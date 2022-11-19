@@ -97,8 +97,9 @@ Pressure in mmHg.
 
 Named parameters:
 
-name    name of the element
-C       capacitance of the vessel in ml/mmHg
+| name   | name of the element                  |
+|--------|--------------------------------------|
+| C      | capacitance of the vessel in ml/mmHg |
 
 Δp is calculated in mmHg
 q is calculated in cm^3/s (ml/s)
