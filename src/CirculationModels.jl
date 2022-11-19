@@ -151,7 +151,9 @@ Pressures in mmHg.
 Named parameters:
 
 `μ`:       viscosity of fluid in dyne s / cm^2
+
 `r`:       radius of vessel segmenty in cm
+
 `L`:       length of vessel segment in cm
 """
 function PoiseuilleResistor(;name, μ=3e-2, r=0.1, L=1)
@@ -183,6 +185,7 @@ Pressure in mmHg.
 Named parameters:
 
 `V₀`:      Unstressed volume ml
+
 `C`:       Vessel compliance in ml/mmHg
 """
 function Compliance(;name, V₀=0.0, C=1.0)
@@ -218,6 +221,7 @@ Pressure in mmHg.
 Named parameters:
 
 `V₀`:      Unstressed volume ml
+
 `E`:       Vessel elastance in ml/mmHg. Equivalent to compliance as E=1/C
 """
 function Elastance(;name, V₀=0.0, E=1.0)
@@ -253,6 +257,7 @@ Pressure in mmHg.
 Named parameters:
 
 `V₀`:      Unstressed volume ml
+
 `C`:       Vessel compliance in ml/mmHg
 """
 function Compliance_ep(;name, V₀=0.0, C=1.0)
@@ -291,6 +296,7 @@ Pressure in mmHg.
 Named parameters:
 
 `V₀`:      Unstressed volume ml
+
 `E`:       Vessel elastance in ml/mmHg. Equivalent to compliance as E=1/C
 """
 function Elastance_ep(;name, V₀=0.0, E=1.0)
@@ -380,6 +386,7 @@ Pressure in mmHg.
 Named parameters:
 
 `P`:     Constant pressure in mmHg
+
 `fun`:   Function which modulates the input
 """
 function DrivenPressure(;name, P=1.0, fun)
@@ -406,7 +413,9 @@ Pressure in mmHg.
 Named parameters:
 
 `Q`:     Constant flow in cm^3/s (ml/s).
+
 `τ`     Length of cardiac cycle is s
+
 `fun`:   Function which modulates the input
 """
 function DrivenFlow(;name, Q=1.0, τ=1.0, fun)
@@ -421,19 +430,19 @@ end
 
 
 """
-Chamber(;name, V₀=0.0, E=1.0, fun)
+`Chamber(;name, V₀=0.0, E=1.0, fun)`
 
-Chamber is defined based on the vessel element,
+Chamber is defined based on the `Elastance` element,
 but has a time varying elastance function modelling
-the contraction of muscle fibres
-
+the contraction of muscle fibres.
 
 Named parameters:
 
-name    name of the element
-V₀      stress-free volume (zero pressure volume)
-E       scaling factor (elastance factor)
-fun     function object for elastance (must be `fun(t)`)
+`V₀`:      stress-free volume (zero pressure volume)
+
+`E`:       scaling factor (elastance factor)
+
+`fun`:     function object for elastance (must be `fun(t)`)
 """
 function Chamber(;name, V₀=0.0, E=1.0, fun)
     @named in = Pin()
@@ -453,7 +462,7 @@ end
 
 
 """
-DHChamber(;name, V₀, Eₘᵢₙ, n₁, n₂, τ, τ₁, τ₂, k, Eshift=0.0, Ev=Inf)
+`DHChamber(;name, V₀, Eₘᵢₙ, n₁, n₂, τ, τ₁, τ₂, k, Eshift=0.0, Ev=Inf)`
 
 The Double Hill chamber/ventricle model is defined based on the vessel
 element, but has a time varying elastance function modelling the contraction
@@ -472,18 +481,26 @@ where e(t) is the Double-Hill function.
 
 Named parameters:
 
-name   Name of the element
-V₀     stress-free volume (zero pressure volume)
-Eₘᵢₙ   minimum elastance
-Eₘₐₓ   maximum elastance
-n₁     rise coefficient
-n₂     fall coefficient
-τ      pulse length [s]
-τ₁     rise timing parameter[s]
-τ₂     fall timimg paramter [s]
-k      elastance factor*
-Eshift time shift of contraction (for atria)
-Ev     venous elastance (for atria model), set to `Inf` for ventricle
+`V₀`:     stress-free volume (zero pressure volume)
+
+`Eₘᵢₙ`:   minimum elastance
+
+`Eₘₐₓ`:   maximum elastance
+`n₁`:     rise coefficient
+
+`n₂`:     fall coefficient
+
+`τ`:      pulse length [s]
+
+`τ₁`:     rise timing parameter[s]
+
+`τ₂`:     fall timimg paramter [s]
+
+`k`:      elastance factor*
+
+`Eshift`: time shift of contraction (for atria)
+
+`Ev`:     venous elastance (for atria model), set to `Inf` for ventricle
 
 *Note: `k` is not an independent parameter, it is a scaling factor that corresponds
 to 1/max(e(t)), which ensures that e(t) varies between zero and 1.0, such that
