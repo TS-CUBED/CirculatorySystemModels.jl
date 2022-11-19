@@ -37,19 +37,18 @@ end
 
 
 """
-function Resistor(;name, R=1.0)
+`Resistor(;name, R=1.0)`
 
 Implements the resistor using Ohm's law to represent a vessels linear resistance to blood flow.
+
 Parameter is in the cm, g, s system.
 Pressure in mmHg.
+`Δp` is calculated in mmHg
+`q` calculated in cm^3/s (ml/s)
 
 Named parameters:
 
-name    name of the element
-R       Resistance of the vessel to the fluid in mmHg*s/ml
-
-Δp is calculated in mmHg
-q is calculated in cm^3/s (ml/s)
+`R`:       Resistance of the vessel to the fluid in mmHg*s/ml
 """
 function Resistor(;name, R=1.0)
     @named oneport = OnePort()
@@ -63,21 +62,18 @@ end
 
 
 """
-function QResistor(;name, K=1.0)
+`QResistor(;name, K=1.0)`
 
 Implements the quadratic resistor to represent a vessels non-linear resistance to blood flow.
-Parameter is in the cm, g, s system.
-Pressure in mmHg.
+
+Parameters are in the cm, g, s system.
+Pressures in mmHg.
+`Δp` is calculated in mmHg,
+`q` is calculated in cm^3/s (ml/s).
 
 Named parameters:
 
-| name   | name of the element                                                             |
-|--------|---------------------------------------------------------------------------------|
-| K      | non-linear resistance of the vessel to the fluid in ``\\mathrm{mmHg*s^2/ml^2}`` |
-
-Δp is calculated in mmHg
-
-q is calculated in cm^3/s (ml/s)
+`K`: non-linear resistance of the vessel to the fluid in mmHg*s^2/ml^2
 """
 function QResistor(;name, K=1.0)
     @named oneport = OnePort()
@@ -91,21 +87,18 @@ end
 
 
 """
-function Capacitor(;name, C=1.0)
+`Capacitor(;name, C=1.0)`
 
 Implements a capacitor to represent vessel capacitance.
 
-Parameters are in the cm, g, s system. Pressure in mmHg.
+Parameters are in the cm, g, s system.
+Pressures in mmHg.
+`Δp` is calculated in mmHg,
+`q` is calculated in cm^3/s (ml/s).
 
 Named parameters:
 
-| name   | name of the element                  |
-|--------|--------------------------------------|
-| C      | capacitance of the vessel in ml/mmHg |
-
-Δp is calculated in mmHg
-
-q is calculated in cm^3/s (ml/s)
+`C`:      capacitance of the vessel in ml/mmHg
 """
 function Capacitor(;name, C=1.0)
     @named oneport = OnePort()
@@ -120,19 +113,18 @@ end
 
 
 """
-function Inductance(;name, L=1.0)
+`Inductance(;name, L=1.0)`
 
 Implements the inductance to represent blood inertance.
-Parameter is in the cm, g, s system.
-Pressure in mmHg.
+
+Parameters are in the cm, g, s system.
+Pressures in mmHg.
+`Δp` is calculated in mmHg,
+`q` is calculated in cm^3/s (ml/s).
 
 Named parameters:
 
-name    name of the element
-L       Inertia of the fluid in mmHg*s^2/ml
-
-Δp is calculated in mmHg
-q is calculated in cm^3/s (ml/s)
+`L`:       Inertia of the fluid in mmHg*s^2/ml
 """
 function Inductance(;name, L=1.0)
     @named oneport = OnePort()
@@ -147,21 +139,20 @@ end
 
 
 """
-function PoiseuilleResistor(;name, μ=3e-2, r=0.5, L=5)
+`PoiseuilleResistor(;name, μ=3e-2, r=0.5, L=5)`
 
 Implements the resistance following the Poiseuille law.
+
 Parameters are in the cm, g, s system.
-Pressure in mmHg.
+Pressures in mmHg.
+`Δp` is calculated in mmHg,
+`q` is calculated in cm^3/s (ml/s).
 
 Named parameters:
 
-name    name of the element
-μ       viscosity of fluid in dyne s / cm^2
-r       radius of vessel segmenty in cm
-L       length of vessel segment in cm
-
-Δp is calculated in mmHg
-q is calculated in cm^3/s (ml/s)
+`μ`:       viscosity of fluid in dyne s / cm^2
+`r`:       radius of vessel segmenty in cm
+`L`:       length of vessel segment in cm
 """
 function PoiseuilleResistor(;name, μ=3e-2, r=0.1, L=1)
     @named oneport = OnePort()
@@ -180,21 +171,19 @@ end
 
 
 """
-function Compliance(;name, V₀=0.0, C=1.0)
+`Compliance(;name, V₀=0.0, C=1.0)`
 
 Implements the compliance of a vessel.
+
 Parameters are in the cm, g, s system.
 Pressure in mmHg.
-Volume in ml.
+`Δp` is calculated in mmHg,
+`q` is calculated in cm^3/s (ml/s).
 
 Named parameters:
 
-name    name of the element
-V₀      Unstressed volume ml
-C       Vessel compliance in ml/mmHg
-
-p is calculated in mmHg
-V is calculated in ml
+`V₀`:      Unstressed volume ml
+`C`:       Vessel compliance in ml/mmHg
 """
 function Compliance(;name, V₀=0.0, C=1.0)
     @named in = Pin()
@@ -217,21 +206,19 @@ end
 
 
 """
-function Elastance(;name, V₀=0.0, E=1.0)
+`Elastance(;name, V₀=0.0, E=1.0)`
 
 Implements the elastance of a vessel. Elastance more commonly used to describe the heart.
+
 Parameters are in the cm, g, s system.
 Pressure in mmHg.
-Volume in ml.
+`Δp` is calculated in mmHg,
+`q` is calculated in cm^3/s (ml/s).
 
 Named parameters:
 
-name    name of the element
-V₀      Unstressed volume ml
-E       Vessel elastance in ml/mmHg. Equivalent to compliance as E=1/C
-
-p is calculated in mmHg
-V is calculated in ml
+`V₀`:      Unstressed volume ml
+`E`:       Vessel elastance in ml/mmHg. Equivalent to compliance as E=1/C
 """
 function Elastance(;name, V₀=0.0, E=1.0)
     @named in = Pin()
@@ -254,22 +241,19 @@ end
 
 
 """
-function Compliance_ep(;name, V₀=0.0, C=1.0)
+`Compliance_ep(;name, V₀=0.0, C=1.0)`
 
 Implements the compliance of a vessel connected to another component.
+
 Parameters are in the cm, g, s system.
 Pressure in mmHg.
-Volume in ml.
+`Δp` is calculated in mmHg,
+`q` is calculated in cm^3/s (ml/s).
 
 Named parameters:
 
-name    name of the element
-V₀      Unstressed volume ml
-C       Vessel compliance in ml/mmHg
-
-p is calculated in mmHg
-ep is calculated in mmHg
-V is calculated in ml
+`V₀`:      Unstressed volume ml
+`C`:       Vessel compliance in ml/mmHg
 """
 function Compliance_ep(;name, V₀=0.0, C=1.0)
     @named in = Pin()
@@ -295,22 +279,19 @@ end
 
 
 """
-function Elastance_ep(;name, V₀=0.0, E=1.0)
+`Elastance_ep(;name, V₀=0.0, E=1.0)`
 
 Implements the elastance of a vessel connected to another compartment. Elastance more commonly used to describe the heart.
+
 Parameters are in the cm, g, s system.
 Pressure in mmHg.
-Volume in ml.
+`Δp` is calculated in mmHg,
+`q` is calculated in cm^3/s (ml/s).
 
 Named parameters:
 
-name    name of the element
-V₀      Unstressed volume ml
-E       Vessel elastance in ml/mmHg. Equivalent to compliance as E=1/C
-
-p is calculated in mmHg
-V is calculated in ml
-ep is calculated in mmHg
+`V₀`:      Unstressed volume ml
+`E`:       Vessel elastance in ml/mmHg. Equivalent to compliance as E=1/C
 """
 function Elastance_ep(;name, V₀=0.0, E=1.0)
     @named in = Pin()
@@ -337,18 +318,18 @@ end
 
 
 """
-function ConstantPressure(;name, P=1.0)
+`ConstantPressure(;name, P=1.0)`
 
 Implements a constant pressure source to a system.
+
 Parameters are in the cm, g, s system.
 Pressure in mmHg.
+`Δp` is calculated in mmHg,
+`q` is calculated in cm^3/s (ml/s).
 
 Named parameters:
 
-name    name of the element
-P     Constant pressure in mmHg
-
-Δp is calculated in mmHg
+`P`:     Constant pressure in mmHg
 """
 function ConstantPressure(;name, P=1.0)
     @named oneport = OnePort()
@@ -362,18 +343,18 @@ end
 
 
 """
-function ConstantFlow(;name, Q=1.0)
+`ConstantFlow(;name, Q=1.0)`
 
 Implements a constant flow source to a system.
+
 Parameters are in the cm, g, s system.
-Flow in cm^3/s (ml/s).
+Pressure in mmHg.
+`Δp` is calculated in mmHg,
+`q` is calculated in cm^3/s (ml/s).
 
 Named parameters:
 
-name    name of the element
-Q     Constant flow in cm^3/s (ml/s)
-
-q is calculated in cm^3/s (ml/s)
+`Q`:     Constant flow in cm^3/s (ml/s)
 """
 function ConstantFlow(;name, Q=1.0)
     @named oneport = OnePort()
@@ -387,46 +368,46 @@ end
 
 
 """
-DrivenPressure(;name, P=1.0, fun)
+`DrivenPressure(;name, P=1.0, fun)`
 
 Implements a driven pressure source to a system modulated by a function provided.
+
 Parameters are in the cm, g, s system.
 Pressure in mmHg.
+`Δp` is calculated in mmHg,
+`q` is calculated in cm^3/s (ml/s).
 
 Named parameters:
 
-name    name of the element
-P     Constant pressure in mmHg
-fun   Function which modulates the input 
-
-Δp is calculated in mmHg
+`P`:     Constant pressure in mmHg
+`fun`:   Function which modulates the input
 """
 function DrivenPressure(;name, P=1.0, fun)
     @named oneport = OnePort()
     @unpack Δp = oneport
-    ps = @parameters P = P
+    ps = @parameters P = P τ=τ
     eqs = [
-           Δp ~  P * fun(t)
+           Δp ~  P * fun(t / tau)
           ]
     extend(ODESystem(eqs, t, [], ps; name=name), oneport)
 end
 
 
 """
-function DrivenFlow(;name, Q=1.0, τ=1.0, fun)
+`DrivenFlow(;name, Q=1.0, τ=1.0, fun)`
 
 Implements a driven flow source to a system.
+
 Parameters are in the cm, g, s system.
-Flow in cm^3/s (ml/s).
+Pressure in mmHg.
+`Δp` is calculated in mmHg,
+`q` is calculated in cm^3/s (ml/s).
 
 Named parameters:
 
-name    name of the element
-Q     Constant flow in cm^3/s (ml/s).
+`Q`:     Constant flow in cm^3/s (ml/s).
 `τ`     Length of cardiac cycle is s
-fun   Function which modulates the input
-
-q is calculated in mmHg
+`fun`:   Function which modulates the input
 """
 function DrivenFlow(;name, Q=1.0, τ=1.0, fun)
     @named oneport = OnePort()
@@ -573,8 +554,6 @@ which describes the elastance function.
 
 Named parameters:
 
-`name`   Name of the element
-
 `V₀`     stress-free volume (zero pressure volume)
 
 `Eₘᵢₙ`   minimum elastance
@@ -585,9 +564,9 @@ Named parameters:
 
 `τₑₚ`    end pulse time (end of falling cosine)
 
-Eshift time shift of contraction (for atria), set to `0` for ventricle
+`Eshift`: time shift of contraction (for atria), set to `0` for ventricle
 
-Ev     venous elastance (for atria model), set to `Inf` for ventricle
+`Ev`:     venous elastance (for atria model), set to `Inf` for ventricle
 """
 function ShiChamber(;name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift=0.0)
     @named in = Pin()
