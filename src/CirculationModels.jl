@@ -71,10 +71,12 @@ Pressure in mmHg.
 
 Named parameters:
 
-name    name of the element
-K       non-linear resistance of the vessel to the fluid in mmHg*s^2/ml^2
+| name   | name of the element                                                             |
+|--------|---------------------------------------------------------------------------------|
+| K      | non-linear resistance of the vessel to the fluid in ``\\mathrm{mmHg*s^2/ml^2}`` |
 
 Δp is calculated in mmHg
+
 q is calculated in cm^3/s (ml/s)
 """
 function QResistor(;name, K=1.0)
@@ -92,8 +94,8 @@ end
 function Capacitor(;name, C=1.0)
 
 Implements a capacitor to represent vessel capacitance.
-Parameter is in the cm, g, s system.
-Pressure in mmHg.
+
+Parameters are in the cm, g, s system. Pressure in mmHg.
 
 Named parameters:
 
@@ -102,6 +104,7 @@ Named parameters:
 | C      | capacitance of the vessel in ml/mmHg |
 
 Δp is calculated in mmHg
+
 q is calculated in cm^3/s (ml/s)
 """
 function Capacitor(;name, C=1.0)
