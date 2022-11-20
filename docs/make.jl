@@ -16,6 +16,9 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
+        "Manual" => [
+            "Setting up a simple model" => "setupModel.md"
+        ]
     ],
 )
 
