@@ -506,7 +506,7 @@ Named parameters:
 to 1/max(e(t)), which ensures that e(t) varies between zero and 1.0, such that
 E(t) varies between Eₘᵢₙ and Eₘₐₓ.
 """
-function DHChamber(;name, V₀, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift=0.0, Ev=Inf, k)
+function DHChamber(;name, V₀, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, k, Eshift=0.0, Ev=Inf)
     @named in = Pin()
     @named out = Pin()
     sts = @variables V(t) = 2.0 p(t) = 0.0
@@ -534,7 +534,7 @@ end
 
 
 """
-DHelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)
+`DHelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)`
 
 Helper function for `DHChamber`
 """
@@ -546,7 +546,7 @@ end
 
 
 """
-DHdelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)
+`DHdelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)`
 
 Helper function for `DHChamber`
 """
@@ -564,7 +564,9 @@ end
 
 
 """
-function ShiChamber(;name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift=0.0)
+`ShiChamber(;name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift=0.0)`
+
+Implemention of a ventricle following Shi/Korakianitis.
 
 This model uses external helper function `shiElastance`
 which describes the elastance function.
@@ -602,14 +604,6 @@ function ShiChamber(;name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τ�
         # Definition in terms of volume:
         D(V) ~ in.q + out.q
         p ~ p₀ + (V - V₀) * E
-
-        # Definition in terms of pressure:
-        # V ~ (p - p₀) / E + V₀
-        # D(p) ~ (in.q + out.q) * E + (p - p₀) / E * DE
-        
-        # in terms of pressure
-        # with added elastance for venae cavae:
-        # D(p) ~ (in.q + out.q) * E / (1 + 1/Ev * E) + (p -p₀) / (E * (1 + 1/Ev * E)) * DE
         ]
 
     compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
@@ -617,7 +611,7 @@ end
 
 
 """
-function ShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
+`ShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)`
 
 Elastance function `E(t)` for ventricle simulation based on Shi's
 double cosine function.
@@ -632,6 +626,7 @@ Parameters:
 
 `τₑₚ`: end of pulse time (end of falling cosine)
 
+`Eshift`: time shift of contraction (for atria), set to `0` for ventricle
 """
 function ShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
 
@@ -651,6 +646,21 @@ end
 DShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
 
 Helper function for `ShiChamber`
+
+Derivative of the elastance function `E(t)` for ventricle simulation based on Shi's
+double cosine function.
+
+Parameters:
+
+`Eₘᵢₙ`: minimum elastance (diastole)
+
+`Eₘₐₓ`: maximum elastance (systole)
+
+`τₑₛ`: end systolic time (end of rising cosine)
+
+`τₑₚ`: end of pulse time (end of falling cosine)
+
+`Eshift`: time shift of contraction (for atria), set to `0` for ventricle
 """
 function DShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
 
@@ -666,27 +676,27 @@ end
 
 
 """
-function ShiAtrium(;name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τpwb, τpww)
+`ShiAtrium(;name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τpwb, τpww)`
 
-Parameters are in the cm, g, s system.
-Pressure in mmHg.
-Volume in ml.
-Flow in cm^3/s (ml/s).
+Implementation of the Atrium following Shi/Korakianitis.
 
 Named parameters:
 
 name    name of the element
-`V₀`    Unstressed chamber volume in ml
-`p₀`    Unstressed chamber pressure in mmHg
-`Eₘᵢₙ`  Minimum elastance (diastole) in mmHg/ml
-`Eₘₐₓ`  Maximum elastance (systole) in mmHg/ml
-`τ`     Length of cardiac cycle in s
-`τpwb`  Atrial contraction time in s
-`τpww`  Atrial offset time in s
 
-p is calculated in mmHg
-q is calculated in cm^3/s (ml/s)
-V is calculated in ml
+`V₀`    Unstressed chamber volume in ml
+
+`p₀`    Unstressed chamber pressure in mmHg
+
+`Eₘᵢₙ`  Minimum elastance (diastole) in mmHg/ml
+
+`Eₘₐₓ`  Maximum elastance (systole) in mmHg/ml
+
+`τ`     Length of cardiac cycle in s
+
+`τpwb`  Atrial contraction time in s
+
+`τpww`  Atrial offset time in s
 """
 function ShiAtrium(;name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τpwb, τpww)
     @named in = Pin()
@@ -708,14 +718,6 @@ function ShiAtrium(;name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τpwb, τpww)
         # Definition in terms of volume:
         D(V) ~ in.q + out.q
         p ~ p₀ + (V - V₀) * E
-
-        # Definition in terms of pressure:
-#        V ~ (p - p₀) / E + V₀
-#        D(p) ~ (in.q + out.q) * E + (p - p₀) / E * DE
-        
-        # in terms of pressure
-        # with added elastance for venae cavae:
-        # D(p) ~ (in.q + out.q) * E / (1 + 1/Ev * E) + (p -p₀) / (E * (1 + 1/Ev * E)) * DE
         ]
 
     compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
@@ -723,7 +725,7 @@ end
 
 
 """
-function ShiHeart(; name, τ, LV_V₀, LV_p0, LV_Emin, LV_Emax, LV_τes, LV_τed, LV_Eshift, RV_V₀, RV_p0, RV_Emin, RV_Emax, RV_τes, RV_τed, RV_Eshift, LA_V₀, LA_p0, LA_Emin, LA_Emax, LA_τes, LA_τed, LA_Eshift, RA_V₀, RA_p0, RA_Emin, RA_Emax, RA_τes, RA_τed, RA_Eshift, AV_CQ, AV_Kp, AV_Kf, AV_Kb, AV_Kv, AV_θmax, AV_θmin, PV_CQ, PV_Kp, PV_Kf, PV_Kb, PV_Kv, PV_θmax, PV_θmin, MV_CQ, MV_Kp, MV_Kf, MV_Kb, MV_Kv, MV_θmax, MV_θmin, TV_CQ, TV_Kp, TV_Kf, TV_Kb, TV_Kv, TV_θmax, TV_θmin)
+`ShiHeart(; name, τ, LV_V₀, LV_p0, LV_Emin, LV_Emax, LV_τes, LV_τed, LV_Eshift, RV_V₀, RV_p0, RV_Emin, RV_Emax, RV_τes, RV_τed, RV_Eshift, LA_V₀, LA_p0, LA_Emin, LA_Emax, LA_τes, LA_τed, LA_Eshift, RA_V₀, RA_p0, RA_Emin, RA_Emax, RA_τes, RA_τed, RA_Eshift, AV_CQ, AV_Kp, AV_Kf, AV_Kb, AV_Kv, AV_θmax, AV_θmin, PV_CQ, PV_Kp, PV_Kf, PV_Kb, PV_Kv, PV_θmax, PV_θmin, MV_CQ, MV_Kp, MV_Kf, MV_Kb, MV_Kv, MV_θmax, MV_θmin, TV_CQ, TV_Kp, TV_Kf, TV_Kb, TV_Kv, TV_θmax, TV_θmin)`
 
 Models a whole heart, made up of 2 ventricles (Left & Right Ventricle) and 2 atria (Left & Right atrium)
 created from the ShiChamber element. Includes the 4 corresponding valves (Aortic, Mitral, Pulmonary and Tricuspid valve) created using the ShiValve element.
@@ -736,68 +738,119 @@ Maximum and Minimum angles given in rad, to convert from degrees multiply angle 
 
 Named parameters:
 
-name        name of the element
 `τ`         Length of the cardiac cycle in s
-`LV_V₀`     Unstressed left ventricular volume in ml
-`LV_p0`     Unstressed left ventricular pressure in mmHg
-`LV_Emin`   Minimum left ventricular elastance (diastole) in mmHg/ml
-`LV_Emax`   Maximum left ventricular elastance (systole) in mmHg/ml
-`LV_τes`    Left ventricular end systolic time in s
-`LV_τed`    Left ventricular end distolic time in s
-`LV_Eshift` Shift time of contraction - 0 for left ventricle
-`RV_V₀`     Unstressed right ventricular volume in ml
-`RV_p0`     Unstressed right ventricular pressure in mmHg
-`RV_Emin`   Minimum right ventricular elastance (diastole) in mmHg/ml
-`RV_Emax`   Maximum right ventricular elastance (systole) in mmHg/ml
-`RV_τes`    Right ventricular end systolic time in s
-`RV_τed`    Right ventricular end distolic time in s
-`RV_Eshift` Shift time of contraction - 0 for right ventricle
-`LA_V₀`     Unstressed left atrial volume in ml
-`LA_p0`     Unstressed left atrial pressure in mmHg
-`LA_Emin`   Minimum left atrial elastance (diastole) in mmHg/ml
-`LA_Emax`   Maximum left atrial elastance (systole) in mmHg/ml
-`LA_τes`    Left atrial end systolic time in s
-`LA_τed`    Left atrial end distolic time in s
-`LA_Eshift` Shift time of contraction in s
-`RA_V₀`     Unstressed right atrial volume in ml
-`RA_p0`     Unstressed right atrial pressure in mmHg
-`RA_Emin`   Minimum right atrial elastance (diastole) in mmHg/ml
-`RA_Emax`   Maximum right atrial elastance (systole) in mmHg/ml
-`RA_τes`    Right atrial end systolic time in s
-`RA_τed`    Right atrial end distolic time in s
-`RA_Eshift` Shift time of contraction in s
-`AV_CQ`     Aortic valve flow coefficent in ml/(s*mmHg^0.5)  
-`AV_Kp`     Pressure effect on the aortic valve in rad/(s^2*mmHg)
-`AV_Kf`     Frictional effect on the aortic valve in 1/s
-`AV_Kb`     Fluid velocity effect on the aortic valve in rad/(s*m)
-`AV_Kv`     Vortex effect on the aortic valve in rad/(s*m)
-`AV_θmax`   Aortic valve maximum opening angle in rad
-`AV_θmin`   Aortic valve minimum opening angle in rad
-`MV_CQ`     Mitral valve flow coefficent in ml/(s*mmHg^0.5)  
-`MV_Kp`     Pressure effect on the mitral valve in rad/(s^2*mmHg)
-`MV_Kf`     Frictional effect on the mitral valve in 1/s
-`MV_Kb`     Fluid velocity effect on the mitral valve in rad/(s*m)
-`MV_Kv`     Vortex effect on the mitral valve in rad/(s*m)
-`MV_θmax`   Mitral valve maximum opening angle in rad
-`MV_θmin`   Mitral valve minimum opening angle in rad
-`PV_CQ`     Pulmonary valve flow coefficent in ml/(s*mmHg^0.5)  
-`PV_Kp`     Pressure effect on the pulmonary valve in rad/(s^2*mmHg)
-`PV_Kf`     Frictional effect on the pulmonary valve in 1/s
-`PV_Kb`     Fluid velocity effect on the pulmonary valve in rad/(s*m)
-`PV_Kv`     Vortex effect on the pulmonary valve in rad/(s*m)
-`PV_θmax`   Pulmonary valve maximum opening angle in rad
-`PV_θmin`   Pulmonary valve minimum opening angle in rad
-`TV_CQ`     Tricuspid valve flow coefficent in ml/(s*mmHg^0.5)  
-`TV_Kp`     Pressure effect on the tricuspid valve in rad/(s^2*mmHg)
-`TV_Kf`     Frictional effect on the tricuspid valve in 1/s
-`TV_Kb`     Fluid velocity effect on the tricuspid valve in rad/(s*m)
-`TV_Kv`     Vortex effect on the pulmonary valve in rad/(s*m)
-`TV_θmax`   Tricuspid valve maximum opening angle in rad
-`TV_θmin`   Tricuspid valve minimum opening angle in rad
 
-p is calculated in mmHg
-q is calculated in cm^3/s (ml/s)
-V is calculated in ml
+`LV_V₀`     Unstressed left ventricular volume in ml
+
+`LV_p0`     Unstressed left ventricular pressure in mmHg
+
+`LV_Emin`   Minimum left ventricular elastance (diastole) in mmHg/ml
+
+`LV_Emax`   Maximum left ventricular elastance (systole) in mmHg/ml
+
+`LV_τes`    Left ventricular end systolic time in s
+
+`LV_τed`    Left ventricular end distolic time in s
+
+`LV_Eshift` Shift time of contraction - 0 for left ventricle
+
+`RV_V₀`     Unstressed right ventricular volume in ml
+
+`RV_p0`     Unstressed right ventricular pressure in mmHg
+
+`RV_Emin`   Minimum right ventricular elastance (diastole) in mmHg/ml
+
+`RV_Emax`   Maximum right ventricular elastance (systole) in mmHg/ml
+
+`RV_τes`    Right ventricular end systolic time in s
+
+`RV_τed`    Right ventricular end distolic time in s
+
+`RV_Eshift` Shift time of contraction - 0 for right ventricle
+
+`LA_V₀`     Unstressed left atrial volume in ml
+
+`LA_p0`     Unstressed left atrial pressure in mmHg
+
+`LA_Emin`   Minimum left atrial elastance (diastole) in mmHg/ml
+
+`LA_Emax`   Maximum left atrial elastance (systole) in mmHg/ml
+
+`LA_τes`    Left atrial end systolic time in s
+
+`LA_τed`    Left atrial end distolic time in s
+
+`LA_Eshift` Shift time of contraction in s
+
+`RA_V₀`     Unstressed right atrial volume in ml
+
+`RA_p0`     Unstressed right atrial pressure in mmHg
+
+`RA_Emin`   Minimum right atrial elastance (diastole) in mmHg/ml
+
+`RA_Emax`   Maximum right atrial elastance (systole) in mmHg/ml
+
+`RA_τes`    Right atrial end systolic time in s
+
+`RA_τed`    Right atrial end distolic time in s
+
+`RA_Eshift` Shift time of contraction in s
+
+`AV_CQ`     Aortic valve flow coefficent in ml/(s*mmHg^0.5)
+
+`AV_Kp`     Pressure effect on the aortic valve in rad/(s^2*mmHg)
+
+`AV_Kf`     Frictional effect on the aortic valve in 1/s
+
+`AV_Kb`     Fluid velocity effect on the aortic valve in rad/(s*m)
+
+`AV_Kv`     Vortex effect on the aortic valve in rad/(s*m)
+
+`AV_θmax`   Aortic valve maximum opening angle in rad
+
+`AV_θmin`   Aortic valve minimum opening angle in rad
+
+`MV_CQ`     Mitral valve flow coefficent in ml/(s*mmHg^0.5)
+
+`MV_Kp`     Pressure effect on the mitral valve in rad/(s^2*mmHg)
+
+`MV_Kf`     Frictional effect on the mitral valve in 1/s
+
+`MV_Kb`     Fluid velocity effect on the mitral valve in rad/(s*m)
+
+`MV_Kv`     Vortex effect on the mitral valve in rad/(s*m)
+
+`MV_θmax`   Mitral valve maximum opening angle in rad
+
+`MV_θmin`   Mitral valve minimum opening angle in rad
+
+`PV_CQ`     Pulmonary valve flow coefficent in ml/(s*mmHg^0.5)
+
+`PV_Kp`     Pressure effect on the pulmonary valve in rad/(s^2*mmHg)
+
+`PV_Kf`     Frictional effect on the pulmonary valve in 1/s
+
+`PV_Kb`     Fluid velocity effect on the pulmonary valve in rad/(s*m)
+
+`PV_Kv`     Vortex effect on the pulmonary valve in rad/(s*m)
+
+`PV_θmax`   Pulmonary valve maximum opening angle in rad
+
+`PV_θmin`   Pulmonary valve minimum opening angle in rad
+
+`TV_CQ`     Tricuspid valve flow coefficent in ml/(s*mmHg^0.5)
+
+`TV_Kp`     Pressure effect on the tricuspid valve in rad/(s^2*mmHg)
+
+`TV_Kf`     Frictional effect on the tricuspid valve in 1/s
+
+`TV_Kb`     Fluid velocity effect on the tricuspid valve in rad/(s*m)
+
+`TV_Kv`     Vortex effect on the pulmonary valve in rad/(s*m)
+
+`TV_θmax`   Tricuspid valve maximum opening angle in rad
+
+`TV_θmin`   Tricuspid valve minimum opening angle in rad
 """
 
 function ShiHeart(; name, τ, LV_V₀, LV_p0, LV_Emin, LV_Emax, LV_τes, LV_τed, LV_Eshift, RV_V₀, RV_p0, RV_Emin, RV_Emax, RV_τes, RV_τed, RV_Eshift, LA_V₀, LA_p0, LA_Emin, LA_Emax, LA_τes, LA_τed, LA_Eshift, RA_V₀, RA_p0, RA_Emin, RA_Emax, RA_τes, RA_τed, RA_Eshift, AV_CQ, AV_Kp, AV_Kf, AV_Kb, AV_Kv, AV_θmax, AV_θmin, PV_CQ, PV_Kp, PV_Kf, PV_Kb, PV_Kv, PV_θmax, PV_θmin, MV_CQ, MV_Kp, MV_Kf, MV_Kb, MV_Kv, MV_θmax, MV_θmin, TV_CQ, TV_Kp, TV_Kf, TV_Kb, TV_Kv, TV_θmax, TV_θmin)
@@ -849,20 +902,17 @@ end
 
 
 """
-function ResistorDiode(;name, R=1e-3)
+`ResistorDiode(;name, R=1e-3)`
 
 Implements the resistance across a valve following Ohm's law exhibiting diode like behaviour.
+
 Parameters are in the cm, g, s system.
 Pressure in mmHg.
 Flow in cm^3/s (ml/s)
 
 Named parameters:
 
-name    name of the element
 `R`     Resistance across the valve in mmHg*s/ml
-
-Δp is calculated in mmHg
-q is calculated in cm^3/s (ml/s)
 """
 function ResistorDiode(;name, R=1e-3)
     @named oneport = OnePort()
@@ -876,20 +926,17 @@ end
 
 
 """
-function OrificeValve(;name, CQ=1.0)
+`OrificeValve(;name, CQ=1.0)`
 
-Implements the squareroot pressure-flow relationship across a valve.
+Implements the square-root pressure-flow relationship across a valve.
+
 Parameters are in the cm, g, s system.
 Pressure in mmHg.
 Flow in cm^3/s (ml/s)
 
 Named parameters:
 
-name    name of the element
 `CQ`    Flow coefficent in ml/(s*mmHg^0.5)
-
-Δp is calculated in mmHg
-q is calculated in cm^3/s (ml/s)
 """
 function OrificeValve(;name, CQ=1.0)
     @named oneport = OnePort()
@@ -903,9 +950,10 @@ end
 
 
 """
-function ShiValve(; name, CQ, Kp, Kf, Kb, Kv, θmax, θmin)
+`ShiValve(; name, CQ, Kp, Kf, Kb, Kv, θmax, θmin)`
 
 Implements the Shi description for valve opening and closing, full description in [Shi].
+
 Parameters are in the cm, g, s system.
 Pressure in mmHg.
 Flow in cm^3/s (ml/s)
@@ -913,17 +961,19 @@ Maximum and Minimum angles given in rad, to convert from degrees multiply angle 
 
 Named parameters:
 
-name    name of the element
 `CQ`    Flow coefficent in ml/(s*mmHg^0.5)
-`Kp`    Pressure effect on the valve in rad/(s^2*mmHg)
-`Kf`    Frictional effect on the valve in 1/s
-`Kb`    Fluid velocity effect on the valve in rad/(s*m)
-`Kv`    Vortex effect on the valve in rad/(s*m)
-`θmax`  Valve maximum opening angle in rad
-`θmin`  Valve minimum opening angle in rad
 
-Δp is calculated in mmHg
-q is calculated in cm^3/s (ml/s)
+`Kp`    Pressure effect on the valve in rad/(s^2*mmHg)
+
+`Kf`    Frictional effect on the valve in 1/s
+
+`Kb`    Fluid velocity effect on the valve in rad/(s*m)
+
+`Kv`    Vortex effect on the valve in rad/(s*m)
+
+`θmax`  Valve maximum opening angle in rad
+
+`θmin`  Valve minimum opening angle in rad
 """
 function ShiValve(; name, CQ, Kp, Kf, Kb, Kv, θmax, θmin)
     @named oneport = OnePort()
@@ -963,10 +1013,8 @@ function ShiValve(; name, CQ, Kp, Kf, Kb, Kv, θmax, θmin)
 end
 
 
-
-
 """
-function WK3(;name, Rc=1.0, Rp=1.0, C=1.0)
+`WK3(;name, Rc=1.0, Rp=1.0, C=1.0)`
 
 Implements the 3 element windkessel model.
 
@@ -977,26 +1025,17 @@ Flow in cm^3/s (ml/s)
 
 Named parameters:
 
-name    name of the element
-Rc      Characteristic impedence in mmHg*s/ml
-Rp      Peripheral resistance in mmHg*s/ml
-C       Arterial compliance in ml/mmHg
+`Rc`:      Characteristic impedence in mmHg*s/ml
 
-Δp is calculated in mmHg
-q is calculated in cm^3/s (ml/s)
+`Rp`:      Peripheral resistance in mmHg*s/ml
+
+`C`:       Arterial compliance in ml/mmHg
 """
 function WK3(;name, Rc=1.0, Rp=1.0, C=1.0)
     @named in = Pin()
     @named out = Pin()
-    # since we connect the external connector twice
-    # (outside and inside of the WK3 subsystem)
-    # the sign on currents is switched. To overcome
-    # this we use two "inverter" pins ii and oi
-    # @named iin = Pin()
-    # @named iout = Pin()
+
     sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    # sts = []
-    # ps = @parameters Rc=Rc Rp=Rp C=C
     # No parameters in this function
     # Parameters are inherited from subcomponents
     ps = []
@@ -1007,30 +1046,22 @@ function WK3(;name, Rc=1.0, Rp=1.0, C=1.0)
     @named C  = Capacitor(C=C)
     @named ground = Ground()
 
-    # The equations for the subsystem are created by
-    # 'connect'-ing the components
-    # Note the inverter pin connection (i, ii), (oi, o)
     eqs = [
         Δp ~ out.p - in.p
         0 ~ in.q + out.q
         q ~ in.q
-        # connect(in, iin)
-        # connecting p to pi corrects the signs!
         connect(in, Rc.in)
         connect(Rc.out, Rp.in, C.in)
         connect(Rp.out, C.out, out)
-        # connect(iout, out)
-        # and correct signs again for next subsystem
     ]
 
     # and finaly compose the system
-    # Note that the inverter pins are not included!
     compose(ODESystem(eqs, t, sts, ps; name=name), in, out, Rc, Rp, C)
 end
 
 
 """
-function WK3E(;name, Rc=1.0, Rp=1.0, E=1.0)
+`WK3E(;name, Rc=1.0, Rp=1.0, E=1.0)`
 
 Implements the 3 element windkessel model. With a vessel elastance instead of a capacitor.
 
@@ -1041,27 +1072,16 @@ Flow in cm^3/s (ml/s)
 
 Named parameters:
 
-name    name of the element
-Rc      Characteristic impedence in mmHg*s/ml
-Rp      Peripheral resistance in mmHg*s/ml
-E       Arterial elastance in ml/mmHg
+`Rc`:      Characteristic impedence in mmHg*s/ml
 
-Δp is calculated in mmHg
-q is calculated in cm^3/s (ml/s)
+`Rp`:      Peripheral resistance in mmHg*s/ml
+
+`E`:       Arterial elastance in ml/mmHg
 """
-
 function WK3E(;name, Rc=1.0, Rp=1.0, E=1.0)
     @named in = Pin()
     @named out = Pin()
-    # since we connect the external connector twice
-    # (outside and inside of the WK3 subsystem)
-    # the sign on currents is switched. To overcome
-    # this we use two "inverter" pins pi and ni
-    # @named iin = Pin()
-    # @named iout = Pin()
     sts = @variables p(t) = 0.0 q(t) = 0.0
-    # sts = []
-    # ps = @parameters Rc=Rc Rp=Rp C=C
     # No parameters in this function
     # Parameters are inherited from subcomponents
     ps = []
@@ -1075,22 +1095,16 @@ function WK3E(;name, Rc=1.0, Rp=1.0, E=1.0)
 
     # The equations for the subsystem are created by
     # 'connect'-ing the components
-    # Note the inverter pin connection (p, pi), (ni, n)
     eqs = [
         Δp ~ out.p - in.p
         q ~ in.q
-        # connect(in, iin)
-        # connecting p to pi corrects the signs!
         connect(in, Rc.in)
         connect(Rc.out, E.in)
         connect(E.out, Rp.in)
         connect(Rp.out, out)
-        # connect(iout, out)
-        # and correct signs again for next subsystem
     ]
 
     # and finaly compose the system
-    # Note that the inverter pins are not included!
     compose(ODESystem(eqs, t, sts, ps; name=name), in, out, Rc, Rp, E)
 end
 
@@ -1098,15 +1112,8 @@ end
 function WK4_S(;name, Rc=1.0, L = 1.0, Rp=1.0, C=1.0)
     @named in = Pin()
     @named out = Pin()
-    # since we connect the external connector twice
-    # (outside and inside of the WK3 subsystem)
-    # the sign on currents is switched. To overcome
-    # this we use two "inverter" pins ii and oi
-    # @named iin = Pin()
-    # @named iout = Pin()
+
     sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    # sts = []
-    # ps = @parameters Rc=Rc Rp=Rp C=C
     # No parameters in this function
     # Parameters are inherited from subcomponents
     ps = []
@@ -1120,23 +1127,17 @@ function WK4_S(;name, Rc=1.0, L = 1.0, Rp=1.0, C=1.0)
 
     # The equations for the subsystem are created by
     # 'connect'-ing the components
-    # Note the inverter pin connection (i, ii), (oi, o)
     eqs = [
         Δp ~ out.p - in.p
         0 ~ in.q + out.q
         q ~ in.q
-        # connect(in, iin)
-        # connecting p to pi corrects the signs!
         connect(in, Rc.in)
         connect(Rc.out, L.in)
         connect(L.out, C.in, Rp.in)
         connect(Rp.out, C.out, out)
-        # connect(iout, out)
-        # and correct signs again for next subsystem
     ]
 
     # and finaly compose the system
-    # Note that the inverter pins are not included!
     compose(ODESystem(eqs, t, sts, ps; name=name), in, out, Rc, Rp, C, L)
 end
 
@@ -1144,15 +1145,8 @@ end
 function WK4_SE(;name, Rc=1.0, L = 1.0, Rp=1.0, E=1.0)
     @named in = Pin()
     @named out = Pin()
-    # since we connect the external connector twice
-    # (outside and inside of the WK3 subsystem)
-    # the sign on currents is switched. To overcome
-    # this we use two "inverter" pins ii and oi
-    # @named iin = Pin()
-    # @named iout = Pin()
+
     sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    # sts = []
-    # ps = @parameters Rc=Rc Rp=Rp C=C
     # No parameters in this function
     # Parameters are inherited from subcomponents
     ps = []
@@ -1166,24 +1160,18 @@ function WK4_SE(;name, Rc=1.0, L = 1.0, Rp=1.0, E=1.0)
 
     # The equations for the subsystem are created by
     # 'connect'-ing the components
-    # Note the inverter pin connection (i, ii), (oi, o)
     eqs = [
         Δp ~ out.p - in.p
         0 ~ in.q + out.q
         q ~ in.q
-        # connect(in, iin)
-        # connecting p to pi corrects the signs!
         connect(in, Rc.in)
         connect(Rc.out, L.in)
         connect(L.out, E.in)
         connect(E.out, Rp.in) 
         connect(Rp.out,out)
-        # connect(iout, out)
-        # and correct signs again for next subsystem
     ]
 
     # and finaly compose the system
-    # Note that the inverter pins are not included!
     compose(ODESystem(eqs, t, sts, ps; name=name), in, out, Rc, Rp, E, L)
 end
 
@@ -1191,15 +1179,8 @@ end
 function WK4_P(;name, Rc=1.0, L = 1.0, Rp=1.0, C=1.0)
     @named in = Pin()
     @named out = Pin()
-    # since we connect the external connector twice
-    # (outside and inside of the WK3 subsystem)
-    # the sign on currents is switched. To overcome
-    # this we use two "inverter" pins ii and oi
-    # @named iin = Pin()
-    # @named iout = Pin()
+
     sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    # sts = []
-    # ps = @parameters Rc=Rc Rp=Rp C=C
     # No parameters in this function
     # Parameters are inherited from subcomponents
     ps = []
@@ -1213,22 +1194,16 @@ function WK4_P(;name, Rc=1.0, L = 1.0, Rp=1.0, C=1.0)
 
     # The equations for the subsystem are created by
     # 'connect'-ing the components
-    # Note the inverter pin connection (i, ii), (oi, o)
     eqs = [
         Δp ~ out.p - in.p
         0 ~ in.q + out.q
         q ~ in.q
-        # connect(in, iin)
-        # connecting p to pi corrects the signs!
         connect(in, L.in, Rc.in)
         connect(L.out, Rc.out, C.in, Rp.in)
         connect(Rp.out, C.out, out)
-        # connect(iout, out)
-        # and correct signs again for next subsystem
     ]
 
     # and finaly compose the system
-    # Note that the inverter pins are not included!
     compose(ODESystem(eqs, t, sts, ps; name=name), in, out, Rc, Rp, C, L)
 end
 
@@ -1236,15 +1211,8 @@ end
 function WK4_PE(;name, Rc=1.0, L = 1.0, Rp=1.0, E=1.0)
     @named in = Pin()
     @named out = Pin()
-    # since we connect the external connector twice
-    # (outside and inside of the WK3 subsystem)
-    # the sign on currents is switched. To overcome
-    # this we use two "inverter" pins ii and oi
-    # @named iin = Pin()
-    # @named iout = Pin()
+
     sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    # sts = []
-    # ps = @parameters Rc=Rc Rp=Rp C=C
     # No parameters in this function
     # Parameters are inherited from subcomponents
     ps = []
@@ -1258,23 +1226,17 @@ function WK4_PE(;name, Rc=1.0, L = 1.0, Rp=1.0, E=1.0)
 
     # The equations for the subsystem are created by
     # 'connect'-ing the components
-    # Note the inverter pin connection (i, ii), (oi, o)
     eqs = [
         Δp ~ out.p - in.p
         0 ~ in.q + out.q
         q ~ in.q
-        # connect(in, iin)
-        # connecting p to pi corrects the signs!
         connect(in, L.in, Rc.in)
         connect(L.out, Rc.out, E.in) 
         connect(E.out, Rp.in)
         connect(Rp.out, out)
-        # connect(iout, out)
-        # and correct signs again for next subsystem
     ]
 
     # and finaly compose the system
-    # Note that the inverter pins are not included!
     compose(ODESystem(eqs, t, sts, ps; name=name), in, out, Rc, Rp, E, L)
 end
 
@@ -1282,15 +1244,8 @@ end
 function WK5(;name, R1=1.0, C1 = 1.0, R2 = 1.0, C2=1.0, R3=1.0)
     @named in = Pin()
     @named out = Pin()
-    # since we connect the external connector twice
-    # (outside and inside of the WK3 subsystem)
-    # the sign on currents is switched. To overcome
-    # this we use two "inverter" pins ii and oi
-    # @named iin = Pin()
-    # @named iout = Pin()
+
     sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    # sts = []
-    # ps = @parameters Rc=Rc Rp=Rp C=C
     # No parameters in this function
     # Parameters are inherited from subcomponents
     ps = []
@@ -1306,23 +1261,17 @@ function WK5(;name, R1=1.0, C1 = 1.0, R2 = 1.0, C2=1.0, R3=1.0)
 
     # The equations for the subsystem are created by
     # 'connect'-ing the components
-    # Note the inverter pin connection (i, ii), (oi, o)
     eqs = [
         Δp ~ out.p - in.p
         0 ~ in.q + out.q
         q ~ in.q
-        # connect(in, iin)
-        # connecting p to pi corrects the signs!
         connect(in, R1.in)
         connect(R1.out, C1.in, R2.in)
         connect(R2.out, C2.in, R3.in)
         connect(R3.out, C1.out, C2.out, out)
-        # connect(iout, out)
-        # and correct signs again for next subsystem
     ]
 
     # and finaly compose the system
-    # Note that the inverter pins are not included!
     compose(ODESystem(eqs, t, sts, ps; name=name), in, out, R1, C1, R2, C2, R3)
 end
 
@@ -1330,15 +1279,7 @@ end
 function WK5E(;name, R1=1.0, E1 = 1.0, R2 = 1.0, E2=1.0, R3=1.0)
     @named in = Pin()
     @named out = Pin()
-    # since we connect the external connector twice
-    # (outside and inside of the WK3 subsystem)
-    # the sign on currents is switched. To overcome
-    # this we use two "inverter" pins ii and oi
-    # @named iin = Pin()
-    # @named iout = Pin()
     sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    # sts = []
-    # ps = @parameters Rc=Rc Rp=Rp C=C
     # No parameters in this function
     # Parameters are inherited from subcomponents
     ps = []
@@ -1354,31 +1295,25 @@ function WK5E(;name, R1=1.0, E1 = 1.0, R2 = 1.0, E2=1.0, R3=1.0)
 
     # The equations for the subsystem are created by
     # 'connect'-ing the components
-    # Note the inverter pin connection (i, ii), (oi, o)
     eqs = [
         Δp ~ out.p - in.p
         0 ~ in.q + out.q
         q ~ in.q
-        # connect(in, iin)
-        # connecting p to pi corrects the signs!
         connect(in, R1.in)
         connect(R1.out, E1.in)
         connect(E1.out, R2.in)
         connect(R2.out, E2.in)
         connect(E2.out, R3.in)
         connect(R3.out, out)
-        # connect(iout, out)
-        # and correct signs again for next subsystem
     ]
 
     # and finaly compose the system
-    # Note that the inverter pins are not included!
     compose(ODESystem(eqs, t, sts, ps; name=name), in, out, R1, E1, R2, E2, R3)
 end
 
 
 """
-function CR(;name, R=1.0, C=1.0)
+`CR(;name, R=1.0, C=1.0)`
 
 Implements the compliance, resistor subsystem.
 
@@ -1389,20 +1324,15 @@ Flow in cm^3/s (ml/s).
 
 Named parameters:
 
-name    name of the element
-R       Component resistance in mmHg*s/ml
-C       Component compliance in ml/mmHg
+`R`:       Component resistance in mmHg*s/ml
 
-Δp is calculated in mmHg
-q is calculated in cm^3/s (ml/s)
+`C`:       Component compliance in ml/mmHg
 """
 function CR(;name, R=1.0, C=1.0)
     @named in = Pin()
     @named out = Pin()
    
     sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    # sts = []
-    # ps = @parameters Rc=Rc Rp=Rp C=C
     # No parameters in this function
     # Parameters are inherited from subcomponents
     ps = []
@@ -1413,7 +1343,6 @@ function CR(;name, R=1.0, C=1.0)
 
     # The equations for the subsystem are created by
     # 'connect'-ing the components
-
     eqs = [
         Δp ~ out.p - in.p
         q ~ in.q
@@ -1429,7 +1358,7 @@ end
 
 
 """
-function CRL(;name, C=1.0, R=1.0, L=1.0)
+`CRL(;name, C=1.0, R=1.0, L=1.0)`
 
 Implements the compliance, resistor, inductance subsystem.
 
@@ -1440,13 +1369,11 @@ Flow in cm^3/s (ml/s).
 
 Named parameters:
 
-name    name of the element
-C       Component compliance in ml/mmHg
-R       Component resistance in mmHg*s/ml
-L       Component blood inertia in mmHg*s^2/ml
+`C`:       Component compliance in ml/mmHg
 
-Δp is calculated in mmHg
-q is calculated in cm^3/s (ml/s)
+`R`:       Component resistance in mmHg*s/ml
+
+`L`:       Component blood inertia in mmHg*s^2/ml
 """
 function CRL(;name, C=1.0, R=1.0, L=1.0)
     @named in = Pin()
@@ -1479,7 +1406,7 @@ end
 
 
 """
-RRCR(;name, R1=1.0, R2=1.0, R3=1.0, C=1.0)
+`RRCR(;name, R1=1.0, R2=1.0, R3=1.0, C=1.0)`
 
 Implements the resistor, resistor, compliance, resistor subsystem.
 
@@ -1490,14 +1417,13 @@ Flow in cm^3/s (ml/s).
 
 Named parameters:
 
-name    name of the element
-R1      Component resistance in mmHg*s/ml
-R2      Component resistance in mmHg*s/ml
-C       Component compliance in ml/mmHg
-R3      Component resistance in mmHg*s/ml
+`R1`:      Component resistance in mmHg*s/ml
 
-Δp is calculated in mmHg
-q is calculated in cm^3/s (ml/s)
+`R2`:      Component resistance in mmHg*s/ml
+
+`C`:       Component compliance in ml/mmHg
+
+`R3`:      Component resistance in mmHg*s/ml
 """
 function RRCR(;name, R1=1.0, R2=1.0, R3=1.0, C=1.0)
     @named in = Pin()
@@ -1538,7 +1464,7 @@ end
 
 
 """
-function ShiSystemicLoop(; name, SAS_C, SAS_R, SAS_L, SAT_C, SAT_R, SAT_L, SAR_R, SCP_R, SVN_C, SVN_R)
+`ShiSystemicLoop(; name, SAS_C, SAS_R, SAS_L, SAT_C, SAT_R, SAT_L, SAR_R, SCP_R, SVN_C, SVN_R)`
 
 Implements systemic loop as written by Shi in [Shi].
 
@@ -1549,20 +1475,25 @@ Flow in cm^3/s (ml/s).
 
 Named parameters:
 
-name    name of the element
-SAS_C   Aortic sinus compliance in ml/mmHg
-SAS_R   Aortic sinus resistance in mmHg*s/ml
-SAS_L   Aortic sinus inductance in mmHg*s^2/ml
-SAT_C   Artery compliance in ml/mmHg
-SAT_R   Artery resistance in mmHg*s/ml
-SAT_L   Artery inductance in mmHg*s^2/ml
-SAR_R   Arteriole resistance in mmHg*s/ml
-SCP_R   Capillary resistance in mmHg*s/ml
-SVN_C   Vein compliance in ml/mmHg
-SVN_R   Vein resistance in mmHg*s/ml
+`SAS_C`:   Aortic sinus compliance in ml/mmHg
 
-Δp is calculated in mmHg
-q is calculated in cm^3/s (ml/s)
+`SAS_R`:   Aortic sinus resistance in mmHg*s/ml
+
+`SAS_L`:   Aortic sinus inductance in mmHg*s^2/ml
+
+`SAT_C`:   Artery compliance in ml/mmHg
+
+`SAT_R`:   Artery resistance in mmHg*s/ml
+
+`SAT_L`:   Artery inductance in mmHg*s^2/ml
+
+`SAR_R`:   Arteriole resistance in mmHg*s/ml
+
+`SCP_R`:   Capillary resistance in mmHg*s/ml
+
+`SVN_C`:   Vein compliance in ml/mmHg
+
+`SVN_R`:   Vein resistance in mmHg*s/ml
 """
 function ShiSystemicLoop(; name, SAS_C, SAS_R, SAS_L, SAT_C, SAT_R, SAT_L, SAR_R, SCP_R, SVN_C, SVN_R)
     @named in = Pin()
@@ -1586,7 +1517,6 @@ function ShiSystemicLoop(; name, SAS_C, SAS_R, SAS_L, SAT_C, SAT_R, SAT_L, SAR_R
 
     # The equations for the subsystem are created by
     # 'connect'-ing the components
-
     eqs = [
         Δp ~ out.p - in.p
         q ~ in.q
@@ -1604,7 +1534,7 @@ end
 
 
 """
-function ShiPulmonaryLoop(; name, PAS_C, PAS_R, PAS_L, PAT_C, PAT_R, PAT_L, PAR_R, PCP_R, PVN_C, PVN_R)
+`ShiPulmonaryLoop(; name, PAS_C, PAS_R, PAS_L, PAT_C, PAT_R, PAT_L, PAR_R, PCP_R, PVN_C, PVN_R)`
 
 Implements systemic loop as written by Shi in [Shi].
 
@@ -1615,20 +1545,25 @@ Flow in cm^3/s (ml/s).
 
 Named parameters:
 
-name    name of the element
-PAS_C   Artery sinus compliance in ml/mmHg
-PAS_R   Artery sinus resistance in mmHg*s/ml
-PAS_L   Artery sinus inductance in mmHg*s^2/ml
-PAT_C   Artery compliance in ml/mmHg
-PAT_R   Artery resistance in mmHg*s/ml
-PAT_L   Artery inductance in mmHg*s^2/ml
-PAR_R   Arteriole resistance in mmHg*s/ml
-PCP_R   Capillary resistance in mmHg*s/ml
-PVN_C   Vein compliance in ml/mmHg
-PVN_R   Vein resistance in mmHg*s/ml
+`PAS_C`:   Artery sinus compliance in ml/mmHg
 
-Δp is calculated in mmHg
-q is calculated in cm^3/s (ml/s)
+`PAS_R`:   Artery sinus resistance in mmHg*s/ml
+
+`PAS_L`:   Artery sinus inductance in mmHg*s^2/ml
+
+`PAT_C`:   Artery compliance in ml/mmHg
+
+`PAT_R`:   Artery resistance in mmHg*s/ml
+
+`PAT_L`:   Artery inductance in mmHg*s^2/ml
+
+`PAR_R`:   Arteriole resistance in mmHg*s/ml
+
+`PCP_R`:   Capillary resistance in mmHg*s/ml
+
+`PVN_C`:   Vein compliance in ml/mmHg
+
+`PVN_R`:   Vein resistance in mmHg*s/ml
 """
 function ShiPulmonaryLoop(; name, PAS_C, PAS_R, PAS_L, PAT_C, PAT_R, PAT_L, PAR_R, PCP_R, PVN_C, PVN_R)
     @named in = Pin()
@@ -1652,7 +1587,6 @@ function ShiPulmonaryLoop(; name, PAS_C, PAS_R, PAS_L, PAT_C, PAT_R, PAT_L, PAR_
 
     # The equations for the subsystem are created by
     # 'connect'-ing the components
-
     eqs = [
         Δp ~ out.p - in.p
         q ~ in.q
