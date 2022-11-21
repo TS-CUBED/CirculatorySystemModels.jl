@@ -8,7 +8,3 @@ Documentation for [CirculationModels](https://github.com/TS-CUBED/CirculationMod
 
 ```@index
 ```
-
-```@autodocs
-Modules = [CirculationModels]
-```
