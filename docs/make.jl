@@ -18,7 +18,8 @@ makedocs(;
         "Home" => "index.md",
         "Manual" => [
             "Setting up a simple model" => "setupModel.md"
-        ]
+        ],
+        "Method Index" => "autodoc.md",
     ],
 )
 
