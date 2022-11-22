@@ -1076,7 +1076,7 @@ Named parameters:
 
 `Rp`:      Peripheral resistance in mmHg*s/ml
 
-`E`:       Arterial elastance in ml/mmHg
+`E`:       Arterial elastance in mmHg/ml
 """
 function WK3E(;name, Rc=1.0, Rp=1.0, E=1.0)
     @named in = Pin()
@@ -1109,7 +1109,27 @@ function WK3E(;name, Rc=1.0, Rp=1.0, E=1.0)
 end
 
 
-function WK4_S(;name, Rc=1.0, L = 1.0, Rp=1.0, C=1.0)
+"""
+`WK4_S(;name, Rc=1.0, L=1.0, Rp=1.0, C=1.0)`
+
+Implements the 4 element windkessel model with serial inertance.
+
+Parameters are in the cm, g, s system.
+Pressure in mmHg.
+Volume in ml.
+Flow in cm^3/s (ml/s)
+
+Named parameters:
+
+`Rc`:      Characteristic impedence in mmHg*s/ml
+
+`L`:       Inertance/Inductance in mmHg*s^2*ml^-1
+
+`Rp`:      Peripheral resistance in mmHg*s/ml
+
+`C`:       Arterial compliance in ml/mmHg
+"""
+function WK4_S(;name, Rc=1.0, L=1.0, Rp=1.0, C=1.0)
     @named in = Pin()
     @named out = Pin()
 
@@ -1142,6 +1162,27 @@ function WK4_S(;name, Rc=1.0, L = 1.0, Rp=1.0, C=1.0)
 end
 
 
+"""
+`WK4_SE(;name, Rc=1.0, L=1.0, Rp=1.0, E=1.0)`
+
+Implements the 4 element windkessel model with serial inertance.
+With a vessel elastance instead of a capacitor.
+
+Parameters are in the cm, g, s system.
+Pressure in mmHg.
+Volume in ml.
+Flow in cm^3/s (ml/s)
+
+Named parameters:
+
+`Rc`:      Characteristic impedence in mmHg*s/ml
+
+`L`:       Inertance/Inductance in mmHg*s^2*ml^-1
+
+`Rp`:      Peripheral resistance in mmHg*s/ml
+
+`E`:       Arterial elastance in mmHg/ml
+"""
 function WK4_SE(;name, Rc=1.0, L = 1.0, Rp=1.0, E=1.0)
     @named in = Pin()
     @named out = Pin()
@@ -1176,6 +1217,26 @@ function WK4_SE(;name, Rc=1.0, L = 1.0, Rp=1.0, E=1.0)
 end
 
 
+"""
+`WK4_P(;name, Rc=1.0, L=1.0, Rp=1.0, C=1.0)`
+
+Implements the 4 element windkessel model with parallel inertance.
+
+Parameters are in the cm, g, s system.
+Pressure in mmHg.
+Volume in ml.
+Flow in cm^3/s (ml/s)
+
+Named parameters:
+
+`Rc`:      Characteristic impedence in mmHg*s/ml
+
+`L`:       Inertance/Inductance in mmHg*s^2*ml^-1
+
+`Rp`:      Peripheral resistance in mmHg*s/ml
+
+`C`:       Arterial compliance in ml/mmHg
+"""
 function WK4_P(;name, Rc=1.0, L = 1.0, Rp=1.0, C=1.0)
     @named in = Pin()
     @named out = Pin()
@@ -1208,6 +1269,27 @@ function WK4_P(;name, Rc=1.0, L = 1.0, Rp=1.0, C=1.0)
 end
 
 
+"""
+`WK4_PE(;name, Rc=1.0, L=1.0, Rp=1.0, E=1.0)`
+
+Implements the 4 element windkessel model with parallel inertance.
+With a vessel elastance instead of a capacitor.
+
+Parameters are in the cm, g, s system.
+Pressure in mmHg.
+Volume in ml.
+Flow in cm^3/s (ml/s)
+
+Named parameters:
+
+`Rc`:      Characteristic impedence in mmHg*s/ml
+
+`L`:       Inertance/Inductance in mmHg*s^2*ml^-1
+
+`Rp`:      Peripheral resistance in mmHg*s/ml
+
+`E`:       Arterial elastance in mmHg/ml
+"""
 function WK4_PE(;name, Rc=1.0, L = 1.0, Rp=1.0, E=1.0)
     @named in = Pin()
     @named out = Pin()

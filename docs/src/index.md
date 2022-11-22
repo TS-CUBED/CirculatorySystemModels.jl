@@ -6,11 +6,13 @@ CurrentModule = CirculationModels
 
 Documentation for [CirculationModels](https://github.com/TS-CUBED/CirculationModels.jl).
 
-
-
 ## An acausal modelling library for Circulation Models
 
-CirculationModels.jl is an acausal modelling library for zero-dimensional, or _lumped parameter_ modelling of the circulatory system.
+CirculationModels.jl is an acausal modelling library for zero-dimensional, or _lumped parameter_ modelling of the circulatory system for [ModelingToolkit.jl (MTK)](https://github.com/SciML/ModelingToolkit.jl).
+
+Integration into MTK and the [SciML](https://docs.sciml.ai/Overview/stable/) environment enables efficient solver methods ([DifferentialEquations.jl](https://diffeq.sciml.ai/latest/)), local and global parameter optimisation ([Optimization.jl](https://optimization.sciml.ai/stable/)), Sensitivity Analysis ([GlobalSensitivity.jl](https://gsa.sciml.ai/stable/)), and many other features in the SciML framework.
+
+The acausal modelling approach in MTK was chosen to support a "if you can draw it you can model" it paradigm.
 
 The main model states that are modelled throughout these models are:
 
@@ -42,7 +44,7 @@ electrical analogon models. To denote the pressure drop over a
 component, this model uses the symbol $\Delta p$.
 
 Time is a parameter in all the symbolic operations, so needs to be
-defined as such (do not use `t` as a variable name elsewhere!)
+defined as such (do not use `t` as a variable name elsewhere!). Parameters can be set using the `@parameters` macro.
 
 ```julia
 @parameters t
