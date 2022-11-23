@@ -21,7 +21,7 @@ makedocs(;
         ],
         "Examples" => [
             "Bjørdalsbakke - Simple Single-Chamber CV-Circuit" => "../../examples/Bjørdalsbakke.md"
-        ]
+        ],
         "Method Index" => "autodoc.md",
     ],
 )
@@ -30,3 +30,8 @@ deploydocs(;
     repo="github.com/TS-CUBED/CirculationModels.jl",
     devbranch="main",
 )
+
+
+
+
+
