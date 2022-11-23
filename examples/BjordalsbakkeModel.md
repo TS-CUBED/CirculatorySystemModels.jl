@@ -1,5 +1,5 @@
 ```@meta
-EditURL = "<unknown>/BjørdalsbakkeModel.jl"
+EditURL = "<unknown>/BjordalsbakkeModel.jl"
 ```
 
 ````julia
@@ -506,7 +506,7 @@ img = DisplayAs.Text(DisplayAs.PNG(img))
 
 img
 ````
-![](BjørdalsbakkeModel-49.png)
+![](BjordalsbakkeModel-49.png)
 
 ---
 
