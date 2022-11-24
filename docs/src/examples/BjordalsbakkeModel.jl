@@ -9,8 +9,17 @@ using CirculationModels
 # This follows Bjørdalsbakke et al.
 #
 # Bjørdalsbakke, N.L., Sturdy, J.T., Hose, D.R., Hellevik, L.R., 2022. Parameter estimation for closed-loop lumped parameter models of the systemic circulation using synthetic data. Mathematical Biosciences 343, 108731. https://doi.org/10.1016/j.mbs.2021.108731
+#
+#
+# Changes from the published version above:
+#
+# - Capacitors are replaced by compliances. These are identical to capacitors, but have an additional parameter, the unstrained volume $V_0$, which allows for realistic blood volume modelling.
+#   Compliances have an inlet and an oulet in line with the flow, rather than the ground connector of the dangling capacitor.
+# - The aortic resistor is combined with the valve (diode) in the `ResistorDiode` element.
 
 # ## Define the parameters
+#
+# All the parameters are taken from table 1 of [Bjørdalsbakke2022].
 #
 
 # Heart rate and cycle time
