@@ -20,7 +20,7 @@ makedocs(;
             "Setting up a simple model" => "setupModel.md"
         ],
         "Examples" => [
-            "Bjørdalsbakke - Simple Single-Chamber CV-Circuit" => "Bjordalsbakke.md"
+            "Bjørdalsbakke - Simple Single-Chamber CV-Circuit" => "BjordalsbakkeModel.md"
         ],
         "Method Index" => "autodoc.md",
     ],
