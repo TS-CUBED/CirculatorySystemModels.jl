@@ -23,15 +23,16 @@ Changes from the published version above:
   Compliances have an inlet and an oulet in line with the flow, rather than the ground connector of the dangling capacitor.
 - The aortic resistor is combined with the valve (diode) in the `ResistorDiode` element.
 
+[Jupyter Notebook](./BjordalsbakkeModel.ipynb)
+
 ## Define the parameters
 
 All the parameters are taken from table 1 of [Bjørdalsbakke2022].
 
-Heart rate and cycle time
+Cycle time in seconds
 
 ````julia
-HR = 70.58823529411765
-τ = 60.0/HR
+τ = 0.85
 ````
 
 ````
