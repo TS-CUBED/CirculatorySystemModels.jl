@@ -29,9 +29,9 @@ This modelling system uses the most common one, which uses $\mathrm{mm_{Hg}$ for
 
 This is a variation of the $\mathrm{[g, cm, s]}$ system, which could be called $\mathrm{[g, cm, s, mm_{Hg}]}$ system.
 
-Different model components are developed based on publications that use different unit systems. In those cases we attempted to keep the equations in the published system and do unit conversions transparently within the component function, while the outside API stays in the $\mathrm{[g, cm, s, mm_{Hg}$ system.
+Different model components are developed based on publications that use different unit systems. In those cases we attempted to keep the equations in the published system and do unit conversions transparently within the component function, while the outside API stays in the $\mathrm{[g, cm, s, mm_{Hg}]}$ system.
 
-All model parameters are to be given in the $\mathrm{[g, cm, s, mm_{Hg}$  system unless otherwise specified in the component documentation.
+All model parameters are to be given in the $\mathrm{[g, cm, s, mm_{Hg}]}$  system unless otherwise specified in the component documentation.
 
 ### Main variables
 
