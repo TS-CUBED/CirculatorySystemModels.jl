@@ -16,9 +16,6 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
-        "Manual" => [
-            "Setting up a simple model" => "setupModel.md"
-        ],
         "Examples" => [
             "Bjørdalsbakke - Simple Single-Chamber CV-Circuit" => "BjordalsbakkeModel.md"
         ],
