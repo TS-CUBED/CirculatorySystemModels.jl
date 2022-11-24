@@ -25,7 +25,7 @@ The main model states that are modelled throughout these models are:
 ### Units
 
 There are many unit systems that are used in circulation models.
-This modelling system uses the most common one, which uses $\mathrm{mm_{Hg}$ for pressures and $\mathrm{ml/s}$ or $\mathrm{cm^3/s}$ for flow rates.
+This modelling system uses the most common one, which uses $\mathrm{mm_{Hg}}$ for pressures and $\mathrm{ml/s}$ or $\mathrm{cm^3/s}$ for flow rates.
 
 This is a variation of the $\mathrm{[g, cm, s]}$ system, which could be called $\mathrm{[g, cm, s, mm_{Hg}]}$ system.
 
