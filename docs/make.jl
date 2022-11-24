@@ -17,7 +17,7 @@ makedocs(;
     pages=[
         "Home" => "index.md",
         "Examples" => [
-            "Bjørdalsbakke - Simple Single-Chamber CV-Circuit" => "BjordalsbakkeModel.md"
+            "Bjørdalsbakke - Simple Single-Chamber CV-Circuit" => "examples/BjordalsbakkeModel.md"
         ],
         "Method Index" => "autodoc.md",
     ],

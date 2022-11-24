@@ -9,6 +9,9 @@ using CirculationModels
 
 # A simple single-chamber model
 
+![Single chamber, closed-loop, lumped parameter model of the systemic circulation and the left ventricle. The circuit equivalent formulation of the model is depicted, with the pressures of each compartment, as well as most of the mechanical parameters. The model describes three compartments: the left ventricular, arterial and venous compartments. 𝑃𝑡ℎ is the intrathoracic pressure, 𝑃𝑙𝑣 is the left ventricular pressure and 𝐸𝑙𝑣(𝑡) indicates the left ventricular elastance function.](./BjordalsbakkeModelSketch.png)
+
+
 This follows Bjørdalsbakke et al.
 
 Bjørdalsbakke, N.L., Sturdy, J.T., Hose, D.R., Hellevik, L.R., 2022. Parameter estimation for closed-loop lumped parameter models of the systemic circulation using synthetic data. Mathematical Biosciences 343, 108731. https://doi.org/10.1016/j.mbs.2021.108731
@@ -506,7 +509,7 @@ img = DisplayAs.Text(DisplayAs.PNG(img))
 
 img
 ````
-![](BjordalsbakkeModel-49.png)
+![](BjordalsbakkeModel-48.png)
 
 ---
 
