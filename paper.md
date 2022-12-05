@@ -62,8 +62,8 @@ models. We then also break down these full systems into collections of
 elements such as the famous Windkessel models [@westerhof2009arterial]
 to give the user full control over their modelling.
 
-The library allows the user to extend it by specialised functions using
-standard _ModelingToolkit.jl_ functionality.
+Users can easily add new elements to _CirculationModels.jl_ 
+using _ModelingToolkit.jl_ functions.
 
 # Statement of need
 
@@ -139,6 +139,8 @@ Speedup against Matlab and Python is 2 and 3 orders of magnitude, respectively (
 ![(a-f) Results for simplified model [@korakianitis2006numerical] implemented in _CirculationModels.jl_. These results match the results from the CellML models (not shown). \label{fig:shi-results}](fig-shi-results.pdf){width=100%}
 
 
+# Acknowledgements
 
+Harry Saxton is supported by a Sheffield Hallam University Graduate Teaching Assistant PhD scholarship.
 
 # References {-}
