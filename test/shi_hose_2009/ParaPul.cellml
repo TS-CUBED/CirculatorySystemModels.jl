@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<model xmlns="http://www.cellml.org/cellml/1.1#" xmlns:cmeta="http://www.cellml.org/metadata/1.0#" cmeta:id="ParaPul" name="ParaPul">
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="Units.cellml">
+<units name="UnitR" units_ref="UnitR"> </units>
+<units name="UnitC" units_ref="UnitC"> </units>
+<units name="UnitL" units_ref="UnitL"/>
+<units name="UnitP" units_ref="UnitP"/><units name="UnitQ" units_ref="UnitQ"/></import>
+
+<component name="ParaPul">
+<!-- pas -->
+<variable initial_value="0.002" name="Rpas" public_interface="out" units="UnitR"> </variable>
+<variable initial_value="0.18" name="Cpas" public_interface="out" units="UnitC"> </variable>
+<variable initial_value="0.000052" name="Lpas" public_interface="out" units="UnitL"> </variable>
+<variable initial_value="30." name="P0pas" public_interface="out" units="UnitP"/>
+<variable initial_value="0." name="Q0pas" public_interface="out" units="UnitQ"/>
+<!-- pat -->
+<variable initial_value="0.01" name="Rpat" public_interface="out" units="UnitR"> </variable>
+<variable initial_value="3.8" name="Cpat" public_interface="out" units="UnitC"> </variable>
+<variable initial_value="0.0017" name="Lpat" public_interface="out" units="UnitL"> </variable>
+<variable initial_value="30." name="P0pat" public_interface="out" units="UnitP"/>
+<variable initial_value="0." name="Q0pat" public_interface="out" units="UnitQ"/>
+<!-- par -->
+<variable initial_value="0.05" name="Rpar" public_interface="out" units="UnitR"> </variable>
+<!-- pcp -->
+<variable initial_value="0.25" name="Rpcp" public_interface="out" units="UnitR"> </variable>
+<!-- pvn -->
+<variable initial_value="0.006" name="Rpvn" public_interface="out" units="UnitR"> </variable>
+<variable initial_value="20.5" name="Cpvn" public_interface="out" units="UnitC"/>
+<variable initial_value="0." name="P0pvn" public_interface="out" units="UnitP"/>
+
+</component>
+
+</model>

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<model xmlns="http://www.cellml.org/cellml/1.1#" xmlns:cmeta="http://www.cellml.org/metadata/1.0#" cmeta:id="TempRLC" name="TempRLC">
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="Units.cellml">
+<units name="UnitP" units_ref="UnitP"/>
+<units name="UnitQ" units_ref="UnitQ"/>
+<units name="UnitR" units_ref="UnitR"/>
+<units name="UnitC" units_ref="UnitC"/>
+<units name="UnitL" units_ref="UnitL"/>
+</import>
+
+<component name="TempRLC">
+<variable name="Pi" initial_value="P0" public_interface="out" units="UnitP"/>
+<variable name="Po" public_interface="in" units="UnitP"/>
+<variable name="Qi" public_interface="in" units="UnitQ"/>
+<variable name="Qo" initial_value="Q0" public_interface="out" units="UnitQ"/>
+<variable name="R" public_interface="in" units="UnitR"/>
+<variable name="C" public_interface="in" units="UnitC"/>
+<variable name="L" public_interface="in" units="UnitL"/>
+<variable name="t" public_interface="in" units="second"/>
+<variable name="P0" public_interface="in" units="UnitP"/>
+<variable name="Q0" public_interface="in" units="UnitQ"/>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+<apply><eq/><apply><diff/><bvar><ci>t</ci></bvar><ci>Pi</ci></apply><apply><divide/><apply><minus/><ci>Qi</ci><ci>Qo</ci></apply><ci>C</ci></apply></apply><apply><eq/><apply><diff/><bvar><ci>t</ci></bvar><ci>Qo</ci></apply><apply><divide/><apply><minus/><apply><minus/><ci>Pi</ci><ci>Po</ci></apply><apply><times/><ci>R</ci><ci>Qo</ci></apply></apply><ci>L</ci></apply></apply></math>
+
+</component>
+
+</model>

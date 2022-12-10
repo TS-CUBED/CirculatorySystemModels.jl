@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+
+<model xmlns="http://www.cellml.org/cellml/1.1#" xmlns:cmeta="http://www.cellml.org/metadata/1.0#" cmeta:id="ModelSys" name="ModelSys">
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="Units.cellml">
+<units name="UnitP" units_ref="UnitP"/>
+<units name="UnitQ" units_ref="UnitQ"/>
+<units name="UnitR" units_ref="UnitR"/>
+<units name="UnitC" units_ref="UnitC"/>
+<units name="UnitL" units_ref="UnitL"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="TempRLC.cellml">
+<component component_ref="TempRLC" name="Sas"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="TempRLC.cellml">
+<component component_ref="TempRLC" name="Sat"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="TempR.cellml">
+<component component_ref="TempR" name="Sar"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="TempR.cellml">
+<component component_ref="TempR" name="Scp"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="TempRC.cellml">
+<component component_ref="TempRC" name="Svn"/>
+</import>
+
+<component name="ModelSys">
+<variable name="Pi" private_interface="in" public_interface="out" units="UnitP"/>
+<variable name="Po" private_interface="out" public_interface="in" units="UnitP"/>
+<variable name="Qi" private_interface="out" public_interface="in" units="UnitQ"/>
+<variable name="Qo" private_interface="in" public_interface="out" units="UnitQ"/>
+<variable name="t" private_interface="out" public_interface="in" units="second"/></component>
+
+<group>
+<relationship_ref relationship="encapsulation"/>
+<component_ref component="ModelSys">
+<component_ref component="Sas"/>
+<component_ref component="Sat"/>
+<component_ref component="Sar"/>
+<component_ref component="Scp"/>
+<component_ref component="Svn"/>
+<component_ref component="ParaSys"/></component_ref>
+</group>
+
+<connection>
+<map_components component_1="ModelSys" component_2="Sas"/>
+<map_variables variable_1="Pi" variable_2="Pi"/>
+<map_variables variable_1="Qi" variable_2="Qi"/>
+<map_variables variable_1="t" variable_2="t"/>
+</connection>
+
+<connection>
+<map_components component_1="ModelSys" component_2="Sat"/>
+<map_variables variable_1="t" variable_2="t"/>
+</connection>
+
+<connection>
+<map_components component_1="ModelSys" component_2="Svn"/>
+<map_variables variable_1="Po" variable_2="Po"/>
+<map_variables variable_1="Qo" variable_2="Qo"/>
+<map_variables variable_1="t" variable_2="t"/>
+</connection>
+
+<connection>
+<map_components component_1="Sas" component_2="Sat"/>
+<map_variables variable_1="Po" variable_2="Pi"/>
+<map_variables variable_1="Qo" variable_2="Qi"/>
+</connection>
+
+<connection>
+<map_components component_1="Sat" component_2="Sar"/>
+<map_variables variable_1="Po" variable_2="Pi"/>
+<map_variables variable_1="Qo" variable_2="Qi"/>
+</connection>
+
+<connection>
+<map_components component_1="Sar" component_2="Scp"/>
+<map_variables variable_1="Po" variable_2="Pi"/>
+<map_variables variable_1="Qo" variable_2="Qi"/>
+</connection>
+
+<connection>
+<map_components component_1="Scp" component_2="Svn"/>
+<map_variables variable_1="Po" variable_2="Pi"/>
+<map_variables variable_1="Qo" variable_2="Qi"/>
+</connection>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ParaSys.cellml">
+<component component_ref="ParaSys" name="ParaSys"/>
+</import>
+
+<connection>
+<map_components component_1="ParaSys" component_2="Sas"/>
+<map_variables variable_1="Rsas" variable_2="R"/>
+<map_variables variable_1="Csas" variable_2="C"/>
+<map_variables variable_1="Lsas" variable_2="L"/>
+<map_variables variable_1="P0sas" variable_2="P0"/>
+<map_variables variable_1="Q0sas" variable_2="Q0"/>
+</connection>
+
+<connection>
+<map_components component_1="ParaSys" component_2="Sat"/>
+<map_variables variable_1="Rsat" variable_2="R"/>
+<map_variables variable_1="Csat" variable_2="C"/>
+<map_variables variable_1="Lsat" variable_2="L"/>
+<map_variables variable_1="P0sat" variable_2="P0"/>
+<map_variables variable_1="Q0sat" variable_2="Q0"/>
+</connection>
+
+<connection>
+<map_components component_1="ParaSys" component_2="Sar"/>
+<map_variables variable_1="Rsar" variable_2="R"/>
+</connection>
+
+<connection>
+<map_components component_1="ParaSys" component_2="Scp"/>
+<map_variables variable_1="Rscp" variable_2="R"/>
+</connection>
+
+<connection>
+<map_components component_1="ParaSys" component_2="Svn"/>
+<map_variables variable_1="Rsvn" variable_2="R"/>
+<map_variables variable_1="Csvn" variable_2="C"/>
+<map_variables variable_1="P0svn" variable_2="P0"/>
+</connection>
+
+</model>
