@@ -98,8 +98,6 @@ using Test
     ##
 
     #### CellML ###
-    using Pkg
-    Pkg.add("CellMLToolkit")
     using CellMLToolkit
     ##
     ml = CellModel("./shi_hose_2009/ModelMain.cellml")

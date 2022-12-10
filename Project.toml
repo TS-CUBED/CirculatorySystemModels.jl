@@ -4,6 +4,7 @@ authors = ["TS-CUBED <ts-cubed@t-cubed.org.uk> and contributors"]
 version = "0.1.1"
 
 [deps]
+CellMLToolkit = "03cb29e0-1ef4-4721-aa24-cf58a006576f"
 DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
 ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
 
