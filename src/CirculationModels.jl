@@ -3,7 +3,7 @@ module CirculationModels
 using ModelingToolkit, DifferentialEquations
 using ModelingToolkit:varmap_to_vars
 
-export Pin, OnePort, Ground, Resistor, QResistor, PoiseuilleResistor, Capacitor, Inductance, Compliance, Elastance, Compliance_ep, Elastance_ep, ConstantPressure, ConstantFlow, DrivenPressure, DrivenFlow, Chamber, DHChamber, ShiChamber, ShiAtrium, ShiHeart, WK3, WK3E, CR, CRL, RRCR, ShiSystemicLoop, ShiPulmonaryLoop, ResistorDiode, OrificeValve, ShiValve
+export Pin, OnePort, Ground, Resistor, QResistor, PoiseuilleResistor, Capacitor, Inductance, Compliance, Elastance, Compliance_ep, Elastance_ep, ConstantPressure, ConstantFlow, DrivenPressure, DrivenFlow, Chamber, DHChamber, ShiChamber, ShiAtrium, ShiHeart, WK3, WK3E, CR, CRL, RRCR, ShiSystemicLoop, ShiPulmonaryLoop, ResistorDiode, OrificeValve, ShiValve, MynardValve_SemiLunar, MynardValve_Atrioventricular
 
 
 @parameters t
@@ -1010,6 +1010,104 @@ function ShiValve(; name, CQ, Kp, Kf, Kb, Kv, θmax, θmin)
     # include the `continuous_events` definition `limits` in the ODE system
     # this is the MTK equivalent to callbacks
     extend(ODESystem(eqs, t, sts, ps; name=name, continuous_events=limits), oneport)
+end
+
+
+"""
+function MynardValve_SemiLunar(; name, ρ, Leff, Mrg, Mst, Ann, Kvc, Kvo)
+
+Implements the Mynard description for flow across the semilunar valves, full description in [Mynard].
+This valve description corresponds to the semilunar valves where interia is an effect we consider.
+
+Note: The minimum level of regurgitation has to be set to machine precision eps()
+
+Parameters are in the cm, g, s system.
+Pressure in mmHg.
+Flow in cm^3/s (ml/s)
+Δp is scaled to ensure units are consistent throughout.
+
+Named parameters:
+
+name    name of the element
+`ρ`     Blood density in g/cm^3
+`Leff`  An effective length in cm
+`Mrg`   Level of regurgitation exhibited by a valve in DN
+`Mst`   Level of stenosis exhibited by a valve in DN
+`Ann`   Annulus area in cm^2
+`Kvc`   Valve closing rate coefficent in  cm^2/(dynes*s)
+`Kvo`   Valve opening rate coefficent in cm^2/(dynes*s)
+
+Δp is calculated in mmHg
+q is calculated in cm^3/s (ml/s)
+"""
+function MynardValve_SemiLunar(; name, ρ, Leff, Mrg, Mst, Ann, Kvc, Kvo)
+    @named oneport = OnePort()
+    @unpack Δp, q = oneport
+    ps = @parameters ρ = ρ Leff = Leff Mrg = Mrg Mst = Mst Ann = Ann Kvc = Kvc Kvo = Kvo
+    sts = @variables Aeff(t) = 0.0 ζ(t) = 0.0 B(t) = 0.0 Aeff_min(t) = 0.0 Aeff_max(t) = 0.0 L(t) = 0.0
+    D = Differential(t)
+    Δp = -1333.22*Δp
+    eqs = [
+        # Opening ratio
+        D(ζ) ~   (Δp > 0)*((1-ζ)*Kvo*Δp) + (Δp < 0)*(ζ*Kvc*Δp)
+        Aeff_min ~ Mrg*Ann + eps()
+        Aeff_max ~ Mst*Ann
+        Aeff ~ (Aeff_max - Aeff_min)*ζ + Aeff_min
+        # Flow equation
+        B ~ ρ/(2*Aeff^2)
+        L ~ ρ*Leff/Aeff
+        D(q) ~ (Δp - B*q*abs(q))*1/L
+
+    ]
+    extend(ODESystem(eqs, t, sts, ps; name=name), oneport)
+end
+
+
+"""
+function MynardValve_Atrioventricular(; name, ρ, Mrg, Mst, Ann, Kvc, Kvo)
+
+Implements the Mynard description for flow across the atrioventricular valves, full description in [Mynard].
+This valve description corresponds to the atrioventricular valves where interia is not considered.
+
+Note: The minimum level of regurgitation has to be set to machine precision eps()
+
+Parameters are in the cm, g, s system.
+Pressure in mmHg.
+Flow in cm^3/s (ml/s)
+Δp is scaled to ensure units are consistent throughout.
+
+Named parameters:
+
+name    name of the element
+`ρ`     Blood density in g/cm^3
+`Mrg`   Level of regurgitation exhibited by a valve in DN
+`Mst`   Level of stenosis exhibited by a valve in DN
+`Ann`   Annulus area in cm^2
+`Kvc`   Valve closing rate coefficent in  cm^2/(dynes*s)
+`Kvo`   Valve opening rate coefficent in cm^2/(dynes*s)
+
+Δp is calculated in mmHg
+q is calculated in cm^3/s (ml/s)
+"""
+function MynardValve_Atrioventricular(; name, ρ, Mrg, Mst, Ann, Kvc, Kvo)
+    @named oneport = OnePort()
+    @unpack Δp, q = oneport
+    ps = @parameters ρ = ρ  Mrg = Mrg Mst = Mst Ann = Ann Kvc = Kvc Kvo = Kvo
+    sts = @variables Aeff(t) = 0.0 ζ(t) = 0.0 B(t) = 0.0 Aeff_min(t) = 0.0 Aeff_max(t) = 0.0 L(t) = 0.0
+    D = Differential(t)
+    Δp = -1333.22*Δp
+    eqs = [
+        # Opening ratio
+        D(ζ) ~   (Δp > 0)*((1-ζ)*Kvo*Δp) + (Δp < 0)*(ζ*Kvc*Δp)
+        Aeff_min ~ Mrg*Ann + eps()
+        Aeff_max ~ Mst*Ann
+        Aeff ~ (Aeff_max - Aeff_min)*ζ + Aeff_min
+        # Flow equation
+        B ~ ρ/(2*Aeff^2)
+        q ~ sqrt(1/B*abs(Δp))*sign(Δp)
+
+    ]
+    extend(ODESystem(eqs, t, sts, ps; name=name), oneport)
 end
 
 
