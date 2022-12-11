@@ -44,9 +44,9 @@ the difference in potential over a component, as is commonly done in
 electrical analogon models. To denote the pressure drop over a
 component, this model uses the symbol $\Delta p$.
 
-Time is a parameter in all the symbolic operations, so needs to be
-defined as such (do not use `t` as a variable name elsewhere!). Parameters can be set using the `@parameters` macro.
+Time is a variable in all the symbolic operations, so needs to be
+defined as such (do not use `t` as a variable name elsewhere!). Parameters can be set using the `@variables` macro.
 
 ```julia
-@parameters t
+@variables t
 ```
