@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<model xmlns="http://www.cellml.org/cellml/1.1#" xmlns:cmeta="http://www.cellml.org/metadata/1.0#" cmeta:id="ParaSys" name="ParaSys">
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="Units.cellml">
+<units name="UnitR" units_ref="UnitR"> </units>
+<units name="UnitC" units_ref="UnitC"> </units>
+<units name="UnitL" units_ref="UnitL"/>
+<units name="UnitP" units_ref="UnitP"/>
+<units name="UnitQ" units_ref="UnitQ"/>
+</import>
+
+<component name="ParaSys">
+<!-- sas -->
+<variable initial_value="0.003" name="Rsas" public_interface="out" units="UnitR"> </variable>
+<variable initial_value="0.08" name="Csas" public_interface="out" units="UnitC"> </variable>
+<variable initial_value="0.000062" name="Lsas" public_interface="out" units="UnitL"> </variable>
+<variable initial_value="100." name="P0sas" public_interface="out" units="UnitP"/>
+<variable initial_value="0." name="Q0sas" public_interface="out" units="UnitQ"/>
+<!-- sat -->
+<variable initial_value="0.05" name="Rsat" public_interface="out" units="UnitR"> </variable>
+<variable initial_value="1.6" name="Csat" public_interface="out" units="UnitC"> </variable>
+<variable initial_value="0.0017" name="Lsat" public_interface="out" units="UnitL"> </variable>
+<variable initial_value="100." name="P0sat" public_interface="out" units="UnitP"/>
+<variable initial_value="0." name="Q0sat" public_interface="out" units="UnitQ"/>
+<!-- sar -->
+<variable initial_value="0.5" name="Rsar" public_interface="out" units="UnitR"> </variable>
+<!-- scp -->
+<variable initial_value="0.52" name="Rscp" public_interface="out" units="UnitR"> </variable>
+<!-- svn -->
+<variable initial_value="0.075" name="Rsvn" public_interface="out" units="UnitR"> </variable>
+<variable initial_value="20.5" name="Csvn" public_interface="out" units="UnitC"/>
+<variable initial_value="0." name="P0svn" public_interface="out" units="UnitP"/>
+
+</component>
+
+</model>

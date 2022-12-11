@@ -1,0 +1,234 @@
+<?xml version="1.0"?>
+<model xmlns="http://www.cellml.org/cellml/1.1#" xmlns:cmeta="http://www.cellml.org/metadata/1.0#" cmeta:id="ModelHeart" name="ModelHeart">
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="Units.cellml">
+<units name="UnitP" units_ref="UnitP"/>
+<units name="UnitQ" units_ref="UnitQ"/>
+<units name="UnitV" units_ref="UnitV"/>
+<units name="UnitCV" units_ref="UnitCV"/>
+<units name="UnitE" units_ref="UnitE"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="TempCDv.cellml">
+<component component_ref="TempCDv" name="LV"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="TempCDa.cellml">
+<component component_ref="TempCDa" name="LA"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="TempCDv.cellml">
+<component component_ref="TempCDv" name="RV"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="TempCDa.cellml">
+<component component_ref="TempCDa" name="RA"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="EAtrium.cellml">
+<component component_ref="EAtrium" name="Ela"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="EVentricle.cellml">
+<component component_ref="EVentricle" name="Elv"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="EAtrium.cellml">
+<component component_ref="EAtrium" name="Era"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="EVentricle.cellml">
+<component component_ref="EVentricle" name="Erv"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ParaHeart.cellml">
+<component component_ref="ParaHeart" name="ParaLHeart"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ParaHeart.cellml">
+<component component_ref="ParaHeart" name="ParaRHeart"/>
+</import>
+
+<component name="LeftHeart">
+<variable name="Pi" private_interface="in" public_interface="out" units="UnitP"/>
+<variable name="Po" private_interface="out" public_interface="in" units="UnitP"/>
+<variable name="Qi" private_interface="out" public_interface="in" units="UnitQ"/>
+<variable name="Qo" private_interface="in" public_interface="out" units="UnitQ"/>
+<variable name="t" private_interface="out" public_interface="in" units="second"/></component>
+
+<component name="RightHeart">
+<variable name="Pi" private_interface="in" public_interface="out" units="UnitP"/>
+<variable name="Po" private_interface="out" public_interface="in" units="UnitP"/>
+<variable name="Qi" private_interface="out" public_interface="in" units="UnitQ"/>
+<variable name="Qo" private_interface="in" public_interface="out" units="UnitQ"/>
+<variable name="t" private_interface="out" public_interface="in" units="second"/></component>
+
+<group>
+<relationship_ref relationship="encapsulation"/>
+<component_ref component="LeftHeart">
+<component_ref component="LV"/>
+<component_ref component="LA"/>
+<component_ref component="Elv"/>
+<component_ref component="Ela"/>
+<component_ref component="ParaLHeart"/></component_ref>
+</group>
+
+<group>
+<relationship_ref relationship="encapsulation"/>
+<component_ref component="RightHeart">
+<component_ref component="RV"/>
+<component_ref component="RA"/>
+<component_ref component="Erv"/>
+<component_ref component="Era"/>
+<component_ref component="ParaRHeart"/></component_ref>
+</group>
+
+<connection>
+<map_components component_1="LeftHeart" component_2="Ela"/>
+<map_variables variable_1="t" variable_2="t"/>
+</connection>
+
+<connection>
+<map_components component_1="LeftHeart" component_2="Elv"/>
+<map_variables variable_1="t" variable_2="t"/>
+</connection>
+
+<connection>
+<map_components component_1="RightHeart" component_2="Era"/>
+<map_variables variable_1="t" variable_2="t"/>
+</connection>
+
+<connection>
+<map_components component_1="RightHeart" component_2="Erv"/>
+<map_variables variable_1="t" variable_2="t"/>
+</connection>
+
+<connection>
+<map_components component_1="LeftHeart" component_2="LA"/>
+<map_variables variable_1="Pi" variable_2="Pi"/>
+<map_variables variable_1="Qi" variable_2="Qi"/>
+<map_variables variable_1="t" variable_2="t"/>
+</connection>
+
+<connection>
+<map_components component_1="LA" component_2="LV"/>
+<map_variables variable_1="Po" variable_2="Pi"/>
+<map_variables variable_1="Qo" variable_2="Qi"/>
+</connection>
+
+<connection>
+<map_components component_1="LeftHeart" component_2="LV"/>
+<map_variables variable_1="Po" variable_2="Po"/>
+<map_variables variable_1="Qo" variable_2="Qo"/>
+<map_variables variable_1="t" variable_2="t"/>
+</connection>
+
+<connection>
+<map_components component_1="RightHeart" component_2="RA"/>
+<map_variables variable_1="Pi" variable_2="Pi"/>
+<map_variables variable_1="Qi" variable_2="Qi"/>
+<map_variables variable_1="t" variable_2="t"/>
+</connection>
+
+<connection>
+<map_components component_1="RA" component_2="RV"/>
+<map_variables variable_1="Po" variable_2="Pi"/>
+<map_variables variable_1="Qo" variable_2="Qi"/>
+</connection>
+
+<connection>
+<map_components component_1="RightHeart" component_2="RV"/>
+<map_variables variable_1="Po" variable_2="Po"/>
+<map_variables variable_1="Qo" variable_2="Qo"/>
+<map_variables variable_1="t" variable_2="t"/>
+</connection>
+
+<connection>
+<map_components component_1="ParaLHeart" component_2="LA"/>
+<map_variables variable_1="PlaIni" variable_2="Pini"/>
+<map_variables variable_1="VlaIni" variable_2="Vini"/>
+<map_variables variable_1="CVmi" variable_2="CV"/>
+<map_variables variable_1="Vla0" variable_2="V0"/>
+</connection>
+
+<connection>
+<map_components component_1="ParaLHeart" component_2="LV"/>
+<map_variables variable_1="PlvIni" variable_2="Pini"/>
+<map_variables variable_1="VlvIni" variable_2="Vini"/>
+<map_variables variable_1="CVao" variable_2="CV"/>
+<map_variables variable_1="Vlv0" variable_2="V0"/>
+</connection>
+
+<connection>
+<map_components component_1="ParaRHeart" component_2="RA"/>
+<map_variables variable_1="PraIni" variable_2="Pini"/>
+<map_variables variable_1="VraIni" variable_2="Vini"/>
+<map_variables variable_1="CVti" variable_2="CV"/>
+<map_variables variable_1="Vra0" variable_2="V0"/>
+</connection>
+
+<connection>
+<map_components component_1="ParaRHeart" component_2="RV"/>
+<map_variables variable_1="PrvIni" variable_2="Pini"/>
+<map_variables variable_1="VrvIni" variable_2="Vini"/>
+<map_variables variable_1="CVpa" variable_2="CV"/>
+<map_variables variable_1="Vrv0" variable_2="V0"/>
+</connection>
+
+<connection>
+<map_components component_1="ParaLHeart" component_2="Ela"/>
+<map_variables variable_1="ElaMax" variable_2="Emax"/>
+<map_variables variable_1="ElaMin" variable_2="Emin"/>
+<map_variables variable_1="T" variable_2="T"/>
+<map_variables variable_1="Tpwb" variable_2="Tpwb"/>
+<map_variables variable_1="Tpww" variable_2="Tpww"/>
+</connection>
+
+<connection>
+<map_components component_1="ParaLHeart" component_2="Elv"/>
+<map_variables variable_1="ElvMax" variable_2="Emax"/>
+<map_variables variable_1="ElvMin" variable_2="Emin"/>
+<map_variables variable_1="T" variable_2="T"/>
+<map_variables variable_1="Ts1" variable_2="Ts1"/>
+<map_variables variable_1="Ts2" variable_2="Ts2"/>
+</connection>
+
+<connection>
+<map_components component_1="ParaRHeart" component_2="Era"/>
+<map_variables variable_1="EraMax" variable_2="Emax"/>
+<map_variables variable_1="EraMin" variable_2="Emin"/>
+<map_variables variable_1="T" variable_2="T"/>
+<map_variables variable_1="Tpwb" variable_2="Tpwb"/>
+<map_variables variable_1="Tpww" variable_2="Tpww"/>
+</connection>
+
+<connection>
+<map_components component_1="ParaRHeart" component_2="Erv"/>
+<map_variables variable_1="ErvMax" variable_2="Emax"/>
+<map_variables variable_1="ErvMin" variable_2="Emin"/>
+<map_variables variable_1="T" variable_2="T"/>
+<map_variables variable_1="Ts1" variable_2="Ts1"/>
+<map_variables variable_1="Ts2" variable_2="Ts2"/>
+</connection>
+
+<connection>
+<map_components component_1="LA" component_2="Ela"/>
+<map_variables variable_1="E" variable_2="E"/>
+</connection>
+
+<connection>
+<map_components component_1="LV" component_2="Elv"/>
+<map_variables variable_1="E" variable_2="E"/>
+</connection>
+
+<connection>
+<map_components component_1="RA" component_2="Era"/>
+<map_variables variable_1="E" variable_2="E"/>
+</connection>
+
+<connection>
+<map_components component_1="RV" component_2="Erv"/>
+<map_variables variable_1="E" variable_2="E"/>
+</connection>
+
+</model>

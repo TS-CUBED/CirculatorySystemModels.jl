@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<model xmlns="http://www.cellml.org/cellml/1.1#" xmlns:cmeta="http://www.cellml.org/metadata/1.0#" cmeta:id="ModelPul" name="ModelPul">
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="Units.cellml">
+<units name="UnitP" units_ref="UnitP"/>
+<units name="UnitQ" units_ref="UnitQ"/>
+<units name="UnitR" units_ref="UnitR"/>
+<units name="UnitC" units_ref="UnitC"/>
+<units name="UnitL" units_ref="UnitL"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="TempRLC.cellml">
+<component component_ref="TempRLC" name="Pas"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="TempRLC.cellml">
+<component component_ref="TempRLC" name="Pat"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="TempR.cellml">
+<component component_ref="TempR" name="Par"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="TempR.cellml">
+<component component_ref="TempR" name="Pcp"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="TempRC.cellml">
+<component component_ref="TempRC" name="Pvn"/>
+</import>
+
+<component name="ModelPul">
+<variable name="Pi" private_interface="in" public_interface="out" units="UnitP"/>
+<variable name="Po" private_interface="out" public_interface="in" units="UnitP"/>
+<variable name="Qi" private_interface="out" public_interface="in" units="UnitQ"/>
+<variable name="Qo" private_interface="in" public_interface="out" units="UnitQ"/>
+<variable name="t" private_interface="out" public_interface="in" units="second"/></component>
+
+<group>
+<relationship_ref relationship="encapsulation"/>
+<component_ref component="ModelPul">
+<component_ref component="Pas"/>
+<component_ref component="Pat"/>
+<component_ref component="Par"/>
+<component_ref component="Pcp"/>
+<component_ref component="Pvn"/>
+<component_ref component="ParaPul"/></component_ref>
+</group>
+
+<connection>
+<map_components component_1="ModelPul" component_2="Pas"/>
+<map_variables variable_1="Pi" variable_2="Pi"/>
+<map_variables variable_1="Qi" variable_2="Qi"/>
+<map_variables variable_1="t" variable_2="t"/>
+</connection>
+
+<connection>
+<map_components component_1="ModelPul" component_2="Pat"/>
+<map_variables variable_1="t" variable_2="t"/>
+</connection>
+
+<connection>
+<map_components component_1="ModelPul" component_2="Pvn"/>
+<map_variables variable_1="Po" variable_2="Po"/>
+<map_variables variable_1="Qo" variable_2="Qo"/>
+<map_variables variable_1="t" variable_2="t"/>
+</connection>
+
+<connection>
+<map_components component_1="Pas" component_2="Pat"/>
+<map_variables variable_1="Po" variable_2="Pi"/>
+<map_variables variable_1="Qo" variable_2="Qi"/>
+</connection>
+
+<connection>
+<map_components component_1="Pat" component_2="Par"/>
+<map_variables variable_1="Po" variable_2="Pi"/>
+<map_variables variable_1="Qo" variable_2="Qi"/>
+</connection>
+
+<connection>
+<map_components component_1="Par" component_2="Pcp"/>
+<map_variables variable_1="Po" variable_2="Pi"/>
+<map_variables variable_1="Qo" variable_2="Qi"/>
+</connection>
+
+<connection>
+<map_components component_1="Pcp" component_2="Pvn"/>
+<map_variables variable_1="Po" variable_2="Pi"/>
+<map_variables variable_1="Qo" variable_2="Qi"/>
+</connection>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ParaPul.cellml">
+<component component_ref="ParaPul" name="ParaPul"/>
+</import>
+
+<connection>
+<map_components component_1="ParaPul" component_2="Pas"/>
+<map_variables variable_1="Rpas" variable_2="R"/>
+<map_variables variable_1="Cpas" variable_2="C"/>
+<map_variables variable_1="Lpas" variable_2="L"/>
+<map_variables variable_1="P0pas" variable_2="P0"/>
+<map_variables variable_1="Q0pas" variable_2="Q0"/>
+</connection>
+
+<connection>
+<map_components component_1="ParaPul" component_2="Pat"/>
+<map_variables variable_1="Rpat" variable_2="R"/>
+<map_variables variable_1="Cpat" variable_2="C"/>
+<map_variables variable_1="Lpat" variable_2="L"/>
+<map_variables variable_1="P0pat" variable_2="P0"/>
+<map_variables variable_1="Q0pat" variable_2="Q0"/>
+</connection>
+
+<connection>
+<map_components component_1="ParaPul" component_2="Par"/>
+<map_variables variable_1="Rpar" variable_2="R"/>
+</connection>
+
+<connection>
+<map_components component_1="ParaPul" component_2="Pcp"/>
+<map_variables variable_1="Rpcp" variable_2="R"/>
+</connection>
+
+<connection>
+<map_components component_1="ParaPul" component_2="Pvn"/>
+<map_variables variable_1="Rpvn" variable_2="R"/>
+<map_variables variable_1="Cpvn" variable_2="C"/>
+<map_variables variable_1="P0pvn" variable_2="P0"/>
+</connection>
+
+</model>

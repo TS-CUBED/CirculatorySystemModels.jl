@@ -1,0 +1,292 @@
+<?xml version="1.0"?>
+<model xmlns="http://www.cellml.org/cellml/1.1#" xmlns:cmeta="http://www.cellml.org/metadata/1.0#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqs="http://www.cellml.org/bqs/1.0#" xmlns:cellml="http://www.cellml.org/cellml/1.1#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:ns7="http://www.cellml.org/metadata/simulation/1.0#" cmeta:id="ModelMain" name="ModelMain">
+<!-- Model description -->
+  <documentation xmlns="http://cellml.org/tmp-documentation">
+    <article>
+      <articleinfo>
+        <title>Zero dimensional (lumped parameter) modelling of native human cardiovascular dynamics</title>
+        <author>
+          <firstname>Yubing</firstname>
+          <surname>Shi</surname>
+          <affiliation>
+            <shortaffil>Sheffield University</shortaffil>
+          </affiliation>
+        </author>
+      </articleinfo>
+      <section id="sec_status">
+        <title>Model Status</title>
+        <para>
+            This model describes a zero dimensional model of human cardiovascular dynamics, based on a hydraulic-electric analogue. The original model was implemented in C, and has been applied to the study of cardiovascular dynamics under various healthy and diseased conditions including heart failure, valve disease, and heart failure under different modes of ventricular assist device support [1,2,3]. Due to some current limitations in the representation in CellML of algebraic differential equations, some features of the original model, such as the heart valve dynamics, have been simplified in the current CellML implementation.
+The current CellML model implementation runs in OpenCell. The results have been validated against the original C implementation and against other published data. Please note that because this is a 1.1 model it does not run in COR.
+
+          </para>
+
+      </section>
+      <sect1 id="sec_structure">
+        <title>Model Structure</title>
+        <para>
+The model comprises three main parts: the heart, the systemic loop, and the pulmonary loop, as illustrated in Fig. 1.  The heart is modelled as a four-chambered pump with variable elastance and four heart valves to control the direction of blood flow. Systemic and pulmonary circulatory loops are sub-divided into a number of segments, namely: the aortic sinus/pulmonary artery sinus, artery, arteriole, capillary and vein segments. In each segment, individual components are modelled by representations of the local resistance to blood flow, vessel elasticity and the inertia of the blood. 
+</para>
+
+<informalfigure float="0" id="system_configuration">
+<mediaobject>
+  <imageobject>
+    <objectinfo>
+      <title>Schematic of the system configuration of the cardiovascular model
+</title>
+    </objectinfo>
+    <imagedata fileref="CSysBase.png"/>
+  </imageobject>
+</mediaobject>
+<caption>Schematic of the system configuration of the cardiovascular model</caption>
+</informalfigure>
+<para>
+For the CellML representation of the model, several template components are defined: namely, TempRLC, TempRC, TempR, TempCDv, TempCDa, EAtrium and EVentricle.  The first three of these provide zero dimensional representations of the linearised governing equations for pressure and flow in the vessel segments.  TempCDv and TempCDa define the variable elastances of the cardiac chambers together with the heart valve dynamics. EAtrium and EVentricle define the activation functions, which are used in the calculation of these variable elastances.  In addition to the templates, a further component, ‘Units’, is defined.  This provides the definitions of the derived units of the variables of pressure, flow-rate, volume, vessel resistance, blood inertia, vessel elasticity etc. in the model.  The parameter settings for the model are specified in three separate components; ParaHeart, ParaSys and ParaPul, which contain the respective values for the system variables. The templates are then imported into the upper-level description of the model, in which each template-type is integrated with the unit definitions and specific parameter settings appropriate for the vessel segment or cardiac chamber described. Upper level component models for the systemic loop, the pulmonary loop and the heart are then constructed using the group feature to assemble the individual vessel segments or cardiac chambers into the general function modules. Finally the functional modules of heart, systemic loop and pulmonary loop are connected to form the complete CellML model.
+</para>
+<para>
+The complete original model was presented in the following papers:
+</para>
+<para>
+A concentrated parameter model for the human cardiovascular system including heart valve dynamics and atrioventricular interaction, Korakianitis T., Shi Y., 2006. <emphasis>Medical Engineering and Physics</emphasis> 28, 613-28, <ulink url="http://www.ncbi.nlm.nih.gov/pubmed/16293439">PubMed ID: 16293439</ulink>.</para>
+
+<para>
+Numerical simulation of cardiovascular dynamics with healthy and diseased heart valves, Korakianitis T., Shi Y., 2006. <emphasis>Journal of Biomechanics</emphasis> 39 (11), 1964-82, <ulink url="http://www.ncbi.nlm.nih.gov/pubmed/16140309">PubMed ID: 16140309
+</ulink>.</para>
+<para>
+Numerical simulation of cardiovascular dynamics with left heart failure and in-series pulsatile ventricular assist device, Shi Y., Korakianitis T., 2006. <emphasis>Artificial Organs</emphasis> 30 (12), 929-48, <ulink url="http://www.ncbi.nlm.nih.gov/pubmed/17181834">PubMed ID: 17181834</ulink>.
+</para>
+
+      </sect1>
+    </article>
+  </documentation>
+
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="Units.cellml">
+<units name="UnitP" units_ref="UnitP"/>
+<units name="UnitQ" units_ref="UnitQ"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ModelHeart.cellml">
+<component component_ref="LeftHeart" name="LEFTHeart"/>
+<component component_ref="RightHeart" name="RIGHTHeart"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ModelSys.cellml">
+<component component_ref="ModelSys" name="SysLoop"/>
+</import>
+
+<import xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ModelPul.cellml">
+<component component_ref="ModelPul" name="PulLoop"/>
+</import>
+
+<component name="environment">
+<variable name="t" public_interface="out" units="second"/>
+</component>
+
+<connection>
+<map_components component_1="environment" component_2="LEFTHeart"/>
+<map_variables variable_1="t" variable_2="t"/>
+</connection>
+
+<connection>
+<map_components component_1="environment" component_2="RIGHTHeart"/>
+<map_variables variable_1="t" variable_2="t"/>
+</connection>
+
+<connection>
+<map_components component_1="environment" component_2="SysLoop"/>
+<map_variables variable_1="t" variable_2="t"/>
+</connection>
+
+<connection>
+<map_components component_1="environment" component_2="PulLoop"/>
+<map_variables variable_1="t" variable_2="t"/>
+</connection>
+
+<connection>
+<map_components component_1="LEFTHeart" component_2="SysLoop"/>
+<map_variables variable_1="Po" variable_2="Pi"/>
+<map_variables variable_1="Qo" variable_2="Qi"/>
+</connection>
+
+<connection>
+<map_components component_1="SysLoop" component_2="RIGHTHeart"/>
+<map_variables variable_1="Po" variable_2="Pi"/>
+<map_variables variable_1="Qo" variable_2="Qi"/>
+</connection>
+
+<connection>
+<map_components component_1="RIGHTHeart" component_2="PulLoop"/>
+<map_variables variable_1="Po" variable_2="Pi"/>
+<map_variables variable_1="Qo" variable_2="Qi"/>
+</connection>
+
+<connection>
+<map_components component_1="PulLoop" component_2="LEFTHeart"/>
+<map_variables variable_1="Po" variable_2="Pi"/>
+<map_variables variable_1="Qo" variable_2="Qi"/>
+</connection>
+
+<RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <RDF:Description RDF:about="#ModelMain">
+    <NS1:simulation xmlns:NS1="http://www.cellml.org/metadata/simulation/1.0#" RDF:resource="rdf:#$3.sa72"/>
+  </RDF:Description>
+  <RDF:Description xmlns:NS1="http://www.cellml.org/metadata/simulation/1.0#" RDF:about="rdf:#$5.sa72" NS1:nonstandard-pointDensity="10000"/>
+  <RDF:Description RDF:about="rdf:#$4.sa72">
+    <RDF:first RDF:resource="rdf:#$5.sa72"/>
+    <RDF:rest RDF:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </RDF:Description>
+  <RDF:Description RDF:about="rdf:#$3.sa72">
+    <NS1:boundIntervals xmlns:NS1="http://www.cellml.org/metadata/simulation/1.0#" RDF:resource="rdf:#$4.sa72"/>
+  </RDF:Description>
+</RDF:RDF>
+
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqs="http://www.cellml.org/bqs/1.0#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#">
+    
+	<rdf:Description rdf:about="">
+	  <dc:title>Zero dimensional (lumped parameter) modelling of native human cardiovascular dynamics</dc:title>
+      <dc:creator rdf:parseType="Resource">
+        <vCard:N rdf:parseType="Resource">
+          <vCard:Family>Shi</vCard:Family>
+		  <vCard:Given>Yubing</vCard:Given>
+        </vCard:N>
+		<vCard:N rdf:parseType="Resource">
+          <vCard:Family>Hose</vCard:Family>
+		  <vCard:Given>Rod</vCard:Given>
+        </vCard:N>
+		<vCard:ORG rdf:parseType="Resource">
+          <vCard:Orgname>The University of Sheffield</vCard:Orgname>
+        </vCard:ORG>
+      </dc:creator>
+    </rdf:Description>
+    
+    <rdf:Description rdf:about="#ModelMain">
+	  <bqs:reference rdf:parseType="Resource">
+        <dc:subject rdf:parseType="Resource">
+          <bqs:subject_type>keyword</bqs:subject_type>
+          <rdf:value>
+            <rdf:Bag>
+              <rdf:li>cardiac</rdf:li>
+			  <rdf:li>cardiovascular circulation</rdf:li>
+            </rdf:Bag>
+          </rdf:value>
+        </dc:subject>
+      </bqs:reference>
+
+      <bqs:reference rdf:parseType="Resource">
+        <bqs:Pubmed_id>16293439</bqs:Pubmed_id>
+		<bqs:JournalArticle rdf:parseType="Resource">
+          <dc:creator>
+            <rdf:Seq>
+              <rdf:li rdf:parseType="Resource">
+                <bqs:Person rdf:parseType="Resource">
+                  <vCard:N rdf:parseType="Resource">
+                    <vCard:Family>Korakianitis</vCard:Family>
+                    <vCard:Given>T</vCard:Given>
+				  </vCard:N>
+                </bqs:Person>
+              </rdf:li>
+			  <rdf:li rdf:parseType="Resource">
+                <bqs:Person rdf:parseType="Resource">
+                  <vCard:N rdf:parseType="Resource">
+                    <vCard:Family>Shi</vCard:Family>
+                    <vCard:Given>Y</vCard:Given>
+				  </vCard:N>
+                </bqs:Person>
+              </rdf:li>
+            </rdf:Seq>
+          </dc:creator>
+		  <dc:title>
+            A concentrated parameter model for the human cardiovascular system including heart valve dynamics and atrioventricular interaction
+          </dc:title>
+          <dcterms:issued rdf:parseType="Resource">
+            <dcterms:W3CDTF>2006</dcterms:W3CDTF>
+          </dcterms:issued>
+          <bqs:Journal rdf:parseType="Resource">
+            <dc:title>Medical Engineering and Physics</dc:title>
+          </bqs:Journal>
+		  <bqs:volume>28</bqs:volume>
+          <bqs:first_page>613</bqs:first_page>
+          <bqs:last_page>628</bqs:last_page>
+        </bqs:JournalArticle>
+      </bqs:reference>
+	  
+	  <bqs:reference rdf:parseType="Resource">
+	  <bqs:Pubmed_id>16140309</bqs:Pubmed_id>
+	  	<bqs:JournalArticle rdf:parseType="Resource">
+          <dc:creator>
+            <rdf:Seq>
+              <rdf:li rdf:parseType="Resource">
+                <bqs:Person rdf:parseType="Resource">
+                  <vCard:N rdf:parseType="Resource">
+                    <vCard:Family>Korakianitis</vCard:Family>
+                    <vCard:Given>T</vCard:Given>
+				  </vCard:N>
+                </bqs:Person>
+              </rdf:li>
+			  <rdf:li rdf:parseType="Resource">
+                <bqs:Person rdf:parseType="Resource">
+                  <vCard:N rdf:parseType="Resource">
+                    <vCard:Family>Shi</vCard:Family>
+                    <vCard:Given>Y</vCard:Given>
+				  </vCard:N>
+                </bqs:Person>
+              </rdf:li>
+            </rdf:Seq>
+          </dc:creator>
+		  <dc:title>
+            Numerical simulation of cardiovascular dynamics with healthy and diseased heart valves
+          </dc:title>
+          <dcterms:issued rdf:parseType="Resource">
+            <dcterms:W3CDTF>2006</dcterms:W3CDTF>
+          </dcterms:issued>
+          <bqs:Journal rdf:parseType="Resource">
+            <dc:title>Journal of Biomechanics</dc:title>
+          </bqs:Journal>
+		  <bqs:volume>39</bqs:volume>
+          <bqs:first_page>1964</bqs:first_page>
+          <bqs:last_page>1982</bqs:last_page>
+        </bqs:JournalArticle>
+      </bqs:reference>
+	  
+	  <bqs:reference rdf:parseType="Resource">
+	  <bqs:Pubmed_id>17181834</bqs:Pubmed_id>
+	  	<bqs:JournalArticle rdf:parseType="Resource">
+          <dc:creator>
+            <rdf:Seq>
+              <rdf:li rdf:parseType="Resource">
+                <bqs:Person rdf:parseType="Resource">
+                  <vCard:N rdf:parseType="Resource">
+                    <vCard:Family>Shi</vCard:Family>
+                    <vCard:Given>Y</vCard:Given>
+				  </vCard:N>
+                </bqs:Person>
+              </rdf:li>
+			  <rdf:li rdf:parseType="Resource">
+                <bqs:Person rdf:parseType="Resource">
+                  <vCard:N rdf:parseType="Resource">
+                    <vCard:Family>Korakianitis</vCard:Family>
+                    <vCard:Given>T</vCard:Given>
+				  </vCard:N>
+                </bqs:Person>
+              </rdf:li>
+            </rdf:Seq>
+          </dc:creator>
+		  <dc:title>
+            Numerical simulation of cardiovascular dynamics with left heart failure and in-series pulsatile ventricular assist device
+          </dc:title>
+          <dcterms:issued rdf:parseType="Resource">
+            <dcterms:W3CDTF>2006</dcterms:W3CDTF>
+          </dcterms:issued>
+          <bqs:Journal rdf:parseType="Resource">
+            <dc:title>Artificial Organs</dc:title>
+          </bqs:Journal>
+		  <bqs:volume>30</bqs:volume>
+          <bqs:first_page>929</bqs:first_page>
+          <bqs:last_page>948</bqs:last_page>
+        </bqs:JournalArticle>
+      </bqs:reference>
+    </rdf:Description>
+  </rdf:RDF>
+</model>
+  
