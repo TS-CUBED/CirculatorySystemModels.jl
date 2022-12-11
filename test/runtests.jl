@@ -9,7 +9,7 @@ using DataFrames
 
 end
 
-testset "Shi Model" begin
+@testset "Shi Model" begin
     ##
     include("ShiParam.jl");
 
@@ -106,7 +106,7 @@ testset "Shi Model" begin
     @test sum(ShiSol[RA.V] .- ShiBench[!, :RA_V])/length(ShiSol.u) ≈ 0 atol=1e-3
 end
 
-testset "Shi Model Complex" begin
+@testset "Shi Model Complex" begin
     ##
     include("ShiParam.jl");
 
