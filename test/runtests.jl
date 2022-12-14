@@ -97,7 +97,7 @@ end
     ShiSol = sol
 
     ## Read benchmark data and compare
-    ShiBench = CSV.read("ShiSimple.df", DataFrame)
+    ShiBench = CSV.read("ShiSimple.csv", DataFrame)
 
     @test ShiSol.retcode == :Success
     @test sum(ShiSol[LV.V] .- ShiBench[!, :LV_V])/length(ShiSol.u) ≈ 0 atol=1e-3
@@ -211,7 +211,7 @@ end
     ##
 
     ## Read benchmark data and compare
-    ShiBench = CSV.read("ShiComplex.df", DataFrame)
+    ShiBench = CSV.read("ShiComplex.csv", DataFrame)
 
     @test ShiSol.retcode == :Success
     @test sum(ShiSol[Heart.LV.V] .- ShiBench[!, :LV_V])/length(ShiSol.u) ≈ 0 atol=1e-3
