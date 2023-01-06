@@ -10,3 +10,7 @@ We believe this library will be useful (dare we say, could be a game changer?) f
 [![Coverage](https://codecov.io/gh/TS-CUBED/CirculationModels.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/TS-CUBED/CirculationModels.jl)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7497881.svg)](https://doi.org/10.5281/zenodo.7497881)
 
+Cite as
+
+Torsten Schenkel. (2023). TS-CUBED/CirculationModels.jl: v0.2.1 (v0.2.1). Zenodo. https://doi.org/10.5281/zenodo.7497881
+
