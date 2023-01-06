@@ -8,6 +8,5 @@ We believe this library will be useful (dare we say, could be a game changer?) f
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://TS-CUBED.github.io/CirculationModels.jl/dev/)
 [![Build Status](https://github.com/TS-CUBED/CirculationModels.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/TS-CUBED/CirculationModels.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/TS-CUBED/CirculationModels.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/TS-CUBED/CirculationModels.jl)
-#[![DOI](https://zenodo.org/badge/567823705.svg)](https://zenodo.org/badge/latestdoi/567823705)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7497881.svg)](https://doi.org/10.5281/zenodo.7497881)
 
