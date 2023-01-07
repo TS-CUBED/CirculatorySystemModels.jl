@@ -1,3 +1,4 @@
+##
 using ModelingToolkit, DifferentialEquations, Plots
 using CirculationModels
 
@@ -23,14 +24,14 @@ using CirculationModels
 # Heart rate and cycle time
 #
 HR = 70.58823529411765
-τ = 60.0/HR
+τ = 60.0 / HR
 
 # Double Hill parameters for the ventricle
 #
 Eₘᵢₙ = 0.03
 Eₘₐₓ = 1.5
-n1LV    = 1.32;
-n2LV    = 21.9;
+n1LV = 1.32;
+n2LV = 21.9;
 Tau1fLV = 0.303 * τ;
 Tau2fLV = 0.508 * τ
 
@@ -68,7 +69,7 @@ MCFP = 7.0
 nstep = 1000
 t = LinRange(0, τ, nstep)
 
-kLV = 1 / maximum((t ./ Tau1fLV).^n1LV ./ (1 .+ (t ./ Tau1fLV).^n1LV) .* 1 ./ (1 .+ (t ./ Tau2fLV).^n2LV))
+kLV = 1 / maximum((t ./ Tau1fLV) .^ n1LV ./ (1 .+ (t ./ Tau1fLV) .^ n1LV) .* 1 ./ (1 .+ (t ./ Tau2fLV) .^ n2LV))
 
 
 # ## Set up the model elements
@@ -79,13 +80,13 @@ kLV = 1 / maximum((t ./ Tau1fLV).^n1LV ./ (1 .+ (t ./ Tau1fLV).^n1LV) .* 1 ./ (1
 
 # Heart is modelled as a single chamber (we call it `LV` for "Left Ventricle" so the model can be extended later, if required):
 #
-@named LV = DHChamber(V₀ = 0.0, Eₘₐₓ=Eₘₐₓ, Eₘᵢₙ=Eₘᵢₙ, n₁=n1LV, n₂=n2LV, τ = τ, τ₁=Tau1fLV, τ₂=Tau2fLV, k = kLV, Eshift=0.0, Ev=Inf)
+@named LV = DHChamber(V₀=0.0, Eₘₐₓ=Eₘₐₓ, Eₘᵢₙ=Eₘᵢₙ, n₁=n1LV, n₂=n2LV, τ=τ, τ₁=Tau1fLV, τ₂=Tau2fLV, k=kLV, Eshift=0.0, Ev=Inf)
 
 # The two valves are simple diodes with a small resistance
 # (resistance is needed, since perfect diodes would connect two elastances/compliances, which will lead to unstable oscillations):
 #
-@named AV = ResistorDiode(R=Zao) 
-@named MV = ResistorDiode(R=Rmv) 
+@named AV = ResistorDiode(R=Zao)
+@named MV = ResistorDiode(R=Rmv)
 
 # The main components of the circuit are 1 resistor `Rs` and two compliances for systemic arteries `Csa`,
 # and systemic veins `Csv` (names are arbitrary).
@@ -128,8 +129,8 @@ circ_eqs = [
 @named _circ_model = ODESystem(circ_eqs, t)
 
 @named circ_model = compose(_circ_model,
-                          [LV, AV, MV, Rs, Csa, Csv, ground])
-                     
+    [LV, AV, MV, Rs, Csa, Csv, ground])
+
 # ### Simplify the ODE system
 #
 # The crucial step in any acausal modelling is the sympification and reduction of the OD(A)E system to the minimal set of equations. ModelingToolkit.jl does this in the `structural_simplify` function.
@@ -168,16 +169,16 @@ prob = ODEProblem(circ_sys, u0, tspan)
 # The ODE problem is now in the MTK/DifferentialEquations.jl format and we can use any DifferentialEquations.jl solver to solve it:
 #
 sol = solve(prob, Vern7(), reltol=1e-12, abstol=1e-12);
-
+##
 # ## Results
 using Plots
 using DisplayAs
 
-p1 = plot(sol, idxs=[LV.p,  Csa.in.p], tspan=(16 * τ, 17 * τ), xlabel = "Time [s]", ylabel = "Pressure [mmHg]",  hidexaxis = nothing) # Make a line plot
-p2 = plot(sol, idxs=[LV.V], tspan=(16 * τ, 17 * τ),xlabel = "Time [s]", ylabel = "Volume [ml]",  linkaxes = :all)
-p3 = plot(sol, idxs=[Csa.in.q,Csv.in.q], tspan=(16 * τ, 17 * τ),xlabel = "Time [s]", ylabel = "Flow rate [ml/s]", linkaxes = :all)
+p1 = plot(sol, idxs=[LV.p, Csa.in.p], tspan=(16 * τ, 17 * τ), xlabel="Time [s]", ylabel="Pressure [mmHg]", hidexaxis=nothing) # Make a line plot
+p2 = plot(sol, idxs=[LV.V], tspan=(16 * τ, 17 * τ), xlabel="Time [s]", ylabel="Volume [ml]", linkaxes=:all)
+p3 = plot(sol, idxs=[Csa.in.q, Csv.in.q], tspan=(16 * τ, 17 * τ), xlabel="Time [s]", ylabel="Flow rate [ml/s]", linkaxes=:all)
 
-img = plot(p1, p2, p3, layout=@layout([a; b c]), legend = true)
+img = plot(p1, p2, p3, layout=@layout([a; b c]), legend=true)
 
 img = DisplayAs.Text(DisplayAs.PNG(img))
 
