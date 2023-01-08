@@ -10,29 +10,29 @@ export Pin, OnePort, Ground, Resistor, QResistor, PoiseuilleResistor, Capacitor,
 
 
 @connector function Pin(; name)
-    sts = @variables p(t) = 1.0 q(t) = 1.0 [connect = Flow]
-    ODESystem(Equation[], t, sts, []; name=name)
+        sts = @variables p(t) = 1.0 q(t) = 1.0 [connect = Flow]
+        ODESystem(Equation[], t, sts, []; name=name)
 end
 
 
 function Ground(; name, P=0.0)
-    @named g = Pin()
-    ps = @parameters P = P
-    eqs = [g.p ~ P]
-    compose(ODESystem(eqs, t, [], ps; name=name), g)
+        @named g = Pin()
+        ps = @parameters P = P
+        eqs = [g.p ~ P]
+        compose(ODESystem(eqs, t, [], ps; name=name), g)
 end
 
 
 function OnePort(; name)
-    @named in = Pin()
-    @named out = Pin()
-    sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    eqs = [
-        Δp ~ out.p - in.p
-        0 ~ in.q + out.q
-        q ~ in.q
-    ]
-    compose(ODESystem(eqs, t, sts, []; name=name), in, out)
+        @named in = Pin()
+        @named out = Pin()
+        sts = @variables Δp(t) = 0.0 q(t) = 0.0
+        eqs = [
+                Δp ~ out.p - in.p
+                0 ~ in.q + out.q
+                q ~ in.q
+        ]
+        compose(ODESystem(eqs, t, sts, []; name=name), in, out)
 end
 
 
@@ -51,13 +51,13 @@ Named parameters:
 `R`:       Resistance of the vessel to the fluid in mmHg*s/ml
 """
 function Resistor(; name, R=1.0)
-    @named oneport = OnePort()
-    @unpack Δp, q = oneport
-    ps = @parameters R = R
-    eqs = [
-        Δp ~ -q * R
-    ]
-    extend(ODESystem(eqs, t, [], ps; name=name), oneport)
+        @named oneport = OnePort()
+        @unpack Δp, q = oneport
+        ps = @parameters R = R
+        eqs = [
+                Δp ~ -q * R
+        ]
+        extend(ODESystem(eqs, t, [], ps; name=name), oneport)
 end
 
 
@@ -76,13 +76,13 @@ Named parameters:
 `K`: non-linear resistance of the vessel to the fluid in mmHg*s^2/ml^2
 """
 function QResistor(; name, K=1.0)
-    @named oneport = OnePort()
-    @unpack Δp, q = oneport
-    ps = @parameters K = K
-    eqs = [
-        Δp ~ -q * abs(q) * K
-    ]
-    extend(ODESystem(eqs, t, [], ps; name=name), oneport)
+        @named oneport = OnePort()
+        @unpack Δp, q = oneport
+        ps = @parameters K = K
+        eqs = [
+                Δp ~ -q * abs(q) * K
+        ]
+        extend(ODESystem(eqs, t, [], ps; name=name), oneport)
 end
 
 
@@ -101,14 +101,14 @@ Named parameters:
 `C`:      capacitance of the vessel in ml/mmHg
 """
 function Capacitor(; name, C=1.0)
-    @named oneport = OnePort()
-    @unpack Δp, q = oneport
-    ps = @parameters C = C
-    D = Differential(t)
-    eqs = [
-        D(Δp) ~ -q / C
-    ]
-    extend(ODESystem(eqs, t, [], ps; name=name), oneport)
+        @named oneport = OnePort()
+        @unpack Δp, q = oneport
+        ps = @parameters C = C
+        D = Differential(t)
+        eqs = [
+                D(Δp) ~ -q / C
+        ]
+        extend(ODESystem(eqs, t, [], ps; name=name), oneport)
 end
 
 
@@ -127,14 +127,14 @@ Named parameters:
 `L`:       Inertia of the fluid in mmHg*s^2/ml
 """
 function Inductance(; name, L=1.0)
-    @named oneport = OnePort()
-    @unpack Δp, q = oneport
-    ps = @parameters L = L
-    D = Differential(t)
-    eqs = [
-        D(q) ~ -Δp / L
-    ]
-    extend(ODESystem(eqs, t, [], ps; name=name), oneport)
+        @named oneport = OnePort()
+        @unpack Δp, q = oneport
+        ps = @parameters L = L
+        D = Differential(t)
+        eqs = [
+                D(q) ~ -Δp / L
+        ]
+        extend(ODESystem(eqs, t, [], ps; name=name), oneport)
 end
 
 
@@ -157,18 +157,18 @@ Named parameters:
 `L`:       length of vessel segment in cm
 """
 function PoiseuilleResistor(; name, μ=3e-2, r=0.1, L=1)
-    @named oneport = OnePort()
-    @unpack Δp, q = oneport
-    ps = @parameters μ = μ r = r L = L
+        @named oneport = OnePort()
+        @unpack Δp, q = oneport
+        ps = @parameters μ = μ r = r L = L
 
-    # Poiseille resistance in CGS units
-    R = 8 * μ * L / (π * r^4) * (1 / 1333.2)
-    # converted into physiological units.
+        # Poiseille resistance in CGS units
+        R = 8 * μ * L / (π * r^4) * (1 / 1333.2)
+        # converted into physiological units.
 
-    eqs = [
-        Δp ~ -q * R
-    ]
-    extend(ODESystem(eqs, t, [], ps; name=name), oneport)
+        eqs = [
+                Δp ~ -q * R
+        ]
+        extend(ODESystem(eqs, t, [], ps; name=name), oneport)
 end
 
 
@@ -189,22 +189,22 @@ Named parameters:
 `C`:       Vessel compliance in ml/mmHg
 """
 function Compliance(; name, V₀=0.0, C=1.0)
-    @named in = Pin()
-    @named out = Pin()
-    sts = @variables V(t) = V₀ p(t) = 0.0 #q(t) = 0.0
-    ps = @parameters V₀ = V₀ C = C
-    D = Differential(t)
-    eqs = [
-        0 ~ in.p - out.p
-        p ~ in.p
-        # Definition in terms of V
-        #    p ~ (V - V0) / C
-        #    D(V) ~ in.q + out.q
-        # Definition in terms of p (more stable?)
-        V ~ p * C + V₀
-        D(p) ~ (in.q + out.q) * 1 / C
-    ]
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
+        @named in = Pin()
+        @named out = Pin()
+        sts = @variables V(t) = V₀ p(t) = 0.0 #q(t) = 0.0
+        ps = @parameters V₀ = V₀ C = C
+        D = Differential(t)
+        eqs = [
+                0 ~ in.p - out.p
+                p ~ in.p
+                # Definition in terms of V
+                #    p ~ (V - V0) / C
+                #    D(V) ~ in.q + out.q
+                # Definition in terms of p (more stable?)
+                V ~ p * C + V₀
+                D(p) ~ (in.q + out.q) * 1 / C
+        ]
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
 end
 
 
@@ -225,22 +225,22 @@ Named parameters:
 `E`:       Vessel elastance in ml/mmHg. Equivalent to compliance as E=1/C
 """
 function Elastance(; name, V₀=0.0, E=1.0)
-    @named in = Pin()
-    @named out = Pin()
-    sts = @variables V(t) = V₀ p(t) = 0.0 #q(t) = 0.0
-    ps = @parameters V₀ = V₀ E = E
-    D = Differential(t)
-    eqs = [
-        0 ~ in.p - out.p
-        p ~ in.p
-        # Definition in terms of V
-        #    in.p ~ (V - V0) * E
-        #    D(V) ~ in.q + out.q
-        # Definition in terms of p (more stable?)
-        V ~ p / E + V₀
-        D(p) ~ (in.q + out.q) * E
-    ]
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
+        @named in = Pin()
+        @named out = Pin()
+        sts = @variables V(t) = V₀ p(t) = 0.0 #q(t) = 0.0
+        ps = @parameters V₀ = V₀ E = E
+        D = Differential(t)
+        eqs = [
+                0 ~ in.p - out.p
+                p ~ in.p
+                # Definition in terms of V
+                #    in.p ~ (V - V0) * E
+                #    D(V) ~ in.q + out.q
+                # Definition in terms of p (more stable?)
+                V ~ p / E + V₀
+                D(p) ~ (in.q + out.q) * E
+        ]
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
 end
 
 
@@ -261,25 +261,25 @@ Named parameters:
 `C`:       Vessel compliance in ml/mmHg
 """
 function Compliance_ep(; name, V₀=0.0, C=1.0)
-    @named in = Pin()
-    @named out = Pin()
-    @named ep = Pin() # external pressure
-    sts = @variables V(t) = V₀ p(t) = 0.0 pg(t) = 0.0
-    ps = @parameters V₀ = V₀ C = C
-    D = Differential(t)
-    eqs = [
-        0 ~ ep.q
-        0 ~ in.p - out.p
-        p ~ in.p
-        pg ~ p - ep.p
-        # Definition in terms of V
-        #    pg ~ (V - V₀) / C
-        #    D(V) ~ in.q + out.q
-        # Definition in terms of p (more stable?)
-        V ~ pg * C + V₀
-        D(pg) ~ (in.q + out.q) / C
-    ]
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out, ep)
+        @named in = Pin()
+        @named out = Pin()
+        @named ep = Pin() # external pressure
+        sts = @variables V(t) = V₀ p(t) = 0.0 pg(t) = 0.0
+        ps = @parameters V₀ = V₀ C = C
+        D = Differential(t)
+        eqs = [
+                0 ~ ep.q
+                0 ~ in.p - out.p
+                p ~ in.p
+                pg ~ p - ep.p
+                # Definition in terms of V
+                #    pg ~ (V - V₀) / C
+                #    D(V) ~ in.q + out.q
+                # Definition in terms of p (more stable?)
+                V ~ pg * C + V₀
+                D(pg) ~ (in.q + out.q) / C
+        ]
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out, ep)
 end
 
 
@@ -300,25 +300,25 @@ Named parameters:
 `E`:       Vessel elastance in ml/mmHg. Equivalent to compliance as E=1/C
 """
 function Elastance_ep(; name, V₀=0.0, E=1.0)
-    @named in = Pin()
-    @named out = Pin()
-    @named ep = Pin() # external pressure
-    sts = @variables V(t) = V₀ p(t) = 0.0
-    ps = @parameters V₀ = V₀ E = E
-    D = Differential(t)
-    eqs = [
-        0 ~ ep.q
-        0 ~ in.p - out.p
-        p ~ in.p
-        pg ~ p - ep.p
-        # Definition in terms of V
-        #    in.p ~ (V - V0) * E
-        #    D(V) ~ in.q + out.q
-        # Definition in terms of p (more stable?)
-        V ~ pg / E + V₀
-        D(pg) ~ (in.q + out.q) * E
-    ]
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out, ep)
+        @named in = Pin()
+        @named out = Pin()
+        @named ep = Pin() # external pressure
+        sts = @variables V(t) = V₀ p(t) = 0.0
+        ps = @parameters V₀ = V₀ E = E
+        D = Differential(t)
+        eqs = [
+                0 ~ ep.q
+                0 ~ in.p - out.p
+                p ~ in.p
+                pg ~ p - ep.p
+                # Definition in terms of V
+                #    in.p ~ (V - V0) * E
+                #    D(V) ~ in.q + out.q
+                # Definition in terms of p (more stable?)
+                V ~ pg / E + V₀
+                D(pg) ~ (in.q + out.q) * E
+        ]
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out, ep)
 end
 
 
@@ -338,13 +338,13 @@ Named parameters:
 `P`:     Constant pressure in mmHg
 """
 function ConstantPressure(; name, P=1.0)
-    @named oneport = OnePort()
-    @unpack Δp = oneport
-    ps = @parameters P = P
-    eqs = [
-        Δp ~ P
-    ]
-    extend(ODESystem(eqs, t, [], ps; name=name), oneport)
+        @named oneport = OnePort()
+        @unpack Δp = oneport
+        ps = @parameters P = P
+        eqs = [
+                Δp ~ P
+        ]
+        extend(ODESystem(eqs, t, [], ps; name=name), oneport)
 end
 
 
@@ -363,13 +363,13 @@ Named parameters:
 `Q`:     Constant flow in cm^3/s (ml/s)
 """
 function ConstantFlow(; name, Q=1.0)
-    @named oneport = OnePort()
-    @unpack q = oneport
-    ps = @parameters Q = Q
-    eqs = [
-        q ~ Q
-    ]
-    extend(ODESystem(eqs, t, [], ps; name=name), oneport)
+        @named oneport = OnePort()
+        @unpack q = oneport
+        ps = @parameters Q = Q
+        eqs = [
+                q ~ Q
+        ]
+        extend(ODESystem(eqs, t, [], ps; name=name), oneport)
 end
 
 
@@ -390,13 +390,13 @@ Named parameters:
 `fun`:   Function which modulates the input
 """
 function DrivenPressure(; name, P=1.0, fun)
-    @named oneport = OnePort()
-    @unpack Δp = oneport
-    ps = @parameters P = P
-    eqs = [
-        Δp ~ P * fun(t)
-    ]
-    extend(ODESystem(eqs, t, [], ps; name=name), oneport)
+        @named oneport = OnePort()
+        @unpack Δp = oneport
+        ps = @parameters P = P
+        eqs = [
+                Δp ~ P * fun(t)
+        ]
+        extend(ODESystem(eqs, t, [], ps; name=name), oneport)
 end
 
 
@@ -419,13 +419,13 @@ Named parameters:
 `fun`:   Function which modulates the input
 """
 function DrivenFlow(; name, Q=1.0, fun)
-    @named oneport = OnePort()
-    @unpack q = oneport
-    ps = @parameters Q = Q
-    eqs = [
-        q ~ Q * fun(t)
-    ]
-    extend(ODESystem(eqs, t, [], ps; name=name), oneport)
+        @named oneport = OnePort()
+        @unpack q = oneport
+        ps = @parameters Q = Q
+        eqs = [
+                q ~ Q * fun(t)
+        ]
+        extend(ODESystem(eqs, t, [], ps; name=name), oneport)
 end
 
 
@@ -445,19 +445,19 @@ Named parameters:
 `fun`:     function object for elastance (must be `fun(t)`)
 """
 function Chamber(; name, V₀=0.0, E=1.0, fun)
-    @named in = Pin()
-    @named out = Pin()
-    sts = @variables V(t) = 2.0 p(t) = 0.0
-    ps = @parameters V₀ = V₀ E = E
-    D = Differential(t)
-    eqs = [
-        0 ~ in.p - out.p
-        p ~ in.p
-        p ~ (V - V₀) * E * fun(t)
-        # D(V) ~ in.q + out.q
-        D(p) ~ (in.q + out.q) * E + p / E * DE
-    ]
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
+        @named in = Pin()
+        @named out = Pin()
+        sts = @variables V(t) = 2.0 p(t) = 0.0
+        ps = @parameters V₀ = V₀ E = E
+        D = Differential(t)
+        eqs = [
+                0 ~ in.p - out.p
+                p ~ in.p
+                p ~ (V - V₀) * E * fun(t)
+                # D(V) ~ in.q + out.q
+                D(p) ~ (in.q + out.q) * E + p / E * DE
+        ]
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
 end
 
 
@@ -507,28 +507,28 @@ to 1/max(e(t)), which ensures that e(t) varies between zero and 1.0, such that
 E(t) varies between Eₘᵢₙ and Eₘₐₓ.
 """
 function DHChamber(; name, V₀, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, k, Eshift=0.0, Ev=Inf)
-    @named in = Pin()
-    @named out = Pin()
-    sts = @variables V(t) = 2.0 p(t) = 0.0
-    ps = @parameters V₀ = V₀ Eₘᵢₙ = Eₘᵢₙ Eₘₐₓ = Eₘₐₓ n₁ = n₁ n₂ = n₂ τ = τ τ₁ = τ₁ τ₂ = τ₂ k = k Eshift = Eshift Ev = Ev
+        @named in = Pin()
+        @named out = Pin()
+        sts = @variables V(t) = 2.0 p(t) = 0.0
+        ps = @parameters V₀ = V₀ Eₘᵢₙ = Eₘᵢₙ Eₘₐₓ = Eₘₐₓ n₁ = n₁ n₂ = n₂ τ = τ τ₁ = τ₁ τ₂ = τ₂ k = k Eshift = Eshift Ev = Ev
 
-    D = Differential(t)
-    E = DHelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)
-    DE = DHdelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)
+        D = Differential(t)
+        E = DHelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)
+        DE = DHdelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)
 
-    eqs = [
-        0 ~ in.p - out.p
-        p ~ in.p
-        # Definition in terms of V
-        #    p ~ (V - V₀) * E
-        #    D(V) ~ in.q + out.q
-        # Definition in terms of p (more stable?)
-        V ~ p / E + V₀
-        D(p) ~ (in.q + out.q) * E / (1 + 1 / Ev * E) + p / (E * (1 + 1 / Ev * E)) * DE
-        # D(p) ~ (in.q + out.q) * E + p / E * DE
-    ]
+        eqs = [
+                0 ~ in.p - out.p
+                p ~ in.p
+                # Definition in terms of V
+                #    p ~ (V - V₀) * E
+                #    D(V) ~ in.q + out.q
+                # Definition in terms of p (more stable?)
+                V ~ p / E + V₀
+                D(p) ~ (in.q + out.q) * E / (1 + 1 / Ev * E) + p / (E * (1 + 1 / Ev * E)) * DE
+                # D(p) ~ (in.q + out.q) * E + p / E * DE
+        ]
 
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
 
 end
 
@@ -539,9 +539,9 @@ end
 Helper function for `DHChamber`
 """
 function DHelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)
-    tᵢ = rem(t + (1 - Eshift) * τ, τ)
+        tᵢ = rem(t + (1 - Eshift) * τ, τ)
 
-    return (Eₘₐₓ - Eₘᵢₙ) * k * ((tᵢ / τ₁)^n₁ / (1 + (tᵢ / τ₁)^n₁)) * (1 / (1 + (tᵢ / τ₂)^n₂)) + Eₘᵢₙ
+        return (Eₘₐₓ - Eₘᵢₙ) * k * ((tᵢ / τ₁)^n₁ / (1 + (tᵢ / τ₁)^n₁)) * (1 / (1 + (tᵢ / τ₂)^n₂)) + Eₘᵢₙ
 end
 
 
@@ -551,15 +551,15 @@ end
 Helper function for `DHChamber`
 """
 function DHdelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)
-    tᵢ = rem(t + (1 - Eshift) * τ, τ)
+        tᵢ = rem(t + (1 - Eshift) * τ, τ)
 
-    de = ((Eₘₐₓ - Eₘᵢₙ) * k * (τ₂^n₂ * n₁ * tᵢ^(n₁ - 1) *
-                               (τ₁^n₁ * τ₂^n₂ + τ₁^n₁ * tᵢ^n₂ + τ₂^n₂ * tᵢ^n₁ + tᵢ^(n₁ + n₂)) -
-                               τ₂^n₂ * tᵢ^n₁ * (τ₁^n₁ * n₂ * tᵢ^(n₂ - 1) + τ₂^n₂ * n₁ * tᵢ^(n₁ - 1) +
-                                                (n₁ + n₂) * tᵢ^(n₁ + n₂ - 1))) /
-          (τ₁^n₁ * τ₂^n₂ + τ₁^n₁ * tᵢ^n₂ + τ₂^n₂ * tᵢ^n₁ + tᵢ^(n₁ + n₂))^2)
+        de = ((Eₘₐₓ - Eₘᵢₙ) * k * (τ₂^n₂ * n₁ * tᵢ^(n₁ - 1) *
+                                   (τ₁^n₁ * τ₂^n₂ + τ₁^n₁ * tᵢ^n₂ + τ₂^n₂ * tᵢ^n₁ + tᵢ^(n₁ + n₂)) -
+                                   τ₂^n₂ * tᵢ^n₁ * (τ₁^n₁ * n₂ * tᵢ^(n₂ - 1) + τ₂^n₂ * n₁ * tᵢ^(n₁ - 1) +
+                                                    (n₁ + n₂) * tᵢ^(n₁ + n₂ - 1))) /
+              (τ₁^n₁ * τ₂^n₂ + τ₁^n₁ * tᵢ^n₂ + τ₂^n₂ * tᵢ^n₁ + tᵢ^(n₁ + n₂))^2)
 
-    return de
+        return de
 end
 
 
@@ -588,25 +588,25 @@ Named parameters:
 `Ev`:     venous elastance (for atria model), set to `Inf` for ventricle
 """
 function ShiChamber(; name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift=0.0)
-    @named in = Pin()
-    @named out = Pin()
-    sts = @variables V(t) = 0.0 p(t) = 0.0
-    ps = @parameters V₀ = V₀ p₀ = p₀ Eₘᵢₙ = Eₘᵢₙ Eₘₐₓ = Eₘₐₓ τ = τ τₑₛ = τₑₛ τₑₚ = τₑₚ Eshift = Eshift # Ev=Ev
+        @named in = Pin()
+        @named out = Pin()
+        sts = @variables V(t) = 0.0 p(t) = 0.0
+        ps = @parameters V₀ = V₀ p₀ = p₀ Eₘᵢₙ = Eₘᵢₙ Eₘₐₓ = Eₘₐₓ τ = τ τₑₛ = τₑₛ τₑₚ = τₑₚ Eshift = Eshift # Ev=Ev
 
-    D = Differential(t)
-    E = ShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
-    DE = DShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
+        D = Differential(t)
+        E = ShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
+        DE = DShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
 
-    eqs = [
-        0 ~ in.p - out.p
-        p ~ in.p
+        eqs = [
+                0 ~ in.p - out.p
+                p ~ in.p
 
-        # Definition in terms of volume:
-        D(V) ~ in.q + out.q
-        p ~ p₀ + (V - V₀) * E
-    ]
+                # Definition in terms of volume:
+                D(V) ~ in.q + out.q
+                p ~ p₀ + (V - V₀) * E
+        ]
 
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
 end
 
 
@@ -630,15 +630,15 @@ Parameters:
 """
 function ShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
 
-    tᵢ = rem(t + (1 - Eshift) * τ, τ)
+        tᵢ = rem(t + (1 - Eshift) * τ, τ)
 
-    Eₚ = (tᵢ <= τₑₛ) * (1 - cos(tᵢ / τₑₛ * pi)) / 2 +
-         (tᵢ > τₑₛ) * (tᵢ <= τₑₚ) * (1 + cos((tᵢ - τₑₛ) / (τₑₚ - τₑₛ) * pi)) / 2 +
-         (tᵢ <= τₑₚ) * 0
+        Eₚ = (tᵢ <= τₑₛ) * (1 - cos(tᵢ / τₑₛ * pi)) / 2 +
+             (tᵢ > τₑₛ) * (tᵢ <= τₑₚ) * (1 + cos((tᵢ - τₑₛ) / (τₑₚ - τₑₛ) * pi)) / 2 +
+             (tᵢ <= τₑₚ) * 0
 
-    E = Eₘᵢₙ + (Eₘₐₓ - Eₘᵢₙ) * Eₚ
+        E = Eₘᵢₙ + (Eₘₐₓ - Eₘᵢₙ) * Eₚ
 
-    return E
+        return E
 end
 
 
@@ -664,14 +664,14 @@ Parameters:
 """
 function DShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
 
-    tᵢ = rem(t + (1 - Eshift) * τ, τ)
+        tᵢ = rem(t + (1 - Eshift) * τ, τ)
 
-    DEₚ = (tᵢ <= τₑₛ) * pi / τₑₛ * sin(tᵢ / τₑₛ * pi) / 2 +
-          (tᵢ > τₑₛ) * (tᵢ <= τₑₚ) * pi / (τₑₚ - τₑₛ) * sin((τₑₛ - tᵢ) / (τₑₚ - τₑₛ) * pi) / 2
-    (tᵢ <= τₑₚ) * 0
-    DE = (Eₘₐₓ - Eₘᵢₙ) * DEₚ
+        DEₚ = (tᵢ <= τₑₛ) * pi / τₑₛ * sin(tᵢ / τₑₛ * pi) / 2 +
+              (tᵢ > τₑₛ) * (tᵢ <= τₑₚ) * pi / (τₑₚ - τₑₛ) * sin((τₑₛ - tᵢ) / (τₑₚ - τₑₛ) * pi) / 2
+        (tᵢ <= τₑₚ) * 0
+        DE = (Eₘₐₓ - Eₘᵢₙ) * DEₚ
 
-    return DE
+        return DE
 end
 
 
@@ -699,28 +699,28 @@ name    name of the element
 `τpww`  Atrial offset time in s
 """
 function ShiAtrium(; name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τpwb, τpww)
-    @named in = Pin()
-    @named out = Pin()
-    sts = @variables V(t) = 0.0 p(t) = 0.0
-    ps = @parameters V₀ = V₀ p₀ = p₀ Eₘᵢₙ = Eₘᵢₙ Eₘₐₓ = Eₘₐₓ τ = τ τpwb = τpwb τpww = τpww # Ev=Ev
+        @named in = Pin()
+        @named out = Pin()
+        sts = @variables V(t) = 0.0 p(t) = 0.0
+        ps = @parameters V₀ = V₀ p₀ = p₀ Eₘᵢₙ = Eₘᵢₙ Eₘₐₓ = Eₘₐₓ τ = τ τpwb = τpwb τpww = τpww # Ev=Ev
 
-    # adjust timing parameters to fit the elastance functions for the ventricle
-    # define elastance based on ventricle E function
-    E = ShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, 0.5 * τpww, τpww, τpwb)
-    DE = DShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, 0.5 * τpww, τpww, τpwb)
+        # adjust timing parameters to fit the elastance functions for the ventricle
+        # define elastance based on ventricle E function
+        E = ShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, 0.5 * τpww, τpww, τpwb)
+        DE = DShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, 0.5 * τpww, τpww, τpwb)
 
-    D = Differential(t)
+        D = Differential(t)
 
-    eqs = [
-        0 ~ in.p - out.p
-        p ~ in.p
+        eqs = [
+                0 ~ in.p - out.p
+                p ~ in.p
 
-        # Definition in terms of volume:
-        D(V) ~ in.q + out.q
-        p ~ p₀ + (V - V₀) * E
-    ]
+                # Definition in terms of volume:
+                D(V) ~ in.q + out.q
+                p ~ p₀ + (V - V₀) * E
+        ]
 
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
 end
 
 
@@ -853,50 +853,50 @@ Named parameters:
 `TV_θmin`   Tricuspid valve minimum opening angle in rad
 """
 function ShiHeart(; name, τ, LV_V₀, LV_p0, LV_Emin, LV_Emax, LV_τes, LV_τed, LV_Eshift, RV_V₀, RV_p0, RV_Emin, RV_Emax, RV_τes, RV_τed, RV_Eshift, LA_V₀, LA_p0, LA_Emin, LA_Emax, LA_τes, LA_τed, LA_Eshift, RA_V₀, RA_p0, RA_Emin, RA_Emax, RA_τes, RA_τed, RA_Eshift, AV_CQ, AV_Kp, AV_Kf, AV_Kb, AV_Kv, AV_θmax, AV_θmin, PV_CQ, PV_Kp, PV_Kf, PV_Kb, PV_Kv, PV_θmax, PV_θmin, MV_CQ, MV_Kp, MV_Kf, MV_Kb, MV_Kv, MV_θmax, MV_θmin, TV_CQ, TV_Kp, TV_Kf, TV_Kb, TV_Kv, TV_θmax, TV_θmin)
-    @named LHin = Pin()
-    @named LHout = Pin()
-    @named RHin = Pin()
-    @named RHout = Pin()
-    @named in = Pin()
-    @named out = Pin()
+        @named LHin = Pin()
+        @named LHout = Pin()
+        @named RHin = Pin()
+        @named RHout = Pin()
+        @named in = Pin()
+        @named out = Pin()
 
-    sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    # sts = []
-    # ps = @parameters Rc=Rc Rp=Rp C=C
-    # No parameters in this function
-    # Parameters are inherited from subcomponents
-    ps = []
+        sts = @variables Δp(t) = 0.0 q(t) = 0.0
+        # sts = []
+        # ps = @parameters Rc=Rc Rp=Rp C=C
+        # No parameters in this function
+        # Parameters are inherited from subcomponents
+        ps = []
 
-    # These are the components the subsystem is made of:
-    # Ventricles and atria
-    @named LV = ShiChamber(V₀=LV_V₀, p₀=LV_p0, Eₘᵢₙ=LV_Emin, Eₘₐₓ=LV_Emax, τ=τ, τₑₛ=LV_τes, τₑₚ=LV_τed, Eshift=LV_Eshift)
-    @named LA = ShiChamber(V₀=LA_V₀, p₀=LA_p0, Eₘᵢₙ=LA_Emin, Eₘₐₓ=LA_Emax, τ=τ, τₑₛ=LA_τes, τₑₚ=LA_τed, Eshift=LA_Eshift)
-    @named RV = ShiChamber(V₀=RV_V₀, p₀=RV_p0, Eₘᵢₙ=RV_Emin, Eₘₐₓ=RV_Emax, τ=τ, τₑₛ=RV_τes, τₑₚ=RV_τed, Eshift=RV_Eshift)
-    @named RA = ShiChamber(V₀=RA_V₀, p₀=RA_p0, Eₘᵢₙ=RA_Emin, Eₘₐₓ=RA_Emax, τ=τ, τₑₛ=RA_τes, τₑₚ=RA_τed, Eshift=RA_Eshift)
-    # Valves
-    @named AV = ShiValve(CQ=AV_CQ, Kp=AV_Kp, Kf=AV_Kf, Kb=AV_Kb, Kv=AV_Kv, θmax=AV_θmax, θmin=AV_θmin)
-    @named MV = ShiValve(CQ=MV_CQ, Kp=MV_Kp, Kf=MV_Kf, Kb=MV_Kb, Kv=MV_Kv, θmax=MV_θmax, θmin=MV_θmin)
-    @named TV = ShiValve(CQ=TV_CQ, Kp=TV_Kp, Kf=TV_Kf, Kb=TV_Kb, Kv=TV_Kv, θmax=TV_θmax, θmin=TV_θmin)
-    @named PV = ShiValve(CQ=PV_CQ, Kp=PV_Kp, Kf=PV_Kf, Kb=PV_Kb, Kv=PV_Kv, θmax=PV_θmax, θmin=PV_θmin)
-    # The equations for the subsystem are created by
-    # 'connect'-ing the components
+        # These are the components the subsystem is made of:
+        # Ventricles and atria
+        @named LV = ShiChamber(V₀=LV_V₀, p₀=LV_p0, Eₘᵢₙ=LV_Emin, Eₘₐₓ=LV_Emax, τ=τ, τₑₛ=LV_τes, τₑₚ=LV_τed, Eshift=LV_Eshift)
+        @named LA = ShiChamber(V₀=LA_V₀, p₀=LA_p0, Eₘᵢₙ=LA_Emin, Eₘₐₓ=LA_Emax, τ=τ, τₑₛ=LA_τes, τₑₚ=LA_τed, Eshift=LA_Eshift)
+        @named RV = ShiChamber(V₀=RV_V₀, p₀=RV_p0, Eₘᵢₙ=RV_Emin, Eₘₐₓ=RV_Emax, τ=τ, τₑₛ=RV_τes, τₑₚ=RV_τed, Eshift=RV_Eshift)
+        @named RA = ShiChamber(V₀=RA_V₀, p₀=RA_p0, Eₘᵢₙ=RA_Emin, Eₘₐₓ=RA_Emax, τ=τ, τₑₛ=RA_τes, τₑₚ=RA_τed, Eshift=RA_Eshift)
+        # Valves
+        @named AV = ShiValve(CQ=AV_CQ, Kp=AV_Kp, Kf=AV_Kf, Kb=AV_Kb, Kv=AV_Kv, θmax=AV_θmax, θmin=AV_θmin)
+        @named MV = ShiValve(CQ=MV_CQ, Kp=MV_Kp, Kf=MV_Kf, Kb=MV_Kb, Kv=MV_Kv, θmax=MV_θmax, θmin=MV_θmin)
+        @named TV = ShiValve(CQ=TV_CQ, Kp=TV_Kp, Kf=TV_Kf, Kb=TV_Kb, Kv=TV_Kv, θmax=TV_θmax, θmin=TV_θmin)
+        @named PV = ShiValve(CQ=PV_CQ, Kp=PV_Kp, Kf=PV_Kf, Kb=PV_Kb, Kv=PV_Kv, θmax=PV_θmax, θmin=PV_θmin)
+        # The equations for the subsystem are created by
+        # 'connect'-ing the components
 
-    eqs = [
-        Δp ~ out.p - in.p
-        q ~ in.q
-        connect(LHin, LA.in)
-        connect(LA.out, MV.in)
-        connect(MV.out, LV.in)
-        connect(LV.out, AV.in)
-        connect(AV.out, LHout)
-        connect(RHin, RA.in)
-        connect(RA.out, TV.in)
-        connect(TV.out, RV.in)
-        connect(RV.out, PV.in)
-        connect(PV.out, RHout)
-    ]
-    # and finaly compose the system
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out, LHin, LHout, RHin, RHout, LV, RV, LA, RA, AV, MV, TV, PV)
+        eqs = [
+                Δp ~ out.p - in.p
+                q ~ in.q
+                connect(LHin, LA.in)
+                connect(LA.out, MV.in)
+                connect(MV.out, LV.in)
+                connect(LV.out, AV.in)
+                connect(AV.out, LHout)
+                connect(RHin, RA.in)
+                connect(RA.out, TV.in)
+                connect(TV.out, RV.in)
+                connect(RV.out, PV.in)
+                connect(PV.out, RHout)
+        ]
+        # and finaly compose the system
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out, LHin, LHout, RHin, RHout, LV, RV, LA, RA, AV, MV, TV, PV)
 end
 
 
@@ -914,13 +914,13 @@ Named parameters:
 `R`     Resistance across the valve in mmHg*s/ml
 """
 function ResistorDiode(; name, R=1e-3)
-    @named oneport = OnePort()
-    @unpack Δp, q = oneport
-    ps = @parameters R = R
-    eqs = [
-        q ~ -Δp / R * (Δp < 0)
-    ]
-    extend(ODESystem(eqs, t, [], ps; name=name), oneport)
+        @named oneport = OnePort()
+        @unpack Δp, q = oneport
+        ps = @parameters R = R
+        eqs = [
+                q ~ -Δp / R * (Δp < 0)
+        ]
+        extend(ODESystem(eqs, t, [], ps; name=name), oneport)
 end
 
 
@@ -938,13 +938,13 @@ Named parameters:
 `CQ`    Flow coefficent in ml/(s*mmHg^0.5)
 """
 function OrificeValve(; name, CQ=1.0)
-    @named oneport = OnePort()
-    @unpack Δp, q = oneport
-    ps = @parameters CQ = CQ
-    eqs = [
-        q ~ (Δp < 0) * CQ * sqrt(sign(Δp) * Δp)
-    ]
-    extend(ODESystem(eqs, t, [], ps; name=name), oneport)
+        @named oneport = OnePort()
+        @unpack Δp, q = oneport
+        ps = @parameters CQ = CQ
+        eqs = [
+                q ~ (Δp < 0) * CQ * sqrt(sign(Δp) * Δp)
+        ]
+        extend(ODESystem(eqs, t, [], ps; name=name), oneport)
 end
 
 
@@ -975,40 +975,40 @@ Named parameters:
 `θmin`  Valve minimum opening angle in rad
 """
 function ShiValve(; name, CQ, Kp, Kf, Kb, Kv, θmax, θmin)
-    @named oneport = OnePort()
-    @unpack Δp, q = oneport
-    ps = @parameters CQ = CQ Kp = Kp Kf = Kf Kb = Kb Kv = Kv θmax = θmax θmin = θmin
-    sts = @variables θ(t) = 0.0 ω(t) = 0.0 AR(t) = 0.0 Fp(t) = 0.0 Ff(t) = 0.0 Fb(t) = 0.0 Fv(t) = 0.0 F(t) = 0.0
-    D = Differential(t)
-    limits = [
-        [(θ ~ θmax)] => [ω ~ 0]
-        [(θ ~ θmin)] => [ω ~ 0]
-    ]
+        @named oneport = OnePort()
+        @unpack Δp, q = oneport
+        ps = @parameters CQ = CQ Kp = Kp Kf = Kf Kb = Kb Kv = Kv θmax = θmax θmin = θmin
+        sts = @variables θ(t) = 0.0 ω(t) = 0.0 AR(t) = 0.0 Fp(t) = 0.0 Ff(t) = 0.0 Fb(t) = 0.0 Fv(t) = 0.0 F(t) = 0.0
+        D = Differential(t)
+        limits = [
+                [(θ ~ θmax)] => [ω ~ 0]
+                [(θ ~ θmin)] => [ω ~ 0]
+        ]
 
-    # make θmax the real opening angle and define a θmaxopen for a healthy valve
-    # that means we can use θmax as a stenosis parameter
-    θmaxopen = 75 * pi / 180
+        # make θmax the real opening angle and define a θmaxopen for a healthy valve
+        # that means we can use θmax as a stenosis parameter
+        θmaxopen = 75 * pi / 180
 
-    eqs = [
-        # Forces/Moments
-        Fp ~ Kp * -Δp * cos(θ)                 # pressure
-        Ff ~ -Kf * ω                           # friction
-        Fb ~ Kb * q * cos(θ)                       # Fluid Velocity
-        Fv ~ -Kv * q * (q > 0) * sin(2θ)       # vortex behind leaflets
-        F ~ Fp + Ff + Fb + Fv                  # total force/moment on leaflets
-        #ODEs
-        D(θ) ~ ω
-        D(ω) ~ F * ((θ < θmax) * (F > 0) + (θ > θmin) * (F < 0))
-        # Opening ratio
-        #AR ~ ((1 - cos(θ))^2) / ((1 - cos(θmax))^2)
-        AR ~ ((1 - cos(θ))^2) / ((1 - cos(θmaxopen))^2)
-        # Flow equation
-        q ~ -sign(Δp) * CQ * AR * sqrt(abs(Δp))
-    ]
+        eqs = [
+                # Forces/Moments
+                Fp ~ Kp * -Δp * cos(θ)                 # pressure
+                Ff ~ -Kf * ω                           # friction
+                Fb ~ Kb * q * cos(θ)                       # Fluid Velocity
+                Fv ~ -Kv * q * (q > 0) * sin(2θ)       # vortex behind leaflets
+                F ~ Fp + Ff + Fb + Fv                  # total force/moment on leaflets
+                #ODEs
+                D(θ) ~ ω
+                D(ω) ~ F * ((θ < θmax) * (F > 0) + (θ > θmin) * (F < 0))
+                # Opening ratio
+                #AR ~ ((1 - cos(θ))^2) / ((1 - cos(θmax))^2)
+                AR ~ ((1 - cos(θ))^2) / ((1 - cos(θmaxopen))^2)
+                # Flow equation
+                q ~ -sign(Δp) * CQ * AR * sqrt(abs(Δp))
+        ]
 
-    # include the `continuous_events` definition `limits` in the ODE system
-    # this is the MTK equivalent to callbacks
-    extend(ODESystem(eqs, t, sts, ps; name=name, continuous_events=limits), oneport)
+        # include the `continuous_events` definition `limits` in the ODE system
+        # this is the MTK equivalent to callbacks
+        extend(ODESystem(eqs, t, sts, ps; name=name, continuous_events=limits), oneport)
 end
 
 
@@ -1040,23 +1040,23 @@ name    name of the element
 q is calculated in cm^3/s (ml/s)
 """
 function MynardValve_SemiLunar(; name, ρ, Leff, Mrg, Mst, Ann, Kvc, Kvo)
-    @named oneport = OnePort()
-    @unpack Δp, q = oneport
-    ps = @parameters ρ = ρ Leff = Leff Mrg = Mrg Mst = Mst Ann = Ann Kvc = Kvc Kvo = Kvo
-    sts = @variables Aeff(t) = 0.0 ζ(t) = 0.0 B(t) = 0.0 Aeff_min(t) = 0.0 Aeff_max(t) = 0.0 L(t) = 0.0
-    D = Differential(t)
-    Δp = -1333.22 * Δp
-    eqs = [
-        # Opening ratio
-        D(ζ) ~ (Δp > 0) * ((1 - ζ) * Kvo * Δp) + (Δp < 0) * (ζ * Kvc * Δp)
-        Aeff_min ~ Mrg * Ann + eps()
-        Aeff_max ~ Mst * Ann
-        Aeff ~ (Aeff_max - Aeff_min) * ζ + Aeff_min
-        # Flow equation
-        B ~ ρ / (2 * Aeff^2)
-        L ~ ρ * Leff / Aeff
-        D(q) ~ (Δp - B * q * abs(q)) * 1 / L]
-    extend(ODESystem(eqs, t, sts, ps; name=name), oneport)
+        @named oneport = OnePort()
+        @unpack Δp, q = oneport
+        ps = @parameters ρ = ρ Leff = Leff Mrg = Mrg Mst = Mst Ann = Ann Kvc = Kvc Kvo = Kvo
+        sts = @variables Aeff(t) = 0.0 ζ(t) = 0.0 B(t) = 0.0 Aeff_min(t) = 0.0 Aeff_max(t) = 0.0 L(t) = 0.0
+        D = Differential(t)
+        Δp = -1333.22 * Δp
+        eqs = [
+                # Opening ratio
+                D(ζ) ~ (Δp > 0) * ((1 - ζ) * Kvo * Δp) + (Δp < 0) * (ζ * Kvc * Δp)
+                Aeff_min ~ Mrg * Ann + eps()
+                Aeff_max ~ Mst * Ann
+                Aeff ~ (Aeff_max - Aeff_min) * ζ + Aeff_min
+                # Flow equation
+                B ~ ρ / (2 * Aeff^2)
+                L ~ ρ * Leff / Aeff
+                D(q) ~ (Δp - B * q * abs(q)) * 1 / L]
+        extend(ODESystem(eqs, t, sts, ps; name=name), oneport)
 end
 
 
@@ -1087,22 +1087,22 @@ name    name of the element
 q is calculated in cm^3/s (ml/s)
 """
 function MynardValve_Atrioventricular(; name, ρ, Mrg, Mst, Ann, Kvc, Kvo)
-    @named oneport = OnePort()
-    @unpack Δp, q = oneport
-    ps = @parameters ρ = ρ Mrg = Mrg Mst = Mst Ann = Ann Kvc = Kvc Kvo = Kvo
-    sts = @variables Aeff(t) = 0.0 ζ(t) = 0.0 B(t) = 0.0 Aeff_min(t) = 0.0 Aeff_max(t) = 0.0 L(t) = 0.0
-    D = Differential(t)
-    Δp = -1333.22 * Δp
-    eqs = [
-        # Opening ratio
-        D(ζ) ~ (Δp > 0) * ((1 - ζ) * Kvo * Δp) + (Δp < 0) * (ζ * Kvc * Δp)
-        Aeff_min ~ Mrg * Ann + eps()
-        Aeff_max ~ Mst * Ann
-        Aeff ~ (Aeff_max - Aeff_min) * ζ + Aeff_min
-        # Flow equation
-        B ~ ρ / (2 * Aeff^2)
-        q ~ sqrt(1 / B * abs(Δp)) * sign(Δp)]
-    extend(ODESystem(eqs, t, sts, ps; name=name), oneport)
+        @named oneport = OnePort()
+        @unpack Δp, q = oneport
+        ps = @parameters ρ = ρ Mrg = Mrg Mst = Mst Ann = Ann Kvc = Kvc Kvo = Kvo
+        sts = @variables Aeff(t) = 0.0 ζ(t) = 0.0 B(t) = 0.0 Aeff_min(t) = 0.0 Aeff_max(t) = 0.0 L(t) = 0.0
+        D = Differential(t)
+        Δp = -1333.22 * Δp
+        eqs = [
+                # Opening ratio
+                D(ζ) ~ (Δp > 0) * ((1 - ζ) * Kvo * Δp) + (Δp < 0) * (ζ * Kvc * Δp)
+                Aeff_min ~ Mrg * Ann + eps()
+                Aeff_max ~ Mst * Ann
+                Aeff ~ (Aeff_max - Aeff_min) * ζ + Aeff_min
+                # Flow equation
+                B ~ ρ / (2 * Aeff^2)
+                q ~ sqrt(1 / B * abs(Δp)) * sign(Δp)]
+        extend(ODESystem(eqs, t, sts, ps; name=name), oneport)
 end
 
 
@@ -1125,31 +1125,31 @@ Named parameters:
 `C`:       Arterial compliance in ml/mmHg
 """
 function WK3(; name, Rc=1.0, Rp=1.0, C=1.0)
-    @named in = Pin()
-    @named out = Pin()
+        @named in = Pin()
+        @named out = Pin()
 
-    sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    # No parameters in this function
-    # Parameters are inherited from subcomponents
-    ps = []
+        sts = @variables Δp(t) = 0.0 q(t) = 0.0
+        # No parameters in this function
+        # Parameters are inherited from subcomponents
+        ps = []
 
-    # These are the components the subsystem is made of:
-    @named Rc = Resistor(R=Rc)
-    @named Rp = Resistor(R=Rp)
-    @named C = Capacitor(C=C)
-    @named ground = Ground()
+        # These are the components the subsystem is made of:
+        @named Rc = Resistor(R=Rc)
+        @named Rp = Resistor(R=Rp)
+        @named C = Capacitor(C=C)
+        @named ground = Ground()
 
-    eqs = [
-        Δp ~ out.p - in.p
-        0 ~ in.q + out.q
-        q ~ in.q
-        connect(in, Rc.in)
-        connect(Rc.out, Rp.in, C.in)
-        connect(Rp.out, C.out, out)
-    ]
+        eqs = [
+                Δp ~ out.p - in.p
+                0 ~ in.q + out.q
+                q ~ in.q
+                connect(in, Rc.in)
+                connect(Rc.out, Rp.in, C.in)
+                connect(Rp.out, C.out, out)
+        ]
 
-    # and finaly compose the system
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out, Rc, Rp, C)
+        # and finaly compose the system
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out, Rc, Rp, C)
 end
 
 
@@ -1172,33 +1172,33 @@ Named parameters:
 `E`:       Arterial elastance in mmHg/ml
 """
 function WK3E(; name, Rc=1.0, Rp=1.0, E=1.0)
-    @named in = Pin()
-    @named out = Pin()
-    sts = @variables p(t) = 0.0 q(t) = 0.0
-    # No parameters in this function
-    # Parameters are inherited from subcomponents
-    ps = []
+        @named in = Pin()
+        @named out = Pin()
+        sts = @variables p(t) = 0.0 q(t) = 0.0
+        # No parameters in this function
+        # Parameters are inherited from subcomponents
+        ps = []
 
-    # These are the components the subsystem is made of:
-    @named Rc = Resistor(R=Rc)
-    @named Rp = Resistor(R=Rp)
-    # @named C  = Capacitor(C=C)
-    @named E = Elastance(E=E)
-    @named ground = Ground()
+        # These are the components the subsystem is made of:
+        @named Rc = Resistor(R=Rc)
+        @named Rp = Resistor(R=Rp)
+        # @named C  = Capacitor(C=C)
+        @named E = Elastance(E=E)
+        @named ground = Ground()
 
-    # The equations for the subsystem are created by
-    # 'connect'-ing the components
-    eqs = [
-        Δp ~ out.p - in.p
-        q ~ in.q
-        connect(in, Rc.in)
-        connect(Rc.out, E.in)
-        connect(E.out, Rp.in)
-        connect(Rp.out, out)
-    ]
+        # The equations for the subsystem are created by
+        # 'connect'-ing the components
+        eqs = [
+                Δp ~ out.p - in.p
+                q ~ in.q
+                connect(in, Rc.in)
+                connect(Rc.out, E.in)
+                connect(E.out, Rp.in)
+                connect(Rp.out, out)
+        ]
 
-    # and finaly compose the system
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out, Rc, Rp, E)
+        # and finaly compose the system
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out, Rc, Rp, E)
 end
 
 
@@ -1223,35 +1223,35 @@ Named parameters:
 `C`:       Arterial compliance in ml/mmHg
 """
 function WK4_S(; name, Rc=1.0, L=1.0, Rp=1.0, C=1.0)
-    @named in = Pin()
-    @named out = Pin()
+        @named in = Pin()
+        @named out = Pin()
 
-    sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    # No parameters in this function
-    # Parameters are inherited from subcomponents
-    ps = []
+        sts = @variables Δp(t) = 0.0 q(t) = 0.0
+        # No parameters in this function
+        # Parameters are inherited from subcomponents
+        ps = []
 
-    # These are the components the subsystem is made of:
-    @named Rc = Resistor(R=Rc)
-    @named Rp = Resistor(R=Rp)
-    @named C = Capacitor(C=C)
-    @named L = Inductance(L=L)
-    @named ground = Ground()
+        # These are the components the subsystem is made of:
+        @named Rc = Resistor(R=Rc)
+        @named Rp = Resistor(R=Rp)
+        @named C = Capacitor(C=C)
+        @named L = Inductance(L=L)
+        @named ground = Ground()
 
-    # The equations for the subsystem are created by
-    # 'connect'-ing the components
-    eqs = [
-        Δp ~ out.p - in.p
-        0 ~ in.q + out.q
-        q ~ in.q
-        connect(in, Rc.in)
-        connect(Rc.out, L.in)
-        connect(L.out, C.in, Rp.in)
-        connect(Rp.out, C.out, out)
-    ]
+        # The equations for the subsystem are created by
+        # 'connect'-ing the components
+        eqs = [
+                Δp ~ out.p - in.p
+                0 ~ in.q + out.q
+                q ~ in.q
+                connect(in, Rc.in)
+                connect(Rc.out, L.in)
+                connect(L.out, C.in, Rp.in)
+                connect(Rp.out, C.out, out)
+        ]
 
-    # and finaly compose the system
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out, Rc, Rp, C, L)
+        # and finaly compose the system
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out, Rc, Rp, C, L)
 end
 
 
@@ -1277,36 +1277,36 @@ Named parameters:
 `E`:       Arterial elastance in mmHg/ml
 """
 function WK4_SE(; name, Rc=1.0, L=1.0, Rp=1.0, E=1.0)
-    @named in = Pin()
-    @named out = Pin()
+        @named in = Pin()
+        @named out = Pin()
 
-    sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    # No parameters in this function
-    # Parameters are inherited from subcomponents
-    ps = []
+        sts = @variables Δp(t) = 0.0 q(t) = 0.0
+        # No parameters in this function
+        # Parameters are inherited from subcomponents
+        ps = []
 
-    # These are the components the subsystem is made of:
-    @named Rc = Resistor(R=Rc)
-    @named Rp = Resistor(R=Rp)
-    @named E = Elastance(E=E)
-    @named L = Inductance(L=L)
-    @named ground = Ground()
+        # These are the components the subsystem is made of:
+        @named Rc = Resistor(R=Rc)
+        @named Rp = Resistor(R=Rp)
+        @named E = Elastance(E=E)
+        @named L = Inductance(L=L)
+        @named ground = Ground()
 
-    # The equations for the subsystem are created by
-    # 'connect'-ing the components
-    eqs = [
-        Δp ~ out.p - in.p
-        0 ~ in.q + out.q
-        q ~ in.q
-        connect(in, Rc.in)
-        connect(Rc.out, L.in)
-        connect(L.out, E.in)
-        connect(E.out, Rp.in)
-        connect(Rp.out, out)
-    ]
+        # The equations for the subsystem are created by
+        # 'connect'-ing the components
+        eqs = [
+                Δp ~ out.p - in.p
+                0 ~ in.q + out.q
+                q ~ in.q
+                connect(in, Rc.in)
+                connect(Rc.out, L.in)
+                connect(L.out, E.in)
+                connect(E.out, Rp.in)
+                connect(Rp.out, out)
+        ]
 
-    # and finaly compose the system
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out, Rc, Rp, E, L)
+        # and finaly compose the system
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out, Rc, Rp, E, L)
 end
 
 
@@ -1331,34 +1331,34 @@ Named parameters:
 `C`:       Arterial compliance in ml/mmHg
 """
 function WK4_P(; name, Rc=1.0, L=1.0, Rp=1.0, C=1.0)
-    @named in = Pin()
-    @named out = Pin()
+        @named in = Pin()
+        @named out = Pin()
 
-    sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    # No parameters in this function
-    # Parameters are inherited from subcomponents
-    ps = []
+        sts = @variables Δp(t) = 0.0 q(t) = 0.0
+        # No parameters in this function
+        # Parameters are inherited from subcomponents
+        ps = []
 
-    # These are the components the subsystem is made of:
-    @named Rc = Resistor(R=Rc)
-    @named Rp = Resistor(R=Rp)
-    @named C = Capacitor(C=C)
-    @named L = Inductance(L=L)
-    @named ground = Ground()
+        # These are the components the subsystem is made of:
+        @named Rc = Resistor(R=Rc)
+        @named Rp = Resistor(R=Rp)
+        @named C = Capacitor(C=C)
+        @named L = Inductance(L=L)
+        @named ground = Ground()
 
-    # The equations for the subsystem are created by
-    # 'connect'-ing the components
-    eqs = [
-        Δp ~ out.p - in.p
-        0 ~ in.q + out.q
-        q ~ in.q
-        connect(in, L.in, Rc.in)
-        connect(L.out, Rc.out, C.in, Rp.in)
-        connect(Rp.out, C.out, out)
-    ]
+        # The equations for the subsystem are created by
+        # 'connect'-ing the components
+        eqs = [
+                Δp ~ out.p - in.p
+                0 ~ in.q + out.q
+                q ~ in.q
+                connect(in, L.in, Rc.in)
+                connect(L.out, Rc.out, C.in, Rp.in)
+                connect(Rp.out, C.out, out)
+        ]
 
-    # and finaly compose the system
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out, Rc, Rp, C, L)
+        # and finaly compose the system
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out, Rc, Rp, C, L)
 end
 
 
@@ -1384,106 +1384,106 @@ Named parameters:
 `E`:       Arterial elastance in mmHg/ml
 """
 function WK4_PE(; name, Rc=1.0, L=1.0, Rp=1.0, E=1.0)
-    @named in = Pin()
-    @named out = Pin()
+        @named in = Pin()
+        @named out = Pin()
 
-    sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    # No parameters in this function
-    # Parameters are inherited from subcomponents
-    ps = []
+        sts = @variables Δp(t) = 0.0 q(t) = 0.0
+        # No parameters in this function
+        # Parameters are inherited from subcomponents
+        ps = []
 
-    # These are the components the subsystem is made of:
-    @named Rc = Resistor(R=Rc)
-    @named Rp = Resistor(R=Rp)
-    @named E = Elastance(E=E)
-    @named L = Inductance(L=L)
-    @named ground = Ground()
+        # These are the components the subsystem is made of:
+        @named Rc = Resistor(R=Rc)
+        @named Rp = Resistor(R=Rp)
+        @named E = Elastance(E=E)
+        @named L = Inductance(L=L)
+        @named ground = Ground()
 
-    # The equations for the subsystem are created by
-    # 'connect'-ing the components
-    eqs = [
-        Δp ~ out.p - in.p
-        0 ~ in.q + out.q
-        q ~ in.q
-        connect(in, L.in, Rc.in)
-        connect(L.out, Rc.out, E.in)
-        connect(E.out, Rp.in)
-        connect(Rp.out, out)
-    ]
+        # The equations for the subsystem are created by
+        # 'connect'-ing the components
+        eqs = [
+                Δp ~ out.p - in.p
+                0 ~ in.q + out.q
+                q ~ in.q
+                connect(in, L.in, Rc.in)
+                connect(L.out, Rc.out, E.in)
+                connect(E.out, Rp.in)
+                connect(Rp.out, out)
+        ]
 
-    # and finaly compose the system
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out, Rc, Rp, E, L)
+        # and finaly compose the system
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out, Rc, Rp, E, L)
 end
 
 
 function WK5(; name, R1=1.0, C1=1.0, R2=1.0, C2=1.0, R3=1.0)
-    @named in = Pin()
-    @named out = Pin()
+        @named in = Pin()
+        @named out = Pin()
 
-    sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    # No parameters in this function
-    # Parameters are inherited from subcomponents
-    ps = []
+        sts = @variables Δp(t) = 0.0 q(t) = 0.0
+        # No parameters in this function
+        # Parameters are inherited from subcomponents
+        ps = []
 
-    # These are the components the subsystem is made of:
-    @named R1 = Resistor(R=R1)
-    @named C1 = Capacitor(C=C1)
-    @named R2 = Resistor(R=R2)
-    @named C2 = Capacitor(C=C2)
-    @named R3 = Resistor(R=R3)
-    @named L = Inductance(L=L)
-    @named ground = Ground()
+        # These are the components the subsystem is made of:
+        @named R1 = Resistor(R=R1)
+        @named C1 = Capacitor(C=C1)
+        @named R2 = Resistor(R=R2)
+        @named C2 = Capacitor(C=C2)
+        @named R3 = Resistor(R=R3)
+        @named L = Inductance(L=L)
+        @named ground = Ground()
 
-    # The equations for the subsystem are created by
-    # 'connect'-ing the components
-    eqs = [
-        Δp ~ out.p - in.p
-        0 ~ in.q + out.q
-        q ~ in.q
-        connect(in, R1.in)
-        connect(R1.out, C1.in, R2.in)
-        connect(R2.out, C2.in, R3.in)
-        connect(R3.out, C1.out, C2.out, out)
-    ]
+        # The equations for the subsystem are created by
+        # 'connect'-ing the components
+        eqs = [
+                Δp ~ out.p - in.p
+                0 ~ in.q + out.q
+                q ~ in.q
+                connect(in, R1.in)
+                connect(R1.out, C1.in, R2.in)
+                connect(R2.out, C2.in, R3.in)
+                connect(R3.out, C1.out, C2.out, out)
+        ]
 
-    # and finaly compose the system
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out, R1, C1, R2, C2, R3)
+        # and finaly compose the system
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out, R1, C1, R2, C2, R3)
 end
 
 
 function WK5E(; name, R1=1.0, E1=1.0, R2=1.0, E2=1.0, R3=1.0)
-    @named in = Pin()
-    @named out = Pin()
-    sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    # No parameters in this function
-    # Parameters are inherited from subcomponents
-    ps = []
+        @named in = Pin()
+        @named out = Pin()
+        sts = @variables Δp(t) = 0.0 q(t) = 0.0
+        # No parameters in this function
+        # Parameters are inherited from subcomponents
+        ps = []
 
-    # These are the components the subsystem is made of:
-    @named R1 = Resistor(R=R1)
-    @named E1 = Elastance(E=E1)
-    @named R2 = Resistor(R=R2)
-    @named E2 = Elastance(E=E2)
-    @named R3 = Resistor(R=R3)
-    @named L = Inductance(L=L)
-    @named ground = Ground()
+        # These are the components the subsystem is made of:
+        @named R1 = Resistor(R=R1)
+        @named E1 = Elastance(E=E1)
+        @named R2 = Resistor(R=R2)
+        @named E2 = Elastance(E=E2)
+        @named R3 = Resistor(R=R3)
+        @named L = Inductance(L=L)
+        @named ground = Ground()
 
-    # The equations for the subsystem are created by
-    # 'connect'-ing the components
-    eqs = [
-        Δp ~ out.p - in.p
-        0 ~ in.q + out.q
-        q ~ in.q
-        connect(in, R1.in)
-        connect(R1.out, E1.in)
-        connect(E1.out, R2.in)
-        connect(R2.out, E2.in)
-        connect(E2.out, R3.in)
-        connect(R3.out, out)
-    ]
+        # The equations for the subsystem are created by
+        # 'connect'-ing the components
+        eqs = [
+                Δp ~ out.p - in.p
+                0 ~ in.q + out.q
+                q ~ in.q
+                connect(in, R1.in)
+                connect(R1.out, E1.in)
+                connect(E1.out, R2.in)
+                connect(R2.out, E2.in)
+                connect(E2.out, R3.in)
+                connect(R3.out, out)
+        ]
 
-    # and finaly compose the system
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out, R1, E1, R2, E2, R3)
+        # and finaly compose the system
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out, R1, E1, R2, E2, R3)
 end
 
 
@@ -1504,29 +1504,30 @@ Named parameters:
 `C`:       Component compliance in ml/mmHg
 """
 function CR(; name, R=1.0, C=1.0)
-    @named in = Pin()
-    @named out = Pin()
+        @named in = Pin()
+        @named out = Pin()
 
-    sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    # No parameters in this function
-    # Parameters are inherited from subcomponents
-    ps = []
+        sts = @variables Δp(t) = 0.0 q(t) = 0.0
+        # No parameters in this function
+        # Parameters are inherited from subcomponents
+        ps = []
 
-    # These are the components the subsystem is made of:
-    @named R = Resistor(R=R)
-    @named C = Compliance(C=C)
+        # These are the components the subsystem is made of:
+        @named R = Resistor(R=R)
+        @named C = Compliance(C=C)
 
-    # The equations for the subsystem are created by
-    # 'connect'-ing the components
-    eqs = [
-        Δp ~ out.p - in.p
-        q ~ in.qconnect(in, C.in)
-        connect(C.out, R.in)
-        connect(R.out, out)
-    ]
+        # The equations for the subsystem are created by
+        # 'connect'-ing the components
+        eqs = [
+                Δp ~ out.p - in.p
+                q ~ in.q
+                connect(in, C.in)
+                connect(C.out, R.in)
+                connect(R.out, out)
+        ]
 
-    # and finaly compose the system
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out, R, C)
+        # and finaly compose the system
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out, R, C)
 end
 
 
@@ -1549,30 +1550,31 @@ Named parameters:
 `L`:       Component blood inertia in mmHg*s^2/ml
 """
 function CRL(; name, C=1.0, R=1.0, L=1.0)
-    @named in = Pin()
-    @named out = Pin()
+        @named in = Pin()
+        @named out = Pin()
 
-    sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    ps = []
+        sts = @variables Δp(t) = 0.0 q(t) = 0.0
+        ps = []
 
-    # These are the components the subsystem is made of:
-    @named C = Compliance(C=C)
-    @named R = Resistor(R=R)
-    @named L = Inductance(L=L)
+        # These are the components the subsystem is made of:
+        @named C = Compliance(C=C)
+        @named R = Resistor(R=R)
+        @named L = Inductance(L=L)
 
-    # The equations for the subsystem are created by
-    # 'connect'-ing the components
+        # The equations for the subsystem are created by
+        # 'connect'-ing the components
 
-    eqs = [
-        Δp ~ out.p - in.p
-        q ~ in.qconnect(in, C.in)
-        connect(C.out, R.in)
-        connect(R.out, L.in)
-        connect(L.out, out)
-    ]
+        eqs = [
+                Δp ~ out.p - in.p
+                q ~ in.q
+                connect(in, C.in)
+                connect(C.out, R.in)
+                connect(R.out, L.in)
+                connect(L.out, out)
+        ]
 
-    # and finaly compose the system
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out, C, R, L)
+        # and finaly compose the system
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out, C, R, L)
 end
 
 
@@ -1597,38 +1599,39 @@ Named parameters:
 `R3`:      Component resistance in mmHg*s/ml
 """
 function RRCR(; name, R1=1.0, R2=1.0, R3=1.0, C=1.0)
-    @named in = Pin()
-    @named out = Pin()
-    @named ep = Pin()    # base pressure pin
+        @named in = Pin()
+        @named out = Pin()
+        @named ep = Pin()    # base pressure pin
 
-    sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    # sts = []
-    # ps = @parameters Rc=Rc Rp=Rp C=C
-    # No parameters in this function
-    # Parameters are inherited from subcomponents
-    ps = []
+        sts = @variables Δp(t) = 0.0 q(t) = 0.0
+        # sts = []
+        # ps = @parameters Rc=Rc Rp=Rp C=C
+        # No parameters in this function
+        # Parameters are inherited from subcomponents
+        ps = []
 
-    # These are the components the subsystem is made of:
-    @named R1 = Resistor(R=R1)
-    @named R2 = Resistor(R=R2)
-    @named C = Compliance_ep(C=C)
-    @named R3 = Resistor(R=R3)
+        # These are the components the subsystem is made of:
+        @named R1 = Resistor(R=R1)
+        @named R2 = Resistor(R=R2)
+        @named C = Compliance_ep(C=C)
+        @named R3 = Resistor(R=R3)
 
-    # The equations for the subsystem are created by
-    # 'connect'-ing the components
+        # The equations for the subsystem are created by
+        # 'connect'-ing the components
 
-    eqs = [
-        Δp ~ out.p - in.p
-        q ~ in.qconnect(in, R1.in)
-        connect(R1.out, R2.in)
-        connect(R2.out, C.in)
-        connect(C.out, R3.in)
-        connect(R3.out, out)
-        connect(C.ep, ep)
-    ]
+        eqs = [
+                Δp ~ out.p - in.p
+                q ~ in.q
+                connect(in, R1.in)
+                connect(R1.out, R2.in)
+                connect(R2.out, C.in)
+                connect(C.out, R3.in)
+                connect(R3.out, out)
+                connect(C.ep, ep)
+        ]
 
-    # and finaly compose the system
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out, R1, R2, R3, C, ep)
+        # and finaly compose the system
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out, R1, R2, R3, C, ep)
 end
 
 
@@ -1665,40 +1668,40 @@ Named parameters:
 `SVN_R`:   Vein resistance in mmHg*s/ml
 """
 function ShiSystemicLoop(; name, SAS_C, SAS_R, SAS_L, SAT_C, SAT_R, SAT_L, SAR_R, SCP_R, SVN_C, SVN_R)
-    @named in = Pin()
-    @named out = Pin()
+        @named in = Pin()
+        @named out = Pin()
 
-    sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    ps = []
-    # No parameters in this function
+        sts = @variables Δp(t) = 0.0 q(t) = 0.0
+        ps = []
+        # No parameters in this function
 
-    # These are the components the subsystem is made of:
-    ## Systemic Aortic Sinus ##
-    @named SAS = CRL(C=SAS_C, R=SAS_R, L=SAS_L)
-    ## Systemic Artery ##
-    @named SAT = CRL(C=SAT_C, R=SAT_R, L=SAT_L)
-    ## Systemic Arteriole ##
-    @named SAR = Resistor(R=SAR_R)
-    ## Systemic Capillary ##
-    @named SCP = Resistor(R=SCP_R)
-    ## Systemic Vein ##
-    @named SVN = CR(C=SVN_C, R=SVN_R)
+        # These are the components the subsystem is made of:
+        ## Systemic Aortic Sinus ##
+        @named SAS = CRL(C=SAS_C, R=SAS_R, L=SAS_L)
+        ## Systemic Artery ##
+        @named SAT = CRL(C=SAT_C, R=SAT_R, L=SAT_L)
+        ## Systemic Arteriole ##
+        @named SAR = Resistor(R=SAR_R)
+        ## Systemic Capillary ##
+        @named SCP = Resistor(R=SCP_R)
+        ## Systemic Vein ##
+        @named SVN = CR(C=SVN_C, R=SVN_R)
 
-    # The equations for the subsystem are created by
-    # 'connect'-ing the components
-    eqs = [
-        Δp ~ out.p - in.p
-        q ~ in.q
-        connect(in, SAS.in)
-        connect(SAS.out, SAT.in)
-        connect(SAT.out, SAR.in)
-        connect(SAR.out, SCP.in)
-        connect(SCP.out, SVN.in)
-        connect(SVN.out, out)
-    ]
+        # The equations for the subsystem are created by
+        # 'connect'-ing the components
+        eqs = [
+                Δp ~ out.p - in.p
+                q ~ in.q
+                connect(in, SAS.in)
+                connect(SAS.out, SAT.in)
+                connect(SAT.out, SAR.in)
+                connect(SAR.out, SCP.in)
+                connect(SCP.out, SVN.in)
+                connect(SVN.out, out)
+        ]
 
-    # and finaly compose the system
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out, SAS, SAT, SAR, SCP, SVN)
+        # and finaly compose the system
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out, SAS, SAT, SAR, SCP, SVN)
 end
 
 
@@ -1735,40 +1738,40 @@ Named parameters:
 `PVN_R`:   Vein resistance in mmHg*s/ml
 """
 function ShiPulmonaryLoop(; name, PAS_C, PAS_R, PAS_L, PAT_C, PAT_R, PAT_L, PAR_R, PCP_R, PVN_C, PVN_R)
-    @named in = Pin()
-    @named out = Pin()
+        @named in = Pin()
+        @named out = Pin()
 
-    sts = @variables Δp(t) = 0.0 q(t) = 0.0
-    ps = []
-    # No parameters in this function
+        sts = @variables Δp(t) = 0.0 q(t) = 0.0
+        ps = []
+        # No parameters in this function
 
-    # These are the components the subsystem is made of:
-    ## Pulmonary Aortic Sinus ##
-    @named PAS = CRL(C=PAS_C, R=PAS_R, L=PAS_L)
-    ## Pulmonary Artery ##
-    @named PAT = CRL(C=PAT_C, R=PAT_R, L=PAT_L)
-    ## Pulmonary Arteriole ##
-    @named PAR = Resistor(R=PAR_R)
-    ## Pulmonary Capillary ##
-    @named PCP = Resistor(R=PCP_R)
-    ## Pulmonary Vein ##
-    @named PVN = CR(C=PVN_C, R=PVN_R)
+        # These are the components the subsystem is made of:
+        ## Pulmonary Aortic Sinus ##
+        @named PAS = CRL(C=PAS_C, R=PAS_R, L=PAS_L)
+        ## Pulmonary Artery ##
+        @named PAT = CRL(C=PAT_C, R=PAT_R, L=PAT_L)
+        ## Pulmonary Arteriole ##
+        @named PAR = Resistor(R=PAR_R)
+        ## Pulmonary Capillary ##
+        @named PCP = Resistor(R=PCP_R)
+        ## Pulmonary Vein ##
+        @named PVN = CR(C=PVN_C, R=PVN_R)
 
-    # The equations for the subsystem are created by
-    # 'connect'-ing the components
-    eqs = [
-        Δp ~ out.p - in.p
-        q ~ in.q
-        connect(in, PAS.in)
-        connect(PAS.out, PAT.in)
-        connect(PAT.out, PAR.in)
-        connect(PAR.out, PCP.in)
-        connect(PCP.out, PVN.in)
-        connect(PVN.out, out)
-    ]
+        # The equations for the subsystem are created by
+        # 'connect'-ing the components
+        eqs = [
+                Δp ~ out.p - in.p
+                q ~ in.q
+                connect(in, PAS.in)
+                connect(PAS.out, PAT.in)
+                connect(PAT.out, PAR.in)
+                connect(PAR.out, PCP.in)
+                connect(PCP.out, PVN.in)
+                connect(PVN.out, out)
+        ]
 
-    # and finaly compose the system
-    compose(ODESystem(eqs, t, sts, ps; name=name), in, out, PAS, PAT, PAR, PCP, PVN)
+        # and finaly compose the system
+        compose(ODESystem(eqs, t, sts, ps; name=name), in, out, PAS, PAT, PAR, PCP, PVN)
 end
 
 
