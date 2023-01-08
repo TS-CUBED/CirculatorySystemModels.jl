@@ -5,9 +5,9 @@ using Test
 using CSV
 using DataFrames
 
-@testset "WK5" begin
+# @testset "WK5" begin
 
-end
+# end
 
 @testset "Shi Model" begin
     ##
@@ -193,7 +193,7 @@ end
 
     ## Compose the whole ODAE system
     @named _circ_model = ODESystem(circ_eqs, t)
-    @named circ_model = compose(_circ_model
+    @named circ_model = compose(_circ_model,
         [Heart, SystLoop, PulmLoop])
     # [Heart, SAS, SAT, SAR, SCP, SVN, PAS, PAT, PAR, PCP, PVN])
 
