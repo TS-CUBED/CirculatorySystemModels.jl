@@ -1,7 +1,7 @@
 module CirculationModels
 
 using ModelingToolkit, DifferentialEquations
-using ModelingToolkit:varmap_to_vars
+using ModelingToolkit: varmap_to_vars
 
 export Pin, OnePort, Ground, Resistor, QResistor, PoiseuilleResistor, Capacitor, Inductance, Compliance, Elastance, Compliance_ep, Elastance_ep, ConstantPressure, ConstantFlow, DrivenPressure, DrivenFlow, Chamber, DHChamber, ShiChamber, ShiAtrium, ShiHeart, WK3, WK3E, CR, CRL, RRCR, ShiSystemicLoop, ShiPulmonaryLoop, ResistorDiode, OrificeValve, ShiValve, MynardValve_SemiLunar, MynardValve_Atrioventricular
 
@@ -1520,7 +1520,8 @@ function CR(; name, R=1.0, C=1.0)
         # 'connect'-ing the components
         eqs = [
                 Δp ~ out.p - in.p
-                q ~ in.qconnect(in, C.in)
+                q ~ in.q
+                connect(in, C.in)
                 connect(C.out, R.in)
                 connect(R.out, out)
         ]
@@ -1620,7 +1621,8 @@ function RRCR(; name, R1=1.0, R2=1.0, R3=1.0, C=1.0)
 
         eqs = [
                 Δp ~ out.p - in.p
-                q ~ in.qconnect(in, R1.in)
+                q ~ in.q
+                connect(in, R1.in)
                 connect(R1.out, R2.in)
                 connect(R2.out, C.in)
                 connect(C.out, R3.in)
