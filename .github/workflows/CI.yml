@@ -53,6 +53,6 @@ jobs:
       - run: |
           julia --project=docs -e '
             using Documenter: DocMeta, doctest
-            using CirculationModels
-            DocMeta.setdocmeta!(CirculationModels, :DocTestSetup, :(using CirculationModels); recursive=true)
-            doctest(CirculationModels)'
+            using CirculatorySystemModels
+            DocMeta.setdocmeta!(CirculatorySystemModels, :DocTestSetup, :(using CirculatorySystemModels); recursive=true)
+            doctest(CirculatorySystemModels)'
