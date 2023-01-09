@@ -1,4 +1,4 @@
-using CirculationModels
+using CirculatorySystemModels
 using DifferentialEquations
 using ModelingToolkit
 using Test

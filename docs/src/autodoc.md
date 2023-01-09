@@ -1,5 +1,5 @@
 ```@meta
-CurrentModule = CirculationModels
+CurrentModule = CirculatorySystemModels
 ```
 
 ## Method Index (AutoDoc)
@@ -8,5 +8,5 @@ CurrentModule = CirculationModels
 ```
 
 ```@autodocs
-Modules = [CirculationModels]
+Modules = [CirculatorySystemModels]
 ```

@@ -1,15 +1,15 @@
 ```@meta
 -
-CurrentModule = CirculationModels
+CurrentModule = CirculatorySystemModels
 ```
 
-# CirculationModels
+# CirculatorySystemModels
 
-Documentation for [CirculationModels](https://github.com/TS-CUBED/CirculationModels.jl).
+Documentation for [CirculatorySystemModels](https://github.com/TS-CUBED/CirculatorySystemModels.jl).
 
 ## An acausal modelling library for Circulation Models
 
-CirculationModels.jl is an acausal modelling library for zero-dimensional, or _lumped parameter_ modelling of the circulatory system for [ModelingToolkit.jl (MTK)](https://github.com/SciML/ModelingToolkit.jl).
+CirculatorySystemModels.jl is an acausal modelling library for zero-dimensional, or _lumped parameter_ modelling of the circulatory system for [ModelingToolkit.jl (MTK)](https://github.com/SciML/ModelingToolkit.jl).
 
 Integration into MTK and the [SciML](https://docs.sciml.ai/Overview/stable/) environment enables efficient solver methods ([DifferentialEquations.jl](https://diffeq.sciml.ai/latest/)), local and global parameter optimisation ([Optimization.jl](https://optimization.sciml.ai/stable/)), Sensitivity Analysis ([GlobalSensitivity.jl](https://gsa.sciml.ai/stable/)), and many other features in the SciML framework.
 

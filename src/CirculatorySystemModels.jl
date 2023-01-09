@@ -1,12 +1,11 @@
-module CirculationModels
+module CirculatorySystemModels
 
 using ModelingToolkit, DifferentialEquations
-using ModelingToolkit: varmap_to_vars
 
 export Pin, OnePort, Ground, Resistor, QResistor, PoiseuilleResistor, Capacitor, Inductance, Compliance, Elastance, Compliance_ep, Elastance_ep, ConstantPressure, ConstantFlow, DrivenPressure, DrivenFlow, Chamber, DHChamber, ShiChamber, ShiAtrium, ShiHeart, WK3, WK3E, CR, CRL, RRCR, ShiSystemicLoop, ShiPulmonaryLoop, ResistorDiode, OrificeValve, ShiValve, MynardValve_SemiLunar, MynardValve_Atrioventricular
 
 
-@parameters t
+@variables t
 
 
 @connector function Pin(; name)
