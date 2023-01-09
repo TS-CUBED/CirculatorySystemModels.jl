@@ -1,18 +1,18 @@
-using CirculationModels
+using CirculatorySystemModels
 using Documenter
 
-DocMeta.setdocmeta!(CirculationModels, :DocTestSetup, :(using CirculationModels); recursive=true)
+DocMeta.setdocmeta!(CirculatorySystemModels, :DocTestSetup, :(using CirculatorySystemModels); recursive=true)
 
 makedocs(;
-    modules=[CirculationModels],
+    modules=[CirculatorySystemModels],
     authors="TS-CUBED <ts-cubed@t-cubed.org.uk> and contributors",
-    repo="https://github.com/TS-CUBED/CirculationModels.jl/blob/{commit}{path}#{line}",
-    sitename="CirculationModels.jl",
+    repo="https://github.com/TS-CUBED/CirculatorySystemModels.jl/blob/{commit}{path}#{line}",
+    sitename="CirculatorySystemModels.jl",
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
-        canonical="https://TS-CUBED.github.io/CirculationModels.jl",
+        canonical="https://TS-CUBED.github.io/CirculatorySystemModels.jl",
         edit_link="main",
-        assets=String[],
+        assets=String[]
     ),
     pages=[
         "Home" => "index.md",
@@ -20,15 +20,10 @@ makedocs(;
             "Bjørdalsbakke - Simple Single-Chamber CV-Circuit" => "examples/BjordalsbakkeModel.md"
         ],
         "Method Index" => "autodoc.md",
-    ],
+    ]
 )
 
 deploydocs(;
-    repo="github.com/TS-CUBED/CirculationModels.jl",
-    devbranch="main",
+    repo="github.com/TS-CUBED/CirculatorySystemModels.jl",
+    devbranch="main"
 )
-
-
-
-
-

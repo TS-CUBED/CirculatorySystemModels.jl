@@ -1,6 +1,8 @@
 ##
-using ModelingToolkit, DifferentialEquations, Plots
-using CirculationModels
+using CirculatorySystemModels
+using DifferentialEquations
+using ModelingToolkit
+using Plots
 
 # # A simple single-chamber model
 
