@@ -1,6 +1,6 @@
 name = "CirculatorySystemModels"
 uuid = "4211d73e-f4e8-40c4-b600-92e4b82f0e1a"
-authors = ["Torsten Schenkel <t.schenkel@shu.ac.uk> and contributors"]
+authors = ["Torsten Schenkel <t.schenkel@shu.ac.uk>, Harry Saxton <harry.saxton@student.shu.ac.uk> and contributors"]
 version = "0.1.0"
 
 [deps]
