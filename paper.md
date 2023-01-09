@@ -1,5 +1,5 @@
 ---
-title: CirculationModels.jl - A ModelingToolkit Library for 0D-Lumped-Parameter Models of the Cardiovascular Circulation
+title: CirculatorySystemModels.jl - A ModelingToolkit Library for 0D-Lumped-Parameter Models of the Cardiovascular Circulation
 tags:
   - Julia
   - ModelingToolkit
@@ -42,11 +42,11 @@ automated. Meaning the ability to embed these lumped parameter models
 into a clinical workflow could one day become trivial
 [@bozkurt2022patient; @holmes2018clinical].
 
-_CirculationModels.jl_ is a [Julia](https://www.julialang.org) [@bezanson2017julia] 
+_CirculatorySystemModels.jl_ is a [Julia](https://www.julialang.org) [@bezanson2017julia] 
 package, built on the acausal modelling framework provided by _ModelingToolkit.jl_
 [@ma2021modelingtoolkit], containing all the common elements plus more
 needed for effective and realistic lumped parameter modelling. Currently
-_CirculationModels.jl_ supports common elements such as a capacitor,
+_CirculatorySystemModels.jl_ supports common elements such as a capacitor,
 resistor, inductance and diodes [@westerhof2010snapshots], which act as
 simple valve functions. We also make extensions to the common elements
 to include constant compliance chambers, non-linear and Poiseuille
@@ -62,7 +62,7 @@ models. We then also break down these full systems into collections of
 elements such as the famous Windkessel models [@westerhof2009arterial]
 to give the user full control over their modelling.
 
-Users can easily add new elements to _CirculationModels.jl_ 
+Users can easily add new elements to _CirculatorySystemModels.jl_ 
 using _ModelingToolkit.jl_ functions.
 
 # Statement of need
@@ -85,10 +85,10 @@ great for exchanging models they are often difficult to implement and
 model analysis is limited. A common theme within all current lumped 
 parameter modelling software is the systems inability to deal with
 complex event handling and non-linear components. 
-Being based on _ModelingToolkit.jl_, _CirculationModels.jl_ overcomes
+Being based on _ModelingToolkit.jl_, _CirculatorySystemModels.jl_ overcomes
 these limitations by leveraging the wider _SciML_ framework.
 
-_CirculationModels.jl_
+_CirculatorySystemModels.jl_
 provides the Julia community with a quick and effective way to perform
 lumped parameter modelling, being the first within the field to leverage
 both multiple dispatch and JIT compilation. As a result of Julia's
@@ -98,14 +98,14 @@ analysis time does not become unreasonable.
 Other packages exist which
 allow users to import models from other frameworks, CellMLToolkit.jl
 [@CellMLToolKit] and OpenModelica.jl [@tinnerholm2022modular]. 
-_CirculationModels.jl_ goes beyond these by providing a lumped parameter modelling library
+_CirculatorySystemModels.jl_ goes beyond these by providing a lumped parameter modelling library
 with seamless integration with the SciML framework 
 [@Dixit2022; @rackauckas2020universal; @rackauckas2017differentialequations]
 which allows for extensive and efficient model analysis.
 Since both the modelling library and the framework it is built on are pure Julia,
 new components can be developed in a transparent and consistent manner.
 
-Using Julia, _CirculationModels.jl_ models compute significantly faster
+Using Julia, _CirculatorySystemModels.jl_ models compute significantly faster
 than models implemented in Matlab or Python, and at the same speed as 
 specialised C-code (\autoref{tbl:benchmarks}). This allows the models to run in real-time,
 and opens the possibility of global parameter optimisation, global sensitivity analysis.
@@ -120,23 +120,23 @@ topology of the model, which can be automated using meta-programming techniques.
 Validation and benchmarking was performed on a full, 4-chamber, model of the circulation system
 proposed by [@korakianitis2006numerical] (\autoref{fig-shi-diagram}). This model was previously implemented in CellML [@Shi2018],
 which makes it an ideal candidate for validation of the new modeling library^[Note that CellML does not allow the callbacks which are required for the
-extended valve model, so only the simplified model can be compared. The _CirculationModels.jl_
+extended valve model, so only the simplified model can be compared. The _CirculatorySystemModels.jl_
 implementation of [@korakianitis2006numerical] includes the extended model as well.].
 
 
-Model results from _CirculationModels.jl_ model (\autoref{fig:shi-results}) are a perfect match for the CellML model.
+Model results from _CirculatorySystemModels.jl_ model (\autoref{fig:shi-results}) are a perfect match for the CellML model.
 The CellML model was run in three versions: (1) imported into _ModelingToolkit.jl_ using _CellMLToolKit.jl_,
 (2) Matlab code exported from CellML, (3) Python/SciPy code exported from CellML. 
 Speedup against Matlab and Python is 2 and 3 orders of magnitude, respectively (\autoref{tbl:benchmarks}).
 
 ![4-chamber, full-circulationmodel from [@korakianitis2006numerical]. Groupings in dashed rectangles are implemented as compound subsystems, which in turn have been composed from individual resistor, compliance, and inertance elements. Ventricles and Atria implemented as time-variable elastances. Both simplified and dynamic, non-linear valve models are implemented. \label{fig-shi-diagram}](fig-shi-diagram.pdf){width=100%}
 
-| CirculationModels.jl | CellMLToolkit.jl | Matlab (ode45) | Python (scipy.solve) |
+| CirculatorySystemModels.jl | CellMLToolkit.jl | Matlab (ode45) | Python (scipy.solve) |
 |:--------------------:|:----------------:|:--------------:|:--------------------:|
 | 1x                   | 1.6x             | 272x           | 963x                 |
-: Simulation time comparison for a single run of [@korakianitis2006numerical]. CirculationModels.jl model was implemented from scratch. CellML model was imported into ModelingToolkit.jl using CellMLToolkit.jl, Matlab and Python models were created from the CellML code and downloaded from the [CellML Model Repository](http://models.cellml.org/exposure/c49d416ae3a5132882e6ea7479ba50f5/ModelMain.cellml/view).  \label{tbl:benchmarks}
+: Simulation time comparison for a single run of [@korakianitis2006numerical]. CirculatorySystemModels.jl model was implemented from scratch. CellML model was imported into ModelingToolkit.jl using CellMLToolkit.jl, Matlab and Python models were created from the CellML code and downloaded from the [CellML Model Repository](http://models.cellml.org/exposure/c49d416ae3a5132882e6ea7479ba50f5/ModelMain.cellml/view).  \label{tbl:benchmarks}
 
-![(a-f) Results for simplified model [@korakianitis2006numerical] implemented in _CirculationModels.jl_. These results match the results from the CellML models (not shown). \label{fig:shi-results}](fig-shi-results.pdf){width=100%}
+![(a-f) Results for simplified model [@korakianitis2006numerical] implemented in _CirculatorySystemModels.jl_. These results match the results from the CellML models (not shown). \label{fig:shi-results}](fig-shi-results.pdf){width=100%}
 
 
 # Acknowledgements
