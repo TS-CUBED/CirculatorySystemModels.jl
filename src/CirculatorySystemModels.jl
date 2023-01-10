@@ -1,6 +1,4 @@
-"""
-$(DocStringExtensions.README)
-"""
+
 module CirculatorySystemModels
 
 using ModelingToolkit, DifferentialEquations
