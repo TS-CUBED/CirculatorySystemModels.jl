@@ -9,8 +9,3 @@ We believe this library will be useful (dare we say, could be a game changer?) f
 [![Build Status](https://github.com/TS-CUBED/CirculatorySystemModels.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/TS-CUBED/CirculatorySystemModels.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/TS-CUBED/CirculatorySystemModels.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/TS-CUBED/CirculatorySystemModels.jl)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7497881.svg)](https://doi.org/10.5281/zenodo.7497881)
-
-Cite as
-
-Torsten Schenkel. (2023). TS-CUBED/CirculatorySystemModels.jl. Zenodo. https://doi.org/10.5281/zenodo.7497881
-
