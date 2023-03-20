@@ -93,13 +93,13 @@ using DataFrames
 
     prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
     ##
-    @time sol = solve(prob, Tsit5(), reltol=1e-9, abstol=1e-9, saveat=19:0.01:20)
-    ShiSol = sol
+    @time sol1 = solve(prob, Tsit5(), reltol=1e-6, abstol=1e-9, saveat=19:0.01:20)
+    ShiSol = sol1
 
     ## Read benchmark data and compare
     ShiBench = CSV.read("ShiSimple.csv", DataFrame)
 
-    @test ShiSol.retcode == Success
+    @test SciMLBase.successful_retcode(ShiSol)
     @test sum((ShiSol[LV.V] .- ShiBench[!, :LV_V]) ./ ShiBench[!, :LV_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
     @test sum((ShiSol[RV.V] .- ShiBench[!, :RV_V]) ./ ShiBench[!, :RV_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
     @test sum((ShiSol[LA.V] .- ShiBench[!, :LA_V]) ./ ShiBench[!, :LA_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
@@ -206,14 +206,14 @@ end
 
     prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
     ##
-    @time sol = solve(prob, Tsit5(), reltol=1e-9, abstol=1e-9, saveat=19:0.01:20)
-    ShiSol = sol
+    @time sol2 = solve(prob, Tsit5(); reltol=1e-6, abstol=1e-9, saveat=19:0.01:20)
+    ShiSol = sol2
     ##
 
     ## Read benchmark data and compare
     ShiBench = CSV.read("ShiComplex.csv", DataFrame)
 
-    @test ShiSol.retcode == Success
+    @test SciMLBase.successful_retcode(ShiSol)
     @test sum((ShiSol[Heart.LV.V] .- ShiBench[!, :LV_V]) ./ ShiBench[!, :LV_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
     @test sum((ShiSol[Heart.RV.V] .- ShiBench[!, :RV_V]) ./ ShiBench[!, :RV_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
     @test sum((ShiSol[Heart.LA.V] .- ShiBench[!, :LA_V]) ./ ShiBench[!, :LA_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
