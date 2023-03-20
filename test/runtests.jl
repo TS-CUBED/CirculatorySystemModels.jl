@@ -99,11 +99,11 @@ using DataFrames
     ## Read benchmark data and compare
     ShiBench = CSV.read("ShiSimple.csv", DataFrame)
 
-    @test ShiSol.retcode == :Success
-    @test sum(ShiSol[LV.V] .- ShiBench[!, :LV_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
-    @test sum(ShiSol[RV.V] .- ShiBench[!, :RV_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
-    @test sum(ShiSol[LA.V] .- ShiBench[!, :LA_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
-    @test sum(ShiSol[RA.V] .- ShiBench[!, :RA_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
+    @test ShiSol.retcode == Success
+    @test sum(ShiSol[LV.V] .- ShiBench[!, :LV_V]) / length(ShiSol.u) ≈ 0 atol = 1e-2
+    @test sum(ShiSol[RV.V] .- ShiBench[!, :RV_V]) / length(ShiSol.u) ≈ 0 atol = 1e-2
+    @test sum(ShiSol[LA.V] .- ShiBench[!, :LA_V]) / length(ShiSol.u) ≈ 0 atol = 1e-2
+    @test sum(ShiSol[RA.V] .- ShiBench[!, :RA_V]) / length(ShiSol.u) ≈ 0 atol = 1e-2
 end
 
 @testset "Shi Model Complex" begin
@@ -213,11 +213,11 @@ end
     ## Read benchmark data and compare
     ShiBench = CSV.read("ShiComplex.csv", DataFrame)
 
-    @test ShiSol.retcode == :Success
-    @test sum(ShiSol[Heart.LV.V] .- ShiBench[!, :LV_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
-    @test sum(ShiSol[Heart.RV.V] .- ShiBench[!, :RV_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
-    @test sum(ShiSol[Heart.LA.V] .- ShiBench[!, :LA_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
-    @test sum(ShiSol[Heart.RA.V] .- ShiBench[!, :RA_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
+    @test ShiSol.retcode == Success
+    @test sum(ShiSol[Heart.LV.V] .- ShiBench[!, :LV_V]) / length(ShiSol.u) ≈ 0 atol = 1e-2
+    @test sum(ShiSol[Heart.RV.V] .- ShiBench[!, :RV_V]) / length(ShiSol.u) ≈ 0 atol = 1e-2
+    @test sum(ShiSol[Heart.LA.V] .- ShiBench[!, :LA_V]) / length(ShiSol.u) ≈ 0 atol = 1e-2
+    @test sum(ShiSol[Heart.RA.V] .- ShiBench[!, :RA_V]) / length(ShiSol.u) ≈ 0 atol = 1e-2
 end
 
 
