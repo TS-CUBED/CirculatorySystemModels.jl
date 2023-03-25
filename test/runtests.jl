@@ -1,3 +1,4 @@
+##
 using CirculatorySystemModels
 using DifferentialEquations
 using ModelingToolkit
@@ -5,18 +6,19 @@ using Test
 using CSV
 using DataFrames
 
+##
 # @testset "WK5" begin
 
 # end
 
 @testset "Shi Model" begin
-    ##
+##
     include("ShiParam.jl")
 
     ## Start Modelling
     @variables t
 
-    ### Ventricles
+    ## Ventricles
     @named LV = ShiChamber(V₀=v0_lv, p₀=p0_lv, Eₘᵢₙ=Emin_lv, Eₘₐₓ=Emax_lv, τ=τ, τₑₛ=τes_lv, τₑₚ=τed_lv, Eshift=0.0)
     # The atrium can be defined either as a ShiChamber with changed timing parameters, or as defined in the paper
     @named LA = ShiChamber(V₀=v0_la, p₀=p0_la, Eₘᵢₙ=Emin_la, Eₘₐₓ=Emax_la, τ=τ, τₑₛ=τpww_la / 2, τₑₚ=τpww_la, Eshift=τpwb_la)
@@ -93,27 +95,28 @@ using DataFrames
 
     prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
     ##
-    @time sol1 = solve(prob, Tsit5(), reltol=1e-6, abstol=1e-9, saveat=19:0.01:20)
-    ShiSol = sol1
+    @time sol = solve(prob, Tsit5(), reltol=1e-6, abstol=1e-9, saveat=19:0.01:20)
+    ShiSol = sol(19:0.01:20)
 
     ## Read benchmark data and compare
     ShiBench = CSV.read("ShiSimple.csv", DataFrame)
 
-    @test SciMLBase.successful_retcode(ShiSol)
+    @test SciMLBase.successful_retcode(sol)
     @test sum((ShiSol[LV.V] .- ShiBench[!, :LV_V]) ./ ShiBench[!, :LV_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
     @test sum((ShiSol[RV.V] .- ShiBench[!, :RV_V]) ./ ShiBench[!, :RV_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
     @test sum((ShiSol[LA.V] .- ShiBench[!, :LA_V]) ./ ShiBench[!, :LA_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
     @test sum((ShiSol[RA.V] .- ShiBench[!, :RA_V]) ./ ShiBench[!, :RA_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
+##
 end
 
 @testset "Shi Model Complex" begin
-    ##
+##
     include("ShiParam.jl")
-
+##
     ## Start Modelling
     @variables t
 
-    ### Shi Heart
+    ### Shi Heart (with AV stenosis: max AV opening angle = 40 degrees!)
     @named Heart = ShiHeart(τ=τ,
         LV_V₀=v0_lv, LV_p0=p0_lv, LV_Emin=Emin_lv, LV_Emax=Emax_lv, LV_τes=τes_lv, LV_τed=τed_lv, LV_Eshift=0.0,
         RV_V₀=v0_rv, RV_p0=p0_rv, RV_Emin=Emin_rv, RV_Emax=Emax_rv, RV_τes=τes_rv, RV_τed=τed_rv, RV_Eshift=0.0,
@@ -206,18 +209,19 @@ end
 
     prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
     ##
-    @time sol2 = solve(prob, Tsit5(); reltol=1e-6, abstol=1e-9, saveat=19:0.01:20)
-    ShiSol = sol2
+    @time sol = solve(prob, Tsit5(); reltol=1e-6, abstol=1e-9, saveat=19:0.01:20)
+    ShiSol = sol(19:0.01:20)
     ##
 
     ## Read benchmark data and compare
     ShiBench = CSV.read("ShiComplex.csv", DataFrame)
 
-    @test SciMLBase.successful_retcode(ShiSol)
+    @test SciMLBase.successful_retcode(sol)
     @test sum((ShiSol[Heart.LV.V] .- ShiBench[!, :LV_V]) ./ ShiBench[!, :LV_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
     @test sum((ShiSol[Heart.RV.V] .- ShiBench[!, :RV_V]) ./ ShiBench[!, :RV_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
     @test sum((ShiSol[Heart.LA.V] .- ShiBench[!, :LA_V]) ./ ShiBench[!, :LA_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
     @test sum((ShiSol[Heart.RA.V] .- ShiBench[!, :RA_V]) ./ ShiBench[!, :RA_V]) / length(ShiSol.u) ≈ 0 atol = 1e-3
+##
 end
 
 
@@ -225,22 +229,23 @@ end
 
 # Helpers to set up the tests
 # df = DataFrame(
-#     LV_V=ShiSol[LV.V],
-#     RV_V=ShiSol[RV.V],
-#     LA_V=ShiSol[LA.V],
-#     RA_V=ShiSol[RA.V],
-#     SAS_S_p=ShiSol[SAS.C.p],
-#     SAS_L_q=ShiSol[SAS.L.q],
-#     SAT_S_p=ShiSol[SAT.C.p],
-#     SAT_L_q=ShiSol[SAT.L.q],
-#     SVN_C_p=ShiSol[SVN.C.p],
-#     PAS_S_p=ShiSol[PAS.C.p],
-#     PAS_L_q=ShiSol[PAS.L.q],
-#     PAT_S_p=ShiSol[PAT.C.p],
-#     PAT_L_q=ShiSol[PAT.L.q],
-#     PVN_C_p=ShiSol[PVN.C.p]
+#     t=ShiSol.t,
+#     LV_V=ShiSol[Heart.LV.V],
+#     RV_V=ShiSol[Heart.RV.V],
+#     LA_V=ShiSol[Heart.LA.V],
+#     RA_V=ShiSol[Heart.RA.V],
+#     SAS_S_p=ShiSol[SystLoop.SAS.C.p],
+#     SAS_L_q=ShiSol[SystLoop.SAS.L.q],
+#     SAT_S_p=ShiSol[SystLoop.SAT.C.p],
+#     SAT_L_q=ShiSol[SystLoop.SAT.L.q],
+#     SVN_C_p=ShiSol[SystLoop.SVN.C.p],
+#     PAS_S_p=ShiSol[PulmLoop.PAS.C.p],
+#     PAS_L_q=ShiSol[PulmLoop.PAS.L.q],
+#     PAT_S_p=ShiSol[PulmLoop.PAT.C.p],
+#     PAT_L_q=ShiSol[PulmLoop.PAT.L.q],
+#     PVN_C_p=ShiSol[PulmLoop.PVN.C.p]
 # )
 
-# CSV.write("ShiComplex.df", df)
+# CSV.write("ShiComplex.csv", df)
 
-# df2 = CSV.read("ShiSimple.df", DataFrame)
+##
