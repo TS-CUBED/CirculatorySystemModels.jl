@@ -133,7 +133,7 @@ circ_eqs = [
 
 @named circ_model = compose(_circ_model,
                           [LV, AV, MV, Rs, Csa, Csv, ground])
-                     
+
 # ### Simplify the ODE system
 #
 # The crucial step in any acausal modelling is the sympification and reduction of the OD(A)E system to the minimal set of equations. ModelingToolkit.jl does this in the `structural_simplify` function.
