@@ -15,7 +15,7 @@ export Pin, OnePort, Ground, Resistor, QResistor, PoiseuilleResistor, Capacitor,
 end
 
 
-function Ground(; name, P=0.0)
+@component function Ground(; name, P=0.0)
         @named g = Pin()
         ps = @parameters P = P
         eqs = [g.p ~ P]
@@ -23,7 +23,7 @@ function Ground(; name, P=0.0)
 end
 
 
-function OnePort(; name)
+@component function OnePort(; name)
         @named in = Pin()
         @named out = Pin()
         sts = @variables Δp(t) = 0.0 q(t) = 0.0
@@ -50,7 +50,7 @@ Named parameters:
 
 `R`:       Resistance of the vessel to the fluid in mmHg*s/ml
 """
-function Resistor(; name, R=1.0)
+@component function Resistor(; name, R=1.0)
         @named oneport = OnePort()
         @unpack Δp, q = oneport
         ps = @parameters R = R
@@ -75,7 +75,7 @@ Named parameters:
 
 `K`: non-linear resistance of the vessel to the fluid in mmHg*s^2/ml^2
 """
-function QResistor(; name, K=1.0)
+@component function QResistor(; name, K=1.0)
         @named oneport = OnePort()
         @unpack Δp, q = oneport
         ps = @parameters K = K
@@ -100,7 +100,7 @@ Named parameters:
 
 `C`:      capacitance of the vessel in ml/mmHg
 """
-function Capacitor(; name, C=1.0)
+@component function Capacitor(; name, C=1.0)
         @named oneport = OnePort()
         @unpack Δp, q = oneport
         ps = @parameters C = C
@@ -126,7 +126,7 @@ Named parameters:
 
 `L`:       Inertia of the fluid in mmHg*s^2/ml
 """
-function Inductance(; name, L=1.0)
+@component function Inductance(; name, L=1.0)
         @named oneport = OnePort()
         @unpack Δp, q = oneport
         ps = @parameters L = L
@@ -156,7 +156,7 @@ Named parameters:
 
 `L`:       length of vessel segment in cm
 """
-function PoiseuilleResistor(; name, μ=3e-2, r=0.1, L=1)
+@component function PoiseuilleResistor(; name, μ=3e-2, r=0.1, L=1)
         @named oneport = OnePort()
         @unpack Δp, q = oneport
         ps = @parameters μ = μ r = r L = L
@@ -188,7 +188,7 @@ Named parameters:
 
 `C`:       Vessel compliance in ml/mmHg
 """
-function Compliance(; name, V₀=0.0, C=1.0)
+@component function Compliance(; name, V₀=0.0, C=1.0)
         @named in = Pin()
         @named out = Pin()
         sts = @variables V(t) = V₀ p(t) = 0.0 #q(t) = 0.0
@@ -224,7 +224,7 @@ Named parameters:
 
 `E`:       Vessel elastance in ml/mmHg. Equivalent to compliance as E=1/C
 """
-function Elastance(; name, V₀=0.0, E=1.0)
+@component function Elastance(; name, V₀=0.0, E=1.0)
         @named in = Pin()
         @named out = Pin()
         sts = @variables V(t) = V₀ p(t) = 0.0 #q(t) = 0.0
@@ -260,7 +260,7 @@ Named parameters:
 
 `C`:       Vessel compliance in ml/mmHg
 """
-function Compliance_ep(; name, V₀=0.0, C=1.0)
+@component function Compliance_ep(; name, V₀=0.0, C=1.0)
         @named in = Pin()
         @named out = Pin()
         @named ep = Pin() # external pressure
@@ -299,7 +299,7 @@ Named parameters:
 
 `E`:       Vessel elastance in ml/mmHg. Equivalent to compliance as E=1/C
 """
-function Elastance_ep(; name, V₀=0.0, E=1.0)
+@component function Elastance_ep(; name, V₀=0.0, E=1.0)
         @named in = Pin()
         @named out = Pin()
         @named ep = Pin() # external pressure
@@ -337,7 +337,7 @@ Named parameters:
 
 `P`:     Constant pressure in mmHg
 """
-function ConstantPressure(; name, P=1.0)
+@component function ConstantPressure(; name, P=1.0)
         @named oneport = OnePort()
         @unpack Δp = oneport
         ps = @parameters P = P
@@ -362,7 +362,7 @@ Named parameters:
 
 `Q`:     Constant flow in cm^3/s (ml/s)
 """
-function ConstantFlow(; name, Q=1.0)
+@component function ConstantFlow(; name, Q=1.0)
         @named oneport = OnePort()
         @unpack q = oneport
         ps = @parameters Q = Q
@@ -389,7 +389,7 @@ Named parameters:
 
 `fun`:   Function which modulates the input
 """
-function DrivenPressure(; name, P=1.0, fun)
+@component function DrivenPressure(; name, P=1.0, fun)
         @named oneport = OnePort()
         @unpack Δp = oneport
         ps = @parameters P = P
@@ -418,7 +418,7 @@ Named parameters:
 
 `fun`:   Function which modulates the input
 """
-function DrivenFlow(; name, Q=1.0, fun)
+@component function DrivenFlow(; name, Q=1.0, fun)
         @named oneport = OnePort()
         @unpack q = oneport
         ps = @parameters Q = Q
@@ -444,7 +444,7 @@ Named parameters:
 
 `fun`:     function object for elastance (must be `fun(t)`)
 """
-function Chamber(; name, V₀=0.0, E=1.0, fun)
+@component function Chamber(; name, V₀=0.0, E=1.0, fun)
         @named in = Pin()
         @named out = Pin()
         sts = @variables V(t) = 2.0 p(t) = 0.0
@@ -506,7 +506,7 @@ Named parameters:
 to 1/max(e(t)), which ensures that e(t) varies between zero and 1.0, such that
 E(t) varies between Eₘᵢₙ and Eₘₐₓ.
 """
-function DHChamber(; name, V₀, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, k, Eshift=0.0, Ev=Inf)
+@component function DHChamber(; name, V₀, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, k, Eshift=0.0, Ev=Inf)
         @named in = Pin()
         @named out = Pin()
         sts = @variables V(t) = 2.0 p(t) = 0.0
@@ -548,7 +548,7 @@ end
 """
 `DHdelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)`
 
-Helper function for `DHChamber`
+Helper @component function for `DHChamber`
 """
 function DHdelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)
         tᵢ = rem(t + (1 - Eshift) * τ, τ)
@@ -587,7 +587,7 @@ Named parameters:
 
 `Ev`:     venous elastance (for atria model), set to `Inf` for ventricle
 """
-function ShiChamber(; name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift=0.0)
+@component function ShiChamber(; name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift=0.0)
         @named in = Pin()
         @named out = Pin()
         sts = @variables V(t) = 0.0 p(t) = 0.0
@@ -698,7 +698,7 @@ name    name of the element
 
 `τpww`  Atrial offset time in s
 """
-function ShiAtrium(; name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τpwb, τpww)
+@component function ShiAtrium(; name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τpwb, τpww)
         @named in = Pin()
         @named out = Pin()
         sts = @variables V(t) = 0.0 p(t) = 0.0
@@ -852,7 +852,7 @@ Named parameters:
 
 `TV_θmin`   Tricuspid valve minimum opening angle in rad
 """
-function ShiHeart(; name, τ, LV_V₀, LV_p0, LV_Emin, LV_Emax, LV_τes, LV_τed, LV_Eshift, RV_V₀, RV_p0, RV_Emin, RV_Emax, RV_τes, RV_τed, RV_Eshift, LA_V₀, LA_p0, LA_Emin, LA_Emax, LA_τes, LA_τed, LA_Eshift, RA_V₀, RA_p0, RA_Emin, RA_Emax, RA_τes, RA_τed, RA_Eshift, AV_CQ, AV_Kp, AV_Kf, AV_Kb, AV_Kv, AV_θmax, AV_θmin, PV_CQ, PV_Kp, PV_Kf, PV_Kb, PV_Kv, PV_θmax, PV_θmin, MV_CQ, MV_Kp, MV_Kf, MV_Kb, MV_Kv, MV_θmax, MV_θmin, TV_CQ, TV_Kp, TV_Kf, TV_Kb, TV_Kv, TV_θmax, TV_θmin)
+@component function ShiHeart(; name, τ, LV_V₀, LV_p0, LV_Emin, LV_Emax, LV_τes, LV_τed, LV_Eshift, RV_V₀, RV_p0, RV_Emin, RV_Emax, RV_τes, RV_τed, RV_Eshift, LA_V₀, LA_p0, LA_Emin, LA_Emax, LA_τes, LA_τed, LA_Eshift, RA_V₀, RA_p0, RA_Emin, RA_Emax, RA_τes, RA_τed, RA_Eshift, AV_CQ, AV_Kp, AV_Kf, AV_Kb, AV_Kv, AV_θmax, AV_θmin, PV_CQ, PV_Kp, PV_Kf, PV_Kb, PV_Kv, PV_θmax, PV_θmin, MV_CQ, MV_Kp, MV_Kf, MV_Kb, MV_Kv, MV_θmax, MV_θmin, TV_CQ, TV_Kp, TV_Kf, TV_Kb, TV_Kv, TV_θmax, TV_θmin)
         @named LHin = Pin()
         @named LHout = Pin()
         @named RHin = Pin()
@@ -913,7 +913,7 @@ Named parameters:
 
 `R`     Resistance across the valve in mmHg*s/ml
 """
-function ResistorDiode(; name, R=1e-3)
+@component function ResistorDiode(; name, R=1e-3)
         @named oneport = OnePort()
         @unpack Δp, q = oneport
         ps = @parameters R = R
@@ -937,7 +937,7 @@ Named parameters:
 
 `CQ`    Flow coefficent in ml/(s*mmHg^0.5)
 """
-function OrificeValve(; name, CQ=1.0)
+@component function OrificeValve(; name, CQ=1.0)
         @named oneport = OnePort()
         @unpack Δp, q = oneport
         ps = @parameters CQ = CQ
@@ -974,7 +974,7 @@ Named parameters:
 
 `θmin`  Valve minimum opening angle in rad
 """
-function ShiValve(; name, CQ, Kp, Kf, Kb, Kv, θmax, θmin)
+@component function ShiValve(; name, CQ, Kp, Kf, Kb, Kv, θmax, θmin)
         @named oneport = OnePort()
         @unpack Δp, q = oneport
         ps = @parameters CQ = CQ Kp = Kp Kf = Kf Kb = Kb Kv = Kv θmax = θmax θmin = θmin
@@ -1013,7 +1013,7 @@ end
 
 
 """
-function MynardValve_SemiLunar(; name, ρ, Leff, Mrg, Mst, Ann, Kvc, Kvo)
+@component function MynardValve_SemiLunar(; name, ρ, Leff, Mrg, Mst, Ann, Kvc, Kvo)
 
 Implements the Mynard description for flow across the semilunar valves, full description in [Mynard].
 This valve description corresponds to the semilunar valves where interia is an effect we consider.
@@ -1039,7 +1039,7 @@ name    name of the element
 Δp is calculated in mmHg
 q is calculated in cm^3/s (ml/s)
 """
-function MynardValve_SemiLunar(; name, ρ, Leff, Mrg, Mst, Ann, Kvc, Kvo)
+@component function MynardValve_SemiLunar(; name, ρ, Leff, Mrg, Mst, Ann, Kvc, Kvo)
         @named oneport = OnePort()
         @unpack Δp, q = oneport
         ps = @parameters ρ = ρ Leff = Leff Mrg = Mrg Mst = Mst Ann = Ann Kvc = Kvc Kvo = Kvo
@@ -1061,7 +1061,7 @@ end
 
 
 """
-function MynardValve_Atrioventricular(; name, ρ, Mrg, Mst, Ann, Kvc, Kvo)
+@component function MynardValve_Atrioventricular(; name, ρ, Mrg, Mst, Ann, Kvc, Kvo)
 
 Implements the Mynard description for flow across the atrioventricular valves, full description in [Mynard].
 This valve description corresponds to the atrioventricular valves where interia is not considered.
@@ -1086,7 +1086,7 @@ name    name of the element
 Δp is calculated in mmHg
 q is calculated in cm^3/s (ml/s)
 """
-function MynardValve_Atrioventricular(; name, ρ, Mrg, Mst, Ann, Kvc, Kvo)
+@component function MynardValve_Atrioventricular(; name, ρ, Mrg, Mst, Ann, Kvc, Kvo)
         @named oneport = OnePort()
         @unpack Δp, q = oneport
         ps = @parameters ρ = ρ Mrg = Mrg Mst = Mst Ann = Ann Kvc = Kvc Kvo = Kvo
@@ -1124,7 +1124,7 @@ Named parameters:
 
 `C`:       Arterial compliance in ml/mmHg
 """
-function WK3(; name, Rc=1.0, Rp=1.0, C=1.0)
+@component function WK3(; name, Rc=1.0, Rp=1.0, C=1.0)
         @named in = Pin()
         @named out = Pin()
 
@@ -1171,7 +1171,7 @@ Named parameters:
 
 `E`:       Arterial elastance in mmHg/ml
 """
-function WK3E(; name, Rc=1.0, Rp=1.0, E=1.0)
+@component function WK3E(; name, Rc=1.0, Rp=1.0, E=1.0)
         @named in = Pin()
         @named out = Pin()
         sts = @variables p(t) = 0.0 q(t) = 0.0
@@ -1222,7 +1222,7 @@ Named parameters:
 
 `C`:       Arterial compliance in ml/mmHg
 """
-function WK4_S(; name, Rc=1.0, L=1.0, Rp=1.0, C=1.0)
+@component function WK4_S(; name, Rc=1.0, L=1.0, Rp=1.0, C=1.0)
         @named in = Pin()
         @named out = Pin()
 
@@ -1276,7 +1276,7 @@ Named parameters:
 
 `E`:       Arterial elastance in mmHg/ml
 """
-function WK4_SE(; name, Rc=1.0, L=1.0, Rp=1.0, E=1.0)
+@component function WK4_SE(; name, Rc=1.0, L=1.0, Rp=1.0, E=1.0)
         @named in = Pin()
         @named out = Pin()
 
@@ -1330,7 +1330,7 @@ Named parameters:
 
 `C`:       Arterial compliance in ml/mmHg
 """
-function WK4_P(; name, Rc=1.0, L=1.0, Rp=1.0, C=1.0)
+@component function WK4_P(; name, Rc=1.0, L=1.0, Rp=1.0, C=1.0)
         @named in = Pin()
         @named out = Pin()
 
@@ -1383,7 +1383,7 @@ Named parameters:
 
 `E`:       Arterial elastance in mmHg/ml
 """
-function WK4_PE(; name, Rc=1.0, L=1.0, Rp=1.0, E=1.0)
+@component function WK4_PE(; name, Rc=1.0, L=1.0, Rp=1.0, E=1.0)
         @named in = Pin()
         @named out = Pin()
 
@@ -1416,7 +1416,7 @@ function WK4_PE(; name, Rc=1.0, L=1.0, Rp=1.0, E=1.0)
 end
 
 
-function WK5(; name, R1=1.0, C1=1.0, R2=1.0, C2=1.0, R3=1.0)
+@component function WK5(; name, R1=1.0, C1=1.0, R2=1.0, C2=1.0, R3=1.0)
         @named in = Pin()
         @named out = Pin()
 
@@ -1451,7 +1451,7 @@ function WK5(; name, R1=1.0, C1=1.0, R2=1.0, C2=1.0, R3=1.0)
 end
 
 
-function WK5E(; name, R1=1.0, E1=1.0, R2=1.0, E2=1.0, R3=1.0)
+@component function WK5E(; name, R1=1.0, E1=1.0, R2=1.0, E2=1.0, R3=1.0)
         @named in = Pin()
         @named out = Pin()
         sts = @variables Δp(t) = 0.0 q(t) = 0.0
@@ -1503,7 +1503,7 @@ Named parameters:
 
 `C`:       Component compliance in ml/mmHg
 """
-function CR(; name, R=1.0, C=1.0)
+@component function CR(; name, R=1.0, C=1.0)
         @named in = Pin()
         @named out = Pin()
 
@@ -1549,7 +1549,7 @@ Named parameters:
 
 `L`:       Component blood inertia in mmHg*s^2/ml
 """
-function CRL(; name, C=1.0, R=1.0, L=1.0)
+@component function CRL(; name, C=1.0, R=1.0, L=1.0)
         @named in = Pin()
         @named out = Pin()
 
@@ -1598,7 +1598,7 @@ Named parameters:
 
 `R3`:      Component resistance in mmHg*s/ml
 """
-function RRCR(; name, R1=1.0, R2=1.0, R3=1.0, C=1.0)
+@component function RRCR(; name, R1=1.0, R2=1.0, R3=1.0, C=1.0)
         @named in = Pin()
         @named out = Pin()
         @named ep = Pin()    # base pressure pin
@@ -1667,7 +1667,7 @@ Named parameters:
 
 `SVN_R`:   Vein resistance in mmHg*s/ml
 """
-function ShiSystemicLoop(; name, SAS_C, SAS_R, SAS_L, SAT_C, SAT_R, SAT_L, SAR_R, SCP_R, SVN_C, SVN_R)
+@component function ShiSystemicLoop(; name, SAS_C, SAS_R, SAS_L, SAT_C, SAT_R, SAT_L, SAR_R, SCP_R, SVN_C, SVN_R)
         @named in = Pin()
         @named out = Pin()
 
@@ -1737,7 +1737,7 @@ Named parameters:
 
 `PVN_R`:   Vein resistance in mmHg*s/ml
 """
-function ShiPulmonaryLoop(; name, PAS_C, PAS_R, PAS_L, PAT_C, PAT_R, PAT_L, PAR_R, PCP_R, PVN_C, PVN_R)
+@component function ShiPulmonaryLoop(; name, PAS_C, PAS_R, PAS_L, PAT_C, PAT_R, PAT_L, PAR_R, PCP_R, PVN_C, PVN_R)
         @named in = Pin()
         @named out = Pin()
 
