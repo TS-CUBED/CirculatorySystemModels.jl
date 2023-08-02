@@ -1,6 +1,9 @@
-##
-using ModelingToolkit, DifferentialEquations, Plots
+# # Importing the required packages
+
 using CirculatorySystemModels
+using CirculatorySystemModels.ModelingToolkit
+using CirculatorySystemModels.DifferentialEquations
+using Plots, DisplayAs
 
 # # A simple single-chamber model
 #
@@ -66,7 +69,7 @@ MCFP = 7.0
 #
 # $k$ is a scaling factor to assure that $e(t)$ has a maximum of $e(t)_{max} = 1$:
 #
-# $$k = \max \left(\frac{\left(\tau / \tau_1\right)^{n_1}}{1+\left(\tau / \tau_1\right)^{n_1}} \times \frac{1}{1+\left(\tau / \tau_2\right)^{n_2}} \right)^{-1}$$ .
+# $$k = \max \left(\frac{\left(\tau / \tau_1\right)^{n_1}}{1+\left(\tau / \tau_1\right)^{n_1}} \times \frac{1}{1+\left(\tau / \tau_2\right)^{n_2}} \right)^{-1}$$
 #
 
 nstep = 1000
@@ -171,12 +174,9 @@ prob = ODEProblem(circ_sys, u0, tspan)
 #
 # The ODE problem is now in the MTK/DifferentialEquations.jl format and we can use any DifferentialEquations.jl solver to solve it:
 #
-sol = solve(prob, Vern7(), reltol=1e-12, abstol=1e-12);
-##
+sol = solve(prob, Vern7(), reltol=1e-12, abstol=1e-12)
 
 # ## Results
-using Plots
-using DisplayAs
 
 p1 = plot(sol, idxs=[LV.p,  Csa.in.p], tspan=(16 * τ, 17 * τ), xlabel = "Time [s]", ylabel = "Pressure [mmHg]",  hidexaxis = nothing) # Make a line plot
 p2 = plot(sol, idxs=[LV.V], tspan=(16 * τ, 17 * τ),xlabel = "Time [s]", ylabel = "Volume [ml]",  linkaxes = :all)
