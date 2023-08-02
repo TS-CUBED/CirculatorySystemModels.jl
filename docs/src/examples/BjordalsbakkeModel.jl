@@ -80,9 +80,9 @@ kLV = 1 / maximum((t ./ Tau1fLV).^n1LV ./ (1 .+ (t ./ Tau1fLV).^n1LV) .* 1 ./ (1
 
 # ## Set up the model elements
 #
-# Set up time as a parameter `t`
+# Set up time as a variable `t`
 #
-@parameters t
+@variables t
 
 # Heart is modelled as a single chamber (we call it `LV` for "Left Ventricle" so the model can be extended later, if required):
 #
