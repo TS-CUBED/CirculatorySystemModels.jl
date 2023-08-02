@@ -67,7 +67,7 @@ MCFP = 7.0
 #
 # $$e(\tau)= k \times \frac{\left(\tau / \tau_1\right)^{n_1}}{1+\left(\tau / \tau_1\right)^{n_1}} \times \frac{1}{1+\left(\tau / \tau_2\right)^{n_2}}$$
 #
-# $k$ is a scaling factor to assure that $e(t)$ has a maximum of $e(t)_{max} = 1$:
+# and $k$ is a scaling factor to assure that $e(t)$ has a maximum of $e(t)_{max} = 1$:
 #
 # $$k = \max \left(\frac{\left(\tau / \tau_1\right)^{n_1}}{1+\left(\tau / \tau_1\right)^{n_1}} \times \frac{1}{1+\left(\tau / \tau_2\right)^{n_2}} \right)^{-1}$$
 #
