@@ -145,7 +145,7 @@ circ_sys = structural_simplify(circ_model)
 
 # `circ_sys` is now the minimal system of equations. In this case it consists of 3 ODEs for the three pressures.
 #
-# _Note: `structural_simplify` reduces and optimises the ODE system. It is, therefore, not always obvious, which states it will use and which it will drop. We can use the `states` and `observed` function to check this. It is recommended to do this, since small changes can reorder states, observables, and parameters._
+# _Note: this reduces and optimises the ODE system. It is, therefore, not always obvious, which states it will use and which it will drop. We can use the `states` and `observed` function to check this. It is recommended to do this, since small changes can reorder states, observables, and parameters._
 #
 # States in the system are now:
 states(circ_sys)
@@ -174,7 +174,7 @@ prob = ODEProblem(circ_sys, u0, tspan)
 #
 # The ODE problem is now in the MTK/DifferentialEquations.jl format and we can use any DifferentialEquations.jl solver to solve it:
 #
-sol = solve(prob, Vern7(), reltol=1e-12, abstol=1e-12)
+sol = solve(prob, Vern7(), reltol=1e-12, abstol=1e-12);
 
 # ## Results
 
