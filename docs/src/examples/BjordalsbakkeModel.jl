@@ -145,7 +145,7 @@ circ_sys = structural_simplify(circ_model)
 
 # `circ_sys` is now the minimal system of equations. In this case it consists of 3 ODEs for the three pressures.
 #
-# _Note: `structural\_simplify` reduces and optimises the ODE system. It is, therefore, not always obvious, which states it will use and which it will drop. We can use the `states` and `observed` function to check this. It is recommended to do this, since small changes can reorder states, observables, and parameters._
+# _Note: `structural_simplify` reduces and optimises the ODE system. It is, therefore, not always obvious, which states it will use and which it will drop. We can use the `states` and `observed` function to check this. It is recommended to do this, since small changes can reorder states, observables, and parameters._
 #
 # States in the system are now:
 states(circ_sys)

@@ -88,7 +88,7 @@ where $e$ is a double-Hill function, i.e., two Hill-functions, which are multipl
 
 $$e(\tau)= k \times \frac{\left(\tau / \tau_1\right)^{n_1}}{1+\left(\tau / \tau_1\right)^{n_1}} \times \frac{1}{1+\left(\tau / \tau_2\right)^{n_2}}$$
 
-$k$ is a scaling factor to assure that $e(t)$ has a maximum of $e(t)_{max} = 1$:
+and $k$ is a scaling factor to assure that $e(t)$ has a maximum of $e(t)_{max} = 1$:
 
 $$k = \max \left(\frac{\left(\tau / \tau_1\right)^{n_1}}{1+\left(\tau / \tau_1\right)^{n_1}} \times \frac{1}{1+\left(\tau / \tau_2\right)^{n_2}} \right)^{-1}$$
 
@@ -101,10 +101,10 @@ kLV = 1 / maximum((t ./ Tau1fLV).^n1LV ./ (1 .+ (t ./ Tau1fLV).^n1LV) .* 1 ./ (1
 
 ## Set up the model elements
 
-Set up time as a parameter `t`
+Set up time as a variable `t`
 
 ````@example BjordalsbakkeModel
-@parameters t
+@variables t
 ````
 
 Heart is modelled as a single chamber (we call it `LV` for "Left Ventricle" so the model can be extended later, if required):
@@ -182,7 +182,7 @@ circ_sys = structural_simplify(circ_model)
 
 `circ_sys` is now the minimal system of equations. In this case it consists of 3 ODEs for the three pressures.
 
-_Note: `structural_simplify` reduces and optimises the ODE system. It is, therefore, not always obvious, which states it will use and which it will drop. We can use the `states` and `observed` function to check this. It is recommended to do this, since small changes can reorder states, observables, and parameters._
+_Note: `structural\_simplify` reduces and optimises the ODE system. It is, therefore, not always obvious, which states it will use and which it will drop. We can use the `states` and `observed` function to check this. It is recommended to do this, since small changes can reorder states, observables, and parameters._
 
 States in the system are now:
 
