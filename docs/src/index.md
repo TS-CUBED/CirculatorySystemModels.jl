@@ -45,7 +45,7 @@ electrical analogon models. To denote the pressure drop over a
 component, this model uses the symbol $\Delta p$.
 
 Time is a variable in all the symbolic operations, so needs to be
-defined as such (do not use `t` as a variable name elsewhere!). Parameters can be set using the `@variables` macro.
+defined as such (do not use `t` as a variable name elsewhere!). Variables can be set using the `@variables` macro.
 
 ```julia
 @variables t
