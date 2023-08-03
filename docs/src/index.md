@@ -17,7 +17,7 @@ The acausal modelling approach in MTK was chosen to support a "if you can draw i
 
 The main model states that are modelled throughout these models are:
 
-- _volume flow rate_ (at nodes and through elements): $q\ [\mathrm{ml/s}]\ [\mathrm{cm^{3}/s}]$. Flow into an element is positive, flow out of an element is negative.
+- _volume flow rate_ (at nodes and through elements): $q\ [\mathrm{cm^{3}/s}]$ ($[\mathrm{ml/s}]$). Flow into an element is positive, flow out of an element is negative.
 - _pressure_ (at nodes): $p\ [\mathrm{mm_{{Hg}}}]$.
 - _pressure difference_ (over elements): $\Delta p\ [\mathrm{mm_{{Hg}}}]$. The pressure difference is following the usual fluid mechanical definition $\Delta p = p_{out} - p_{in}$. and is usually negative in flow direction!
 
