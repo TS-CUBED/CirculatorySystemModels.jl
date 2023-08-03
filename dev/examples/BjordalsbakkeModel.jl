@@ -174,7 +174,7 @@ prob = ODEProblem(circ_sys, u0, tspan)
 #
 # The ODE problem is now in the MTK/DifferentialEquations.jl format and we can use any DifferentialEquations.jl solver to solve it:
 #
-sol = solve(prob, Vern7(), reltol=1e-12, abstol=1e-12)
+sol = solve(prob, Vern7(), reltol=1e-12, abstol=1e-12);
 
 # ## Results
 
