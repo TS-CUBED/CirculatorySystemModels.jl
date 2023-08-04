@@ -3,7 +3,7 @@
 using CirculatorySystemModels
 using CirculatorySystemModels.ModelingToolkit
 using CirculatorySystemModels.DifferentialEquations
-using Plots, DisplayAs
+using Plots
 
 # # A simple single-chamber model
 #
@@ -182,8 +182,4 @@ p2 = plot(sol, idxs=[LV.V], tspan=(16 * τ, 17 * τ),xlabel = "Time [s]", ylabel
 p3 = plot(sol, idxs=[Csa.in.q,Csv.in.q], tspan=(16 * τ, 17 * τ),xlabel = "Time [s]", ylabel = "Flow rate [ml/s]", linkaxes = :all)
 p4 = plot(sol, idxs=(LV.V, LV.p), tspan=(16 * τ, 17 * τ),xlabel = "Volume [ml]", ylabel = "Pressure [mmHg]", linkaxes = :all)
 
-img = plot(p1, p2, p3, p4; layout=@layout([a b; c d]), legend = true)
-
-img = DisplayAs.Text(DisplayAs.PNG(img))
-
-img
+plot(p1, p2, p3, p4; layout=@layout([a b; c d]), legend = true)
