@@ -160,8 +160,16 @@ parameters(circ_sys)
 #
 # First defined initial conditions `u0` and the time span for simulation:
 #
-u0 = [MCFP, MCFP, MCFP]
+# _Note: the initial conditions are defined as a parameter map, rather than a vector, since the parameter map allows for changes in order._
 
+u0 = [
+        LV.p => MCFP
+        Csa.p => MCFP
+        Csv.p => MCFP
+        ]
+
+# 
+        
 tspan = (0, 20)
 
 # in this case we use the mean cardiac filling pressure as initial condition, and simulate 20 seconds.
