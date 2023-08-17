@@ -3,7 +3,7 @@
 using CirculatorySystemModels
 using CirculatorySystemModels.ModelingToolkit
 using CirculatorySystemModels.DifferentialEquations
-using Plots, DisplayAs
+using Plots
 
 # # A simple single-chamber model
 #
@@ -160,8 +160,16 @@ parameters(circ_sys)
 #
 # First defined initial conditions `u0` and the time span for simulation:
 #
-u0 = [MCFP, MCFP, MCFP]
+# _Note: the initial conditions are defined as a parameter map, rather than a vector, since the parameter map allows for changes in order._
 
+u0 = [
+        LV.p => MCFP
+        Csa.p => MCFP
+        Csv.p => MCFP
+        ]
+
+# 
+        
 tspan = (0, 20)
 
 # in this case we use the mean cardiac filling pressure as initial condition, and simulate 20 seconds.
@@ -177,13 +185,9 @@ prob = ODEProblem(circ_sys, u0, tspan)
 sol = solve(prob, Vern7(), reltol=1e-12, abstol=1e-12);
 
 # ## Results
-
 p1 = plot(sol, idxs=[LV.p,  Csa.in.p], tspan=(16 * τ, 17 * τ), xlabel = "Time [s]", ylabel = "Pressure [mmHg]",  hidexaxis = nothing) # Make a line plot
 p2 = plot(sol, idxs=[LV.V], tspan=(16 * τ, 17 * τ),xlabel = "Time [s]", ylabel = "Volume [ml]",  linkaxes = :all)
 p3 = plot(sol, idxs=[Csa.in.q,Csv.in.q], tspan=(16 * τ, 17 * τ),xlabel = "Time [s]", ylabel = "Flow rate [ml/s]", linkaxes = :all)
+p4 = plot(sol, idxs=(LV.V, LV.p), tspan=(16 * τ, 17 * τ),xlabel = "Volume [ml]", ylabel = "Pressure [mmHg]", linkaxes = :all)
 
-img = plot(p1, p2, p3, layout=@layout([a; b c]), legend = true)
-
-img = DisplayAs.Text(DisplayAs.PNG(img))
-
-img
+plot(p1, p2, p3, p4; layout=@layout([a b; c d]), legend = true)
