@@ -1,7 +1,7 @@
 ##
 using CirculatorySystemModels
-using DifferentialEquations
-using ModelingToolkit
+using CirculatorySystemModels.DifferentialEquations
+using CirculatorySystemModels.ModelingToolkit
 using Test
 using CSV
 using DataFrames
@@ -436,7 +436,7 @@ end
     # First defined initial conditions `u0` and the time span for simulation:
     #
     u0 = [
-        Lv.p => MCFP
+        LV.p => MCFP
         Csa.p => MCFP
         Csv.p => MCFP
         ]
