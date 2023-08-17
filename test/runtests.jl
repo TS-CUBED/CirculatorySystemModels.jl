@@ -89,9 +89,26 @@ using DataFrames
 
     ## Setup ODE
     # Initial Conditions for Shi Valve
-    #u0 = [LV_Vt0, RV_Vt0, LA_Vt0, RA_Vt0, pt0sas, qt0sas , pt0sat, qt0sat, pt0svn, pt0pas, qt0pas, pt0pat, qt0pat, pt0pvn, 0, 0, 0, 0,0, 0, 0, 0]
+    # u0 = [LV_Vt0, RV_Vt0, LA_Vt0, RA_Vt0, pt0sas, qt0sas , pt0sat, qt0sat, pt0svn, pt0pas, qt0pas, pt0pat, qt0pat, pt0pvn, 0, 0, 0, 0,0, 0, 0, 0]
     # and for OrificeValve --- Commment this next line to use ShiValves
-    u0 = [LV_Vt0, RV_Vt0, LA_Vt0, RA_Vt0, pt0sas, qt0sas, pt0sat, qt0sat, pt0svn, pt0pas, qt0pas, pt0pat, qt0pat, pt0pvn]
+    # u0 = [LV_Vt0, RV_Vt0, LA_Vt0, RA_Vt0, pt0sas, qt0sas, pt0sat, qt0sat, pt0svn, pt0pas, qt0pas, pt0pat, qt0pat, pt0pvn]
+
+    u0 = [
+            LV.V => LV_Vt0
+            RV.V => RV_Vt0
+            LA.V => LA_Vt0
+            RA.V => RA_Vt0
+            SAS.C.p => pt0sas
+            SAS.L.q => qt0sas
+            SAT.C.p => pt0sat
+            SAT.L.q => qt0sat
+            SVN.C.p => pt0svn
+            PAS.C.p => pt0pas
+            PAS.L.q => qt0pas
+            PAT.C.p => pt0pat
+            PAT.L.q => qt0pat
+            PVN.C.p => pt0pvn
+    ]
 
     prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
     ##
@@ -209,7 +226,32 @@ end
 
     ## Setup ODE
     # Initial Conditions for Shi Valve
-    u0 = [LV_Vt0, RV_Vt0, LA_Vt0, RA_Vt0, 0, 0, 0, 0, 0, 0, 0, 0, pt0sas, qt0sas, pt0sat, qt0sat, pt0svn, pt0pas, qt0pas, pt0pat, qt0pat, pt0pvn]
+    # u0 = [LV_Vt0, RV_Vt0, LA_Vt0, RA_Vt0, 0, 0, 0, 0, 0, 0, 0, 0, pt0sas, qt0sas, pt0sat, qt0sat, pt0svn, pt0pas, qt0pas, pt0pat, qt0pat, pt0pvn]
+
+    u0 = [
+        Heart.LV.V => LV_Vt0
+        Heart.RV.V => RV_Vt0
+        Heart.LA.V => LA_Vt0
+        Heart.RA.V => RA_Vt0
+        Heart.AV.θ => 0
+        Heart.AV.ω => 0
+        Heart.MV.θ => 0
+        Heart.MV.ω => 0
+        Heart.TV.θ => 0
+        Heart.TV.ω => 0
+        Heart.PV.θ => 0
+        Heart.PV.ω => 0
+        SystLoop.SAS.C.p => pt0sas
+        SystLoop.SAS.L.q => qt0sas
+        SystLoop.SAT.C.p => pt0sat
+        SystLoop.SAT.L.q => qt0sat
+        SystLoop.SVN.C.p => pt0svn
+        PulmLoop.PAS.C.p => pt0pas
+        PulmLoop.PAS.L.q => qt0pas
+        PulmLoop.PAT.C.p => pt0pat
+        PulmLoop.PAT.L.q => qt0pat
+        PulmLoop.PVN.C.p => pt0pvn
+    ]
 
     prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
     ##
@@ -393,7 +435,11 @@ end
     #
     # First defined initial conditions `u0` and the time span for simulation:
     #
-    u0 = [MCFP, MCFP, MCFP]
+    u0 = [
+        Lv.p => MCFP
+        Csa.p => MCFP
+        Csv.p => MCFP
+        ]
 
     tspan = (0, 20)
 
