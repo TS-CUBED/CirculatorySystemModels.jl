@@ -35,27 +35,27 @@ using DataFrames
 
     ####### Systemic Loop #######
     # Systemic Aortic Sinus ##
-    @named SAS = CRL(C=Csas, R=Rsas, L=Lsas)
+    @named SAS = CRL(C.C = Csas, R.R = Rsas, L.L = Lsas)
     # Systemic Artery ##
-    @named SAT = CRL(C=Csat, R=Rsat, L=Lsat)
+    @named SAT = CRL(C.C = Csat, R.R = Rsat, L.L = Lsat)
     # Systemic Arteriole ##
-    @named SAR = Resistor(R=Rsar)
+    @named SAR = Resistor(R = Rsar)
     # Systemic Capillary ##
-    @named SCP = Resistor(R=Rscp)
+    @named SCP = Resistor(R = Rscp)
     # Systemic Vein ##
-    @named SVN = CR(R=Rsvn, C=Csvn)
+    @named SVN = CR(R.R = Rsvn, C.C = Csvn)
 
     ####### Pulmonary Loop #######
     # Pulmonary Aortic Sinus ##
-    @named PAS = CRL(C=Cpas, R=Rpas, L=Lpas)
+    @named PAS = CRL(C.C = Cpas, R.R = Rpas, L.L = Lpas)
     # Pulmonary Artery ##
-    @named PAT = CRL(C=Cpat, R=Rpat, L=Lpat)
+    @named PAT = CRL(C.C = Cpat, R.R = Rpat, L.L = Lpat)
     # Pulmonary Arteriole ##
-    @named PAR = Resistor(R=Rpar)
+    @named PAR = Resistor(R = Rpar)
     # Pulmonary Capillary ##
-    @named PCP = Resistor(R=Rpcp)
+    @named PCP = Resistor(R = Rpcp)
     # Pulmonary Vein ##
-    @named PVN = CR(R=Rpvn, C=Cpvn)
+    @named PVN = CR(R.R = Rpvn, C.C = Cpvn)
 
     ##
     circ_eqs = [
@@ -273,14 +273,14 @@ end
 
     ### Shi Heart (with AV stenosis: max AV opening angle = 40 degrees!)
     @named Heart = ShiHeart(τ=τ,
-        LV_V₀=v0_lv, LV_p0=p0_lv, LV_Emin=Emin_lv, LV_Emax=Emax_lv, LV_τes=τes_lv, LV_τed=τed_lv, LV_Eshift=0.0,
-        RV_V₀=v0_rv, RV_p0=p0_rv, RV_Emin=Emin_rv, RV_Emax=Emax_rv, RV_τes=τes_rv, RV_τed=τed_rv, RV_Eshift=0.0,
-        LA_V₀=v0_la, LA_p0=p0_la, LA_Emin=Emin_la, LA_Emax=Emax_la, LA_τes=τpww_la / 2, LA_τed=τpww_la, LA_Eshift=τpwb_la,
-        RA_V₀=v0_ra, RA_p0=p0_ra, RA_Emin=Emin_ra, RA_Emax=Emax_ra, RA_τes=τpww_ra / 2, RA_τed=τpww_ra, RA_Eshift=τpwb_ra,
-        AV_CQ=CQ_AV, AV_Kp=Kp_av, AV_Kf=Kf_av, AV_Kb=0.0, AV_Kv=3.5, AV_θmax=40.0 * pi / 180, AV_θmin=5.0 * pi / 180,
-        MV_CQ=CQ_MV, MV_Kp=Kp_mv, MV_Kf=Kf_mv, MV_Kb=0.0, MV_Kv=3.5, MV_θmax=75.0 * pi / 180, MV_θmin=5.0 * pi / 180,
-        TV_CQ=CQ_TV, TV_Kp=Kp_tv, TV_Kf=Kf_tv, TV_Kb=0.0, TV_Kv=3.5, TV_θmax=75.0 * pi / 180, TV_θmin=5.0 * pi / 180,
-        PV_CQ=CQ_PV, PV_Kp=Kp_pv, PV_Kf=Kf_pv, PV_Kb=0.0, PV_Kv=3.5, PV_θmax=75.0 * pi / 180, PV_θmin=5.0 * pi / 180,
+        LV.V₀ = v0_lv, LV.p₀ = p0_lv, LV.Eₘᵢₙ = Emin_lv, LV.Eₘₐₓ = Emax_lv, LV.τ = τ, LV.τₑₛ = τes_lv, LV.τₑₚ = τed_lv, LV.Eshift = 0.0,
+        RV.V₀ = v0_rv, RV.p₀ = p0_rv, RV.Eₘᵢₙ = Emin_rv, RV.Eₘₐₓ = Emax_rv, RV.τ = τ, RV.τₑₛ = τes_rv, RV.τₑₚ = τed_rv, RV.Eshift = 0.0,
+        LA.V₀ = v0_la, LA.p₀ = p0_la, LA.Eₘᵢₙ = Emin_la, LA.Eₘₐₓ = Emax_la, LA.τ = τ, LA.τₑₛ = τpww_la / 2, LA.τₑₚ = τpww_la, LA.Eshift = τpwb_la,
+        RA.V₀ = v0_ra, RA.p₀ = p0_ra, RA.Eₘᵢₙ = Emin_ra, RA.Eₘₐₓ = Emax_ra, RA.τ = τ, RA.τₑₛ = τpww_ra / 2, RA.τₑₚ = τpww_ra, RA.Eshift = τpwb_ra,
+        AV.CQ = CQ_AV, AV.Kp = Kp_av, AV.Kf = Kf_av, AV.Kb = 0.0, AV.Kv=3.5, AV.θmax = 40.0 * pi / 180, AV.θmin = 5.0 * pi / 180,
+        MV.CQ = CQ_MV, MV.Kp = Kp_mv, MV.Kf = Kf_mv, MV.Kb = 0.0, MV.Kv=3.5, MV.θmax = 75.0 * pi / 180, MV.θmin = 5.0 * pi / 180,
+        TV.CQ = CQ_TV, TV.Kp = Kp_tv, TV.Kf = Kf_tv, TV.Kb = 0.0, TV.Kv=3.5, TV.θmax = 75.0 * pi / 180, TV.θmin = 5.0 * pi / 180,
+        PV.CQ = CQ_PV, PV.Kp = Kp_pv, PV.Kf = Kf_pv, PV.Kb = 0.0, PV.Kv=3.5, PV.θmax = 75.0 * pi / 180, PV.θmin = 5.0 * pi / 180,
     )
     ### Ventricles
     # @named LV = ShiChamber(V₀=v0_lv, p₀ = p0_lv, Eₘᵢₙ=Emin_lv, Eₘₐₓ=Emax_lv, τ=τ, τₑₛ=τes_lv, τₑₚ=τed_lv, Eshift=0.0)
@@ -297,9 +297,9 @@ end
     # @named TV = ShiValve(CQ=CQ_TV, Kp=Kp_tv, Kf=Kf_tv, Kb= 0.0, Kv=3.5, θmax=75.0 * pi / 180, θmin=5.0 * pi / 180)
     # @named PV = ShiValve(CQ=CQ_PV, Kp=Kp_pv, Kf=Kf_pv, Kb= 0.0, Kv=3.5, θmax=75.0 * pi / 180, θmin=5.0 * pi / 180)
 
-    @named SystLoop = ShiSystemicLoop(SAS_C=Csas, SAS_R=Rsas, SAS_L=Lsas,
-        SAT_C=Csat, SAT_R=Rsat, SAT_L=Lsat,
-        SAR_R=Rsar, SCP_R=Rscp, SVN_C=Csvn, SVN_R=Rsvn)
+    @named SystLoop = ShiSystemicLoop(SAS.C.C = Csas, SAS.R.R = Rsas, SAS.L.L = Lsas,
+    SAT.C.C = Csat, SAT.R.R = Rsat, SAT.L.L = Lsat,
+    SAR.R = Rsar, SCP.R = Rscp, SVN.C.C = Csvn, SVN.R.R = Rsvn)
     # ####### Systemic Loop #######
     # # Systemic Aortic Sinus ##
     # @named SAS = CRL(C=Csas, R=Rsas, L=Lsas)
@@ -312,9 +312,9 @@ end
     # # Systemic Vein ##
     # @named SVN = CR(R=Rsvn, C=Csvn)
 
-    @named PulmLoop = ShiPulmonaryLoop(PAS_C=Cpas, PAS_R=Rpas, PAS_L=Lpas,
-        PAT_C=Cpat, PAT_R=Rpat, PAT_L=Lpat,
-        PAR_R=Rpar, PCP_R=Rpcp, PVN_C=Cpvn, PVN_R=Rpvn)
+    @named PulmLoop = ShiPulmonaryLoop(PAS.C.C = Cpas, PAS.R.R = Rpas, PAS.L.L = Lpas,
+        PAT.C.C = Cpat, PAT.R.R = Rpat, PAT.L.L = Lpat,
+        PAR.R = Rpar, PCP.R = Rpcp, PVN.C.C = Cpvn, PVN.R.R = Rpvn)
     # ####### Pulmonary Loop #######
     # # Pulmonary Aortic Sinus ##
     # @named PAS = CRL(C=Cpas, R=Rpas, L=Lpas)
