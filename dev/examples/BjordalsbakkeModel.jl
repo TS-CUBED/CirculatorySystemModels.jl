@@ -87,7 +87,7 @@ kLV = 1 / maximum((t ./ Tau1fLV).^n1LV ./ (1 .+ (t ./ Tau1fLV).^n1LV) .* 1 ./ (1
 
 # Heart is modelled as a single chamber (we call it `LV` for "Left Ventricle" so the model can be extended later, if required):
 #
-@named LV = DHChamber(V₀ = 0.0, Eₘₐₓ=Eₘₐₓ, Eₘᵢₙ=Eₘᵢₙ, n₁=n1LV, n₂=n2LV, τ = τ, τ₁=Tau1fLV, τ₂=Tau2fLV, k = kLV, Eshift=0.0, Ev=Inf)
+@named LV = DHChamber(V₀ = 0.0, Eₘₐₓ=Eₘₐₓ, Eₘᵢₙ=Eₘᵢₙ, n₁=n1LV, n₂=n2LV, τ = τ, τ₁=Tau1fLV, τ₂=Tau2fLV, k = kLV, Eshift=0.0)
 
 # The two valves are simple diodes with a small resistance
 # (resistance is needed, since perfect diodes would connect two elastances/compliances, which will lead to unstable oscillations):
@@ -144,7 +144,7 @@ circ_eqs = [
 #
 circ_sys = structural_simplify(circ_model)
 
-# `circ_sys` is now the minimal system of equations. In this case it consists of 3 ODEs for the three pressures.
+# `circ_sys` is now the minimal system of equations. In this case it consists of 3 ODEs for the ventricular volume and the systemic and venous pressures.
 #
 # _Note: this reduces and optimises the ODE system. It is, therefore, not always obvious, which states it will use and which it will drop. We can use the `states` and `observed` function to check this. It is recommended to do this, since small changes can reorder states, observables, and parameters._
 #
@@ -161,10 +161,11 @@ parameters(circ_sys)
 #
 # First defined initial conditions `u0` and the time span for simulation:
 #
-# _Note: the initial conditions are defined as a parameter map, rather than a vector, since the parameter map allows for changes in order._
+# _Note: the initial conditions are defined as a parameter map, rather than a vector, since the parameter map allows for changes in order. This map can include non-existant states (like `LV.p` in this case), which allows for exchanging the ventricle for one that's defined in terms of $dp/dt$)._
 
 u0 = [
         LV.p => MCFP
+        LV.V => MCFP/Eₘᵢₙ
         Csa.p => MCFP
         Csv.p => MCFP
         ]
