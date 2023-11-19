@@ -455,7 +455,7 @@ Named parameters:
                 p ~ in.p
                 p ~ (V - V₀) * E * fun(t)
                 # D(V) ~ in.q + out.q
-                D(p) ~ (in.q + out.q) * E + p / E * DE
+                D(p) ~ (in.q + out.q) * E + p / E * D(fun(t))
         ]
         compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
 end
