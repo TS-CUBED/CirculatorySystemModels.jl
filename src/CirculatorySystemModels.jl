@@ -501,31 +501,28 @@ Named parameters:
 
 `Eshift`: time shift of contraction (for atria)
 
-`Ev`:     venous elastance (for atria model), set to `Inf` for ventricle
-
 *Note: `k` is not an independent parameter, it is a scaling factor that corresponds
 to 1/max(e(t)), which ensures that e(t) varies between zero and 1.0, such that
 E(t) varies between Eₘᵢₙ and Eₘₐₓ.
 """
-@component function DHChamber(; name, V₀, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, k, Eshift=0.0, Ev=Inf)
+@component function DHChamber(; name, V₀, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, k, Eshift=0.0)
         @named in = Pin()
         @named out = Pin()
         sts = @variables V(t) = 2.0 p(t) = 0.0
-        ps = @parameters V₀ = V₀ Eₘᵢₙ = Eₘᵢₙ Eₘₐₓ = Eₘₐₓ n₁ = n₁ n₂ = n₂ τ = τ τ₁ = τ₁ τ₂ = τ₂ k = k Eshift = Eshift Ev = Ev
+        ps = @parameters V₀ = V₀ Eₘᵢₙ = Eₘᵢₙ Eₘₐₓ = Eₘₐₓ n₁ = n₁ n₂ = n₂ τ = τ τ₁ = τ₁ τ₂ = τ₂ k = k Eshift = Eshift
 
         D = Differential(t)
         E = DHelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)
-        DE = DHdelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)
 
         eqs = [
                 0 ~ in.p - out.p
                 p ~ in.p
                 # Definition in terms of V
-                #    p ~ (V - V₀) * E
-                #    D(V) ~ in.q + out.q
+                   p ~ (V - V₀) * E
+                   D(V) ~ in.q + out.q
                 # Definition in terms of p (more stable?)
-                V ~ p / E + V₀
-                D(p) ~ (in.q + out.q) * E / (1 + 1 / Ev * E) + p / (E * (1 + 1 / Ev * E)) * DE
+                # V ~ p / E + V₀
+                # D(p) ~ (in.q + out.q) * E / (1 + 1 / Ev * E) + p / (E * (1 + 1 / Ev * E)) * DE
                 # D(p) ~ (in.q + out.q) * E + p / E * DE
         ]
 
