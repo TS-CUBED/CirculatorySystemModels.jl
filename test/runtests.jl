@@ -437,6 +437,7 @@ end
     #
     u0 = [
         LV.p => MCFP
+        LV.V => MCFP/Eₘᵢₙ
         Csa.p => MCFP
         Csv.p => MCFP
         ]
