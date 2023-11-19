@@ -430,7 +430,7 @@ end
 
 
 """
-`Chamber(;name, V₀=0.0, Escale=1.0, fun)`
+`Chamber(;name, V₀=0.0, E=1.0, fun)`
 
 Chamber is defined based on the `Elastance` element,
 but has a time varying elastance function modelling
@@ -440,22 +440,21 @@ Named parameters:
 
 `V₀`:      stress-free volume (zero pressure volume)
 
-`Escale`:       scaling factor (elastance factor)
+`E`:       scaling factor (elastance factor)
 
 `fun`:     function object for elastance (must be `fun(t)`)
 """
-@component function Chamber(; name, V₀=0.0, Escale=1.0, fun)
+@component function Chamber(; name, V₀=0.0, E=1.0, fun)
         @named in = Pin()
         @named out = Pin()
         sts = @variables V(t) = 2.0 p(t) = 0.0
-        ps = @parameters V₀ = V₀ Escale = Escale
+        ps = @parameters V₀ = V₀ E = E
         D = Differential(t)
-        E = Escale * fun(t)
-        DE = Escale * D(fun(t))
         eqs = [
                 0 ~ in.p - out.p
                 p ~ in.p
                 p ~ (V - V₀) * E * fun(t)
+                # D(V) ~ in.q + out.q
                 D(p) ~ (in.q + out.q) * E + p / E * DE
         ]
         compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
