@@ -9,6 +9,7 @@ using CirculatorySystemModels
 using CirculatorySystemModels.ModelingToolkit
 using CirculatorySystemModels.DifferentialEquations
 using Plots
+using DisplayAs
 ````
 
 # A simple single-chamber model
