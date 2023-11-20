@@ -318,9 +318,9 @@ end
 
     # Resistances and Compliances
     #
-    Rs = 1.11
-    Csa = 1.13
-    Csv = 11.0
+    R_s = 1.11
+    C_sa = 1.13
+    C_sv = 11.0
 
     # Valve parameters
     #
@@ -372,7 +372,7 @@ end
     # The main components of the circuit are 1 resistor `Rs` and two compliances for systemic arteries `Csa`,
     # and systemic veins `Csv` (names are arbitrary).
     #
-    @named Rs = Resistor(R=Rs)
+    @named Rs = Resistor(R=R_s)
 
     @named Csa = Compliance(C=C_sa, inV=true, has_ep=false, has_variable_ep=true)
     @named Csv = Compliance(C=C_sv, inV=true)
