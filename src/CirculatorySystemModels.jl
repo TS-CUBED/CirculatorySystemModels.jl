@@ -296,7 +296,7 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
                    _Note: if `has_variable_ep` is set to `true` this pin is created, independent of
                    `has_ep`!_
 """
-@component function Elastance(; name, V₀=0.0, C=1.0, inV=false, has_ep=false, has_variable_ep=false, p₀=0.0)
+@component function Elastance(; name, V₀=0.0, E=1.0, inV=false, has_ep=false, has_variable_ep=false, p₀=0.0)
         @named in = Pin()
         @named out = Pin()
 
@@ -311,7 +311,7 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
 
         ps = @parameters begin
                 V₀ = V₀
-                C = C
+                E = E
         end
 
         D = Differential(t)

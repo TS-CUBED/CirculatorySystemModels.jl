@@ -374,8 +374,9 @@ end
     #
     @named Rs = Resistor(R=R_s)
 
-    @named Csa = Compliance(C=C_sa, inV=true, has_ep=false, has_variable_ep=true)
-    @named Csv = Compliance(C=C_sv, inV=true)
+    @named Csa = Compliance(C=C_sa, inV=true, has_variable_ep=true)
+    # @named Csv = Compliance(C=C_sv, inV=true, has_ep=true)
+    @named Csv = Elastance(E=1/C_sv, inV=true, has_ep=true)
 
     # We also need to define a base pressure level, which we use the `Ground` element for:
     #
