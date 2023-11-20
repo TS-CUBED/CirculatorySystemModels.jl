@@ -230,12 +230,17 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
         ]
 
         if has_variable_ep
-                push!(sts,
-                        (@variables p_rel(t) = p₀)[1]
+            push!(sts,
+                  (@variables p_rel(t) = p₀)[1]
                 )
-                push!(eqs,
-                        p_rel ~ ep.p,
-                        ep.q ~ 0
+            if has_ep
+                push!(ps,
+                        (@parameters p₀ = p₀)[1]
+                )
+            end
+            push!(eqs,
+                  p_rel ~ ep.p + p₀,
+                  ep.q ~ 0
                 )
         elseif has_ep
                 push!(ps,
@@ -322,12 +327,17 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
         ]
 
         if has_variable_ep
-                push!(sts,
-                        (@variables p_rel(t) = p₀)[1]
+            push!(sts,
+                  (@variables p_rel(t) = p₀)[1]
                 )
-                push!(eqs,
-                        p_rel ~ ep.p,
-                        ep.q ~ 0
+            if has_ep
+                push!(ps,
+                        (@parameters p₀ = p₀)[1]
+                )
+            end
+            push!(eqs,
+                  p_rel ~ ep.p + p₀,
+                  ep.q ~ 0
                 )
         elseif has_ep
                 push!(ps,
