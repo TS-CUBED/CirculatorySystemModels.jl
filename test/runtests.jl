@@ -99,20 +99,26 @@ using DataFrames
             LA.V => LA_Vt0
             RA.V => RA_Vt0
             SAS.C.p => pt0sas
+            SAS.C.V => pt0sas * Csas
             SAS.L.q => qt0sas
             SAT.C.p => pt0sat
+            SAT.C.V => pt0sat * Csat
             SAT.L.q => qt0sat
             SVN.C.p => pt0svn
+            SVN.C.V => pt0svn * Csvn
             PAS.C.p => pt0pas
+            PAS.C.V => pt0pas * Cpas
             PAS.L.q => qt0pas
             PAT.C.p => pt0pat
+            PAT.C.V => pt0pat * Cpat
             PAT.L.q => qt0pat
             PVN.C.p => pt0pvn
+            PVN.C.V => pt0pvn * Cpvn
     ]
 
     prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
     ##
-    @time sol = solve(prob, Tsit5(), reltol=1e-6, abstol=1e-9, saveat=19:0.01:20)
+    @time sol = solve(prob, Tsit5(), reltol=1e-6, abstol=1e-9) #, saveat=19:0.01:20)
     ShiSimpleSol = sol(19:0.01:20)
 
     ## Read benchmark data and compare
@@ -242,15 +248,21 @@ end
         Heart.PV.θ => 0
         Heart.PV.ω => 0
         SystLoop.SAS.C.p => pt0sas
+        SystLoop.SAS.C.V => pt0sas * Csas
         SystLoop.SAS.L.q => qt0sas
         SystLoop.SAT.C.p => pt0sat
+        SystLoop.SAT.C.V => pt0sat * Csat
         SystLoop.SAT.L.q => qt0sat
         SystLoop.SVN.C.p => pt0svn
+        SystLoop.SVN.C.V => pt0svn * Csvn
         PulmLoop.PAS.C.p => pt0pas
+        PulmLoop.PAS.C.V => pt0pas * Cpas
         PulmLoop.PAS.L.q => qt0pas
         PulmLoop.PAT.C.p => pt0pat
+        PulmLoop.PAT.C.V => pt0pat * Cpat
         PulmLoop.PAT.L.q => qt0pat
         PulmLoop.PVN.C.p => pt0pvn
+        PulmLoop.PVN.C.V => pt0pvn * Cpvn
     ]
 
     prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
@@ -361,7 +373,7 @@ end
 
     # Heart is modelled as a single chamber (we call it `LV` for "Left Ventricle" so the model can be extended later, if required):
     #
-    @named LV = DHChamber(V₀=0.0, Eₘₐₓ=Eₘₐₓ, Eₘᵢₙ=Eₘᵢₙ, n₁=n1LV, n₂=n2LV, τ=τ, τ₁=Tau1fLV, τ₂=Tau2fLV, k=kLV, Eshift=0.0)
+    @named LV = DHChamber(V₀=0.0, Eₘₐₓ=Eₘₐₓ, Eₘᵢₙ=Eₘᵢₙ, n₁=n1LV, n₂=n2LV, τ=τ, τ₁=Tau1fLV, τ₂=Tau2fLV, k=kLV, Eshift=0.0, inP=false)
 
     # The two valves are simple diodes with a small resistance
     # (resistance is needed, since perfect diodes would connect two elastances/compliances, which will lead to unstable oscillations):

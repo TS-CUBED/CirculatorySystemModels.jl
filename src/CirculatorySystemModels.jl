@@ -637,7 +637,7 @@ E(t) varies between Eₘᵢₙ and Eₘₐₓ.
         if inP
                 push!(eqs,
                         V ~ (p - p_rel) / E + V₀,
-                        D(p) ~ (in.q + out.q) * E + V * DE
+                        D(p) ~ (in.q + out.q) * E + (p - p_rel) / E * DE
                 )
         else
                 push!(eqs,
@@ -706,7 +706,7 @@ Named parameters:
 
 `Eshift`: time shift of contraction (for atria), set to `0` for ventricle
 """
-@component function ShiChamber(; name, V₀, p₀=0.0, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift=0.0)
+@component function ShiChamber(; name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift=0.0)
         @named in = Pin()
         @named out = Pin()
         sts = @variables V(t) = 0.0 p(t) = 0.0
@@ -714,16 +714,15 @@ Named parameters:
 
         D = Differential(t)
         E = ShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
-        DE = DShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
+
+        p_rel = p₀
 
         eqs = [
                 0 ~ in.p - out.p
                 p ~ in.p
-
-                # Definition in terms of volume:
+                p ~ (V - V₀) * E + p_rel
                 D(V) ~ in.q + out.q
-                p ~ p₀ + (V - V₀) * E
-        ]
+            ]
 
         compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
 end
