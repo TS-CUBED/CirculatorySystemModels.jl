@@ -441,7 +441,7 @@ Named parameters:
 
 `Escale`:       scaling factor (elastance factor)
 
-`p₀`:       unstressed pressure in mmHg
+`p₀`:       unstressed pressure in mmHg (default 0.0)
 
 `fun`:     function object for elastance (must be `fun(t)`)
 """
