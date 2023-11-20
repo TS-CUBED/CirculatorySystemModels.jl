@@ -374,8 +374,8 @@ end
     #
     @named Rs = Resistor(R=Rs)
 
-    @named Csa = Compliance(C=Csa)
-    @named Csv = Compliance(C=Csv)
+    @named Csa = Compliance(C=C_sa, inV=true, has_ep=false, has_variable_ep=true)
+    @named Csv = Compliance(C=C_sv, inV=true)
 
     # We also need to define a base pressure level, which we use the `Ground` element for:
     #
@@ -399,6 +399,7 @@ end
         connect(Rs.out, Csv.in)
         connect(Csv.out, MV.in)
         connect(MV.out, LV.in)
+        Csa.ep.p ~ 0
     ]
 
     # ### Add the component equations
@@ -439,7 +440,9 @@ end
         LV.p => MCFP
         LV.V => MCFP/Eₘᵢₙ
         Csa.p => MCFP
+        Csa.V => MCFP*C_sa
         Csv.p => MCFP
+        Csv.V => MCFP*C_sv
         ]
 
     tspan = (0, 20)
