@@ -429,7 +429,7 @@ end
 
 
 """
-`Chamber(;name, V₀=0.0, Escale=1.0, fun)`
+`Chamber(;name, V₀=0.0, Escale=1.0, p₀=0.0, fun)`
 
 Chamber is defined based on the `Elastance` element,
 but has a time varying elastance function modelling
@@ -441,9 +441,11 @@ Named parameters:
 
 `Escale`:       scaling factor (elastance factor)
 
+`p₀`:       unstressed pressure in mmHg
+
 `fun`:     function object for elastance (must be `fun(t)`)
 """
-@component function Chamber(; name, V₀=0.0, Escale=1.0, fun)
+@component function Chamber(; name, V₀=0.0, Escale=1.0, p₀=0.0, fun)
         @named in = Pin()
         @named out = Pin()
         sts = @variables V(t) = 2.0 p(t) = 0.0
