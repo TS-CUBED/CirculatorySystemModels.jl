@@ -131,7 +131,7 @@ without that option is in $dp/dt$._
 @named Rs = Resistor(R=R_s)
 
 @named Csa = Compliance(C=C_sa)
-@named Csv = Compliance(C=C_sv, inV=true)
+@named Csv = Compliance(C=C_sv, inP=true)
 ````
 
 ## Build the system
