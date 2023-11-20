@@ -103,7 +103,7 @@ kLV = 1 / maximum((t ./ Tau1fLV).^n1LV ./ (1 .+ (t ./ Tau1fLV).^n1LV) .* 1 ./ (1
 @named Rs = Resistor(R=R_s)
 
 @named Csa = Compliance(C=C_sa)
-@named Csv = Compliance(C=C_sv, inV=true)
+@named Csv = Compliance(C=C_sv, inP=true)
 
 # ## Build the system
 #
