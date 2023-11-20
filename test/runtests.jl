@@ -374,10 +374,12 @@ end
     #
     @named Rs = Resistor(R=R_s)
 
-    @named Csa = Compliance(C=C_sa, inV=true, has_ep=true, has_variable_ep=true)
+    @named Csa = Compliance(C=C_sa, inP=true, has_ep=true, has_variable_ep=true)
     # @named Csv = Compliance(C=C_sv, inV=true, has_ep=true)
-    @named Csv = Elastance(E=1/C_sv, inV=false)
+    @named Csv = Elastance(E=1/C_sv, inP=false)
 
+    # _Note: testing different parameters and formulations here. May need to do all of them separately to really do a unit test.
+    #
     # ## Build the system
     #
     # ### Connections
@@ -417,6 +419,7 @@ end
     circ_sys = structural_simplify(circ_model)
 
     # `circ_sys` is now the minimal system of equations. In this case it consists of 3 ODEs for the three pressures.
+
     #
     # _Note: `structural_simplify` reduces and optimises the ODE system. It is, therefore, not always obvious, which states it will use and which it will drop. We can use the `states` and `observed` function to check this. It is recommended to do this, since small changes can reorder states, observables, and parameters._
     #

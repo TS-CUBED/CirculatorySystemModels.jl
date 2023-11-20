@@ -172,7 +172,7 @@ end
 
 
 """
-`Compliance(; name, V₀=0.0, C=1.0, inV=false, has_ep=false, has_variable_ep=false, p₀=0.0)`
+`Compliance(; name, V₀=0.0, C=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0)`
 
 Implements the compliance of a vessel.
 
@@ -188,7 +188,7 @@ Named parameters:
 `C`:                Vessel compliance in ml/mmHg
 
 
-`inV`:             (Bool) formulate in dV/dt (default: false)
+`inP`:             (Bool) formulate in dp/dt (default: false)
 
 `has_ep`:          (Bool) if true, add a parameter `p₀` for pressure offset
                    e.g., for thoracic pressure (default: false)
@@ -202,7 +202,7 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
                    _Note: if `has_variable_ep` is set to `true` this pin is created, independent of
                    `has_ep`!_
 """
-@component function Compliance(; name, V₀=0.0, C=1.0, inV=false, has_ep=false, has_variable_ep=false, p₀=0.0)
+@component function Compliance(; name, V₀=0.0, C=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0)
         @named in = Pin()
         @named out = Pin()
 
@@ -251,15 +251,15 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
                 p_rel = p₀
         end
 
-        if inV
-                push!(eqs,
-                        p ~ (V - V₀) / C + p_rel,
-                        D(V) ~ in.q + out.q
-                )
-        else
+        if inP
                 push!(eqs,
                         V ~ (p - p_rel) * C + V₀,
                         D(p) ~ (in.q + out.q) * 1 / C
+                )
+        else
+                push!(eqs,
+                        p ~ (V - V₀) / C + p_rel,
+                        D(V) ~ in.q + out.q
                 )
         end
 
@@ -272,7 +272,7 @@ end
 
 
 """
-`Elastance(;name, V₀=0.0, E=1.0)`
+`Elastance(; name, V₀=0.0, E=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0)`
 
 Implements the elastance of a vessel. Elastance more commonly used to describe the heart.
 
@@ -287,7 +287,7 @@ Named parameters:
 
 `E`:              Vessel elastance in ml/mmHg. Equivalent to compliance as E=1/C
 
-`inV`:            (Bool) formulate in dV/dt (default: false)
+`inP`:            (Bool) formulate in dp/dt (default: false)
 
 `has_ep`:         (Bool) if true, add a parameter `p₀` for pressure offset
                   e.g., for thoracic pressure (default: false)
@@ -301,7 +301,7 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
                    _Note: if `has_variable_ep` is set to `true` this pin is created, independent of
                    `has_ep`!_
 """
-@component function Elastance(; name, V₀=0.0, E=1.0, inV=false, has_ep=false, has_variable_ep=false, p₀=0.0)
+@component function Elastance(; name, V₀=0.0, E=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0)
         @named in = Pin()
         @named out = Pin()
 
@@ -348,15 +348,15 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
                 p_rel = p₀
         end
 
-        if inV
-                push!(eqs,
-                        p ~ (V - V₀) * E + p_rel,
-                        D(V) ~ in.q + out.q
-                )
-        else
+        if inP
                 push!(eqs,
                         V ~ (p - p_rel) / E + V₀,
                         D(p) ~ (in.q + out.q) * E
+                )
+        else
+                push!(eqs,
+                        p ~ (V - V₀) * E + p_rel,
+                        D(V) ~ in.q + out.q
                 )
         end
 
@@ -369,7 +369,7 @@ end
 
 
 """
-`VariableElastance(; name, V₀=0.0, C=1.0, Escale=1.0, fun, inV=false, has_ep=false, has_variable_ep=false, p₀=0.0)`
+`VariableElastance(; name, V₀=0.0, C=1.0, Escale=1.0, fun, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0)`
 
 `VariableElastance` is defined based on the `Elastance` element,
 but has a time varying elastance function modelling
@@ -383,7 +383,7 @@ Named parameters:
 
 `fun`:             function object for elastance (must be `fun(t)`)
 
-`inV`:             (Bool) formulate in dV/dt (default: false)
+`inP`:             (Bool) formulate in dp/dt (default: false)
 
 `has_ep`:          (Bool) if true, add a parameter `p₀` for pressure offset
                    e.g., for thoracic pressure (default: false)
@@ -397,7 +397,7 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
                    _Note: if `has_variable_ep` is set to `true` this pin is created, independent of
                    `has_ep`!_
 """
-@component function VariableElastance(; name, V₀=0.0, C=1.0, Escale=1.0, fun, inV=false, has_ep=false, has_variable_ep=false, p₀=0.0)
+@component function VariableElastance(; name, V₀=0.0, C=1.0, Escale=1.0, fun, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0)
         @named in = Pin()
         @named out = Pin()
 
@@ -440,15 +440,15 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
                 p_rel = p₀
         end
 
-        if inV
+        if inP
                 push!(eqs,
-                        p ~ (V - V₀) * E + p_rel,
-                        D(V) ~ in.q + out.q
+                        V ~ (p - p_rel) / E + V₀,
+                        D(p) ~ (in.q + out.q) * E + V * D(E(t))
                 )
         else
                 push!(eqs,
-                        V ~ (p - p_rel) / E + V₀,
-                        D(p) ~ (in.q + out.q) * E
+                        p ~ (V - V₀) * E + p_rel,
+                        D(V) ~ in.q + out.q
                 )
         end
 
@@ -596,6 +596,7 @@ Named parameters:
 `Eₘᵢₙ`:   minimum elastance
 
 `Eₘₐₓ`:   maximum elastance
+
 `n₁`:     rise coefficient
 
 `n₂`:     fall coefficient
@@ -610,11 +611,13 @@ Named parameters:
 
 `Eshift`: time shift of contraction (for atria)
 
+`inP`:    (Bool) formulate in dp/dt (default: false)
+
 *Note: `k` is not an independent parameter, it is a scaling factor that corresponds
 to 1/max(e(t)), which ensures that e(t) varies between zero and 1.0, such that
 E(t) varies between Eₘᵢₙ and Eₘₐₓ.
 """
-@component function DHChamber(; name, V₀, p₀=0.0, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, k, Eshift=0.0)
+@component function DHChamber(; name, V₀, p₀=0.0, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, k, Eshift=0.0, inP=false)
         @named in = Pin()
         @named out = Pin()
         sts = @variables V(t) = 2.0 p(t) = 0.0
@@ -622,14 +625,26 @@ E(t) varies between Eₘᵢₙ and Eₘₐₓ.
 
         D = Differential(t)
         E = DHelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)
+        DE = DHdelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)
+
+        p_rel = p₀
 
         eqs = [
                 0 ~ in.p - out.p
                 p ~ in.p
-                # Definition in terms of V
-                p ~ p₀ + (V - V₀) * E
-                D(V) ~ in.q + out.q
         ]
+
+        if inP
+                push!(eqs,
+                        V ~ (p - p_rel) / E + V₀,
+                        D(p) ~ (in.q + out.q) * E + V * DE
+                )
+        else
+                push!(eqs,
+                        p ~ (V - V₀) * E + p_rel,
+                        D(V) ~ in.q + out.q
+                )
+        end
 
         compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
 end
@@ -650,7 +665,7 @@ end
 """
 `DHdelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)`
 
-Helper @component function for `DHChamber`
+Helper function for `DHChamber`
 """
 function DHdelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)
         tᵢ = rem(t + (1 - Eshift) * τ, τ)
