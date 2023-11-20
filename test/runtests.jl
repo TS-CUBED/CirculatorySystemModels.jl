@@ -408,7 +408,7 @@ end
     @named _circ_model = ODESystem(circ_eqs, t)
 
     @named circ_model = compose(_circ_model,
-        [LV, AV, MV, Rs, Csa, Csv, ground])
+        [LV, AV, MV, Rs, Csa, Csv])
 
     # ### Simplify the ODE system
     #
