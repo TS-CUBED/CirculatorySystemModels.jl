@@ -44,9 +44,9 @@ Tau2fLV = 0.508 * τ
 
 # Resistances and Compliances
 #
-Rs = 1.11
-Csa = 1.13
-Csv = 11.0
+R_s = 1.11
+C_sa = 1.13
+C_sv = 11.0
 
 # Valve parameters
 #
@@ -97,15 +97,13 @@ kLV = 1 / maximum((t ./ Tau1fLV).^n1LV ./ (1 .+ (t ./ Tau1fLV).^n1LV) .* 1 ./ (1
 
 # The main components of the circuit are 1 resistor `Rs` and two compliances for systemic arteries `Csa`,
 # and systemic veins `Csv` (names are arbitrary).
+# _Note: one of the compliances is defined in terms of $dV/dt$ using the option `inV = true`. The other
+# without that option is in $dp/dt$._
 #
-@named Rs = Resistor(R=Rs)
+@named Rs = Resistor(R=R_s)
 
-@named Csa = Compliance(C=Csa)
-@named Csv = Compliance(C=Csv)
-
-# We also need to define a base pressure level, which we use the `Ground` element for:
-#
-@named ground = Ground(P=0)
+@named Csa = Compliance(C=C_sa)
+@named Csv = Compliance(C=C_sv, inP=true)
 
 # ## Build the system
 #
@@ -136,7 +134,7 @@ circ_eqs = [
 @named _circ_model = ODESystem(circ_eqs, t)
 
 @named circ_model = compose(_circ_model,
-                          [LV, AV, MV, Rs, Csa, Csv, ground])
+                          [LV, AV, MV, Rs, Csa, Csv])
 
 # ### Simplify the ODE system
 #
@@ -161,13 +159,17 @@ parameters(circ_sys)
 #
 # First defined initial conditions `u0` and the time span for simulation:
 #
-# _Note: the initial conditions are defined as a parameter map, rather than a vector, since the parameter map allows for changes in order. This map can include non-existant states (like `LV.p` in this case), which allows for exchanging the ventricle for one that's defined in terms of $dp/dt$)._
+# _Note: the initial conditions are defined as a parameter map, rather than a vector, since the parameter map allows for changes in order.
+# This map can include non-existant states (like `LV.p` in this case), which allows for exchanging the compliances or the ventricle
+# for one that's defined in terms of $dp/dt$)._
 
 u0 = [
         LV.p => MCFP
         LV.V => MCFP/Eₘᵢₙ
         Csa.p => MCFP
+        Csa.V => MCFP*C_sa
         Csv.p => MCFP
+        Csv.V => MCFP*C_sv
         ]
 
 # 

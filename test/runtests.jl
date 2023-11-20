@@ -99,20 +99,26 @@ using DataFrames
             LA.V => LA_Vt0
             RA.V => RA_Vt0
             SAS.C.p => pt0sas
+            SAS.C.V => pt0sas * Csas
             SAS.L.q => qt0sas
             SAT.C.p => pt0sat
+            SAT.C.V => pt0sat * Csat
             SAT.L.q => qt0sat
             SVN.C.p => pt0svn
+            SVN.C.V => pt0svn * Csvn
             PAS.C.p => pt0pas
+            PAS.C.V => pt0pas * Cpas
             PAS.L.q => qt0pas
             PAT.C.p => pt0pat
+            PAT.C.V => pt0pat * Cpat
             PAT.L.q => qt0pat
             PVN.C.p => pt0pvn
+            PVN.C.V => pt0pvn * Cpvn
     ]
 
     prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
     ##
-    @time sol = solve(prob, Tsit5(), reltol=1e-6, abstol=1e-9, saveat=19:0.01:20)
+    @time sol = solve(prob, Tsit5(), reltol=1e-6, abstol=1e-9) #, saveat=19:0.01:20)
     ShiSimpleSol = sol(19:0.01:20)
 
     ## Read benchmark data and compare
@@ -242,15 +248,21 @@ end
         Heart.PV.θ => 0
         Heart.PV.ω => 0
         SystLoop.SAS.C.p => pt0sas
+        SystLoop.SAS.C.V => pt0sas * Csas
         SystLoop.SAS.L.q => qt0sas
         SystLoop.SAT.C.p => pt0sat
+        SystLoop.SAT.C.V => pt0sat * Csat
         SystLoop.SAT.L.q => qt0sat
         SystLoop.SVN.C.p => pt0svn
+        SystLoop.SVN.C.V => pt0svn * Csvn
         PulmLoop.PAS.C.p => pt0pas
+        PulmLoop.PAS.C.V => pt0pas * Cpas
         PulmLoop.PAS.L.q => qt0pas
         PulmLoop.PAT.C.p => pt0pat
+        PulmLoop.PAT.C.V => pt0pat * Cpat
         PulmLoop.PAT.L.q => qt0pat
         PulmLoop.PVN.C.p => pt0pvn
+        PulmLoop.PVN.C.V => pt0pvn * Cpvn
     ]
 
     prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
@@ -318,9 +330,9 @@ end
 
     # Resistances and Compliances
     #
-    Rs = 1.11
-    Csa = 1.13
-    Csv = 11.0
+    R_s = 1.11
+    C_sa = 1.13
+    C_sv = 11.0
 
     # Valve parameters
     #
@@ -361,7 +373,7 @@ end
 
     # Heart is modelled as a single chamber (we call it `LV` for "Left Ventricle" so the model can be extended later, if required):
     #
-    @named LV = DHChamber(V₀=0.0, Eₘₐₓ=Eₘₐₓ, Eₘᵢₙ=Eₘᵢₙ, n₁=n1LV, n₂=n2LV, τ=τ, τ₁=Tau1fLV, τ₂=Tau2fLV, k=kLV, Eshift=0.0)
+    @named LV = DHChamber(V₀=0.0, Eₘₐₓ=Eₘₐₓ, Eₘᵢₙ=Eₘᵢₙ, n₁=n1LV, n₂=n2LV, τ=τ, τ₁=Tau1fLV, τ₂=Tau2fLV, k=kLV, Eshift=0.0, inP=true)
 
     # The two valves are simple diodes with a small resistance
     # (resistance is needed, since perfect diodes would connect two elastances/compliances, which will lead to unstable oscillations):
@@ -372,15 +384,14 @@ end
     # The main components of the circuit are 1 resistor `Rs` and two compliances for systemic arteries `Csa`,
     # and systemic veins `Csv` (names are arbitrary).
     #
-    @named Rs = Resistor(R=Rs)
+    @named Rs = Resistor(R=R_s)
 
-    @named Csa = Compliance(C=Csa)
-    @named Csv = Compliance(C=Csv)
+    @named Csa = Compliance(C=C_sa, inP=true, has_ep=true, has_variable_ep=true)
+    # @named Csv = Compliance(C=C_sv, inV=true, has_ep=true)
+    @named Csv = Elastance(E=1/C_sv, inP=false)
 
-    # We also need to define a base pressure level, which we use the `Ground` element for:
+    # _Note: testing different parameters and formulations here. May need to do all of them separately to really do a unit test.
     #
-    @named ground = Ground(P=0)
-
     # ## Build the system
     #
     # ### Connections
@@ -399,6 +410,7 @@ end
         connect(Rs.out, Csv.in)
         connect(Csv.out, MV.in)
         connect(MV.out, LV.in)
+        Csa.ep.p ~ 0
     ]
 
     # ### Add the component equations
@@ -410,7 +422,7 @@ end
     @named _circ_model = ODESystem(circ_eqs, t)
 
     @named circ_model = compose(_circ_model,
-        [LV, AV, MV, Rs, Csa, Csv, ground])
+        [LV, AV, MV, Rs, Csa, Csv])
 
     # ### Simplify the ODE system
     #
@@ -419,6 +431,7 @@ end
     circ_sys = structural_simplify(circ_model)
 
     # `circ_sys` is now the minimal system of equations. In this case it consists of 3 ODEs for the three pressures.
+
     #
     # _Note: `structural_simplify` reduces and optimises the ODE system. It is, therefore, not always obvious, which states it will use and which it will drop. We can use the `states` and `observed` function to check this. It is recommended to do this, since small changes can reorder states, observables, and parameters._
     #
@@ -439,7 +452,9 @@ end
         LV.p => MCFP
         LV.V => MCFP/Eₘᵢₙ
         Csa.p => MCFP
+        Csa.V => MCFP*C_sa
         Csv.p => MCFP
+        Csv.V => MCFP*C_sv
         ]
 
     tspan = (0, 20)
