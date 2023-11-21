@@ -829,11 +829,11 @@ name    name of the element
 
 `τpww`  Atrial offset time in s
 """
-@component function ShiAtrium(; name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τpwb, τpww)
+@component function ShiAtrium(; name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τpwb, τpww, inP=false)
         @named in = Pin()
         @named out = Pin()
         sts = @variables V(t) = 0.0 p(t) = 0.0
-        ps = @parameters V₀ = V₀ p₀ = p₀ Eₘᵢₙ = Eₘᵢₙ Eₘₐₓ = Eₘₐₓ τ = τ τpwb = τpwb τpww = τpww # Ev=Ev
+        ps = @parameters V₀ = V₀ p₀ = p₀ Eₘᵢₙ = Eₘᵢₙ Eₘₐₓ = Eₘₐₓ τ = τ τpwb = τpwb τpww = τpww
 
         # adjust timing parameters to fit the elastance functions for the ventricle
         # define elastance based on ventricle E function
@@ -842,14 +842,24 @@ name    name of the element
 
         D = Differential(t)
 
+        p_rel = p₀
+
         eqs = [
                 0 ~ in.p - out.p
                 p ~ in.p
-
-                # Definition in terms of volume:
-                D(V) ~ in.q + out.q
-                p ~ p₀ + (V - V₀) * E
         ]
+
+        if inP
+                push!(eqs,
+                        V ~ (p - p_rel) / E + V₀,
+                        D(p) ~ (in.q + out.q) * E + (p - p_rel) / E * DE
+                )
+        else
+                push!(eqs,
+                        p ~ (V - V₀) * E + p_rel,
+                        D(V) ~ in.q + out.q
+                )
+        end
 
         compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
 end
