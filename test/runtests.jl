@@ -19,7 +19,7 @@ using DataFrames
     @variables t
 
     ## Ventricles
-    @named LV = ShiChamber(V₀=v0_lv, p₀=p0_lv, Eₘᵢₙ=Emin_lv, Eₘₐₓ=Emax_lv, τ=τ, τₑₛ=τes_lv, τₑₚ=τed_lv, Eshift=0.0)
+    @named LV = ShiChamber(V₀=v0_lv, p₀=p0_lv, Eₘᵢₙ=Emin_lv, Eₘₐₓ=Emax_lv, τ=τ, τₑₛ=τes_lv, τₑₚ=τed_lv, Eshift=0.0, inP=true)
     # The atrium can be defined either as a ShiChamber with changed timing parameters, or as defined in the paper
     @named LA = ShiChamber(V₀=v0_la, p₀=p0_la, Eₘᵢₙ=Emin_la, Eₘₐₓ=Emax_la, τ=τ, τₑₛ=τpww_la / 2, τₑₚ=τpww_la, Eshift=τpwb_la)
     @named RV = ShiChamber(V₀=v0_rv, p₀=p0_rv, Eₘᵢₙ=Emin_rv, Eₘₐₓ=Emax_rv, τ=τ, τₑₛ=τes_rv, τₑₚ=τed_rv, Eshift=0.0)
@@ -95,6 +95,7 @@ using DataFrames
 
     u0 = [
             LV.V => LV_Vt0
+            LV.p => (LV_Vt0 - v0_lv) * Emin_lv + p0_lv
             RV.V => RV_Vt0
             LA.V => LA_Vt0
             RA.V => RA_Vt0
@@ -450,7 +451,7 @@ end
     #
     u0 = [
         LV.p => MCFP
-        LV.V => MCFP/Eₘᵢₙ
+        LV.V => 0 + (MCFP - 0) / Eₘᵢₙ
         Csa.p => MCFP
         Csa.V => MCFP*C_sa
         Csv.p => MCFP
@@ -469,7 +470,7 @@ end
     #
     # The ODE problem is now in the MTK/DifferentialEquations.jl format and we can use any DifferentialEquations.jl solver to solve it:
     #
-    sol = solve(prob, Vern7(), reltol=1e-6, abstol=1e-9, saveat=(19:0.01:20))
+    sol = solve(prob, Vern7(), reltol=1e-6, abstol=1e-9)
     BBsol = sol(19:0.01:20)
 
     BBbench = CSV.read("BB.csv", DataFrame)

@@ -705,8 +705,10 @@ Named parameters:
 `τₑₚ`    end pulse time (end of falling cosine)
 
 `Eshift`: time shift of contraction (for atria), set to `0` for ventricle
+
+`inP`:    (Bool) formulate in dp/dt (default: false)
 """
-@component function ShiChamber(; name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift=0.0)
+@component function ShiChamber(; name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift=0.0, inP=false)
         @named in = Pin()
         @named out = Pin()
         sts = @variables V(t) = 0.0 p(t) = 0.0
@@ -714,15 +716,26 @@ Named parameters:
 
         D = Differential(t)
         E = ShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
+        DE = DShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
 
         p_rel = p₀
 
         eqs = [
                 0 ~ in.p - out.p
                 p ~ in.p
-                p ~ (V - V₀) * E + p_rel
-                D(V) ~ in.q + out.q
             ]
+
+        if inP
+                push!(eqs,
+                        V ~ (p - p_rel) / E + V₀,
+                        D(p) ~ (in.q + out.q) * E + (p - p_rel) / E * DE
+                )
+        else
+                push!(eqs,
+                        p ~ (V - V₀) * E + p_rel,
+                        D(V) ~ in.q + out.q
+                )
+        end
 
         compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
 end
