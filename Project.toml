@@ -1,7 +1,7 @@
 name = "CirculatorySystemModels"
 uuid = "4211d73e-f4e8-40c4-b600-92e4b82f0e1a"
 authors = ["Torsten Schenkel <t.schenkel@shu.ac.uk>, Harry Saxton <harry.saxton@student.shu.ac.uk> and contributors"]
-version = "0.3.0"
+version = "0.3.1"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
