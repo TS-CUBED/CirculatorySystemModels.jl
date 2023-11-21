@@ -246,7 +246,7 @@ end
 
     prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
     ##
-    @time sol = solve(prob, Tsit5(), reltol=1e-6, abstol=1e-9) #, saveat=19:0.01:20)
+    @time sol = solve(prob, Tsit5(), reltol=1e-6, abstol=1e-9, saveat=19:0.01:20)
     ShiSimpleSol = sol(19:0.01:20)
 
     ## Read benchmark data and compare
