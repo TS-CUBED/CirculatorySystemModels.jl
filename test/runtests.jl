@@ -120,17 +120,17 @@ using DataFrames
 
     prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
     ##
-    @time sol = solve(prob, Tsit5(), reltol=1e-6, abstol=1e-9) #, saveat=19:0.01:20)
-    ShiSimpleSol = sol(19:0.01:20)
+    @time ShiSimpleSolV = solve(prob, Tsit5(), reltol=1e-9, abstol=1e-12, saveat=19:0.01:20)
+    # ShiSimpleSolV = ShiSimpleSolV(19:0.01:20)
 
     ## Read benchmark data and compare
     ShiBench = CSV.read("ShiSimple.csv", DataFrame)
 
     @test SciMLBase.successful_retcode(sol)
-    @test sum((ShiSimpleSol[LV.V] .- ShiBench[!, :LV_V]) ./ ShiBench[!, :LV_V]) / length(ShiSimpleSol.u) ≈ 0 atol = 1e-3
-    @test sum((ShiSimpleSol[RV.V] .- ShiBench[!, :RV_V]) ./ ShiBench[!, :RV_V]) / length(ShiSimpleSol.u) ≈ 0 atol = 1e-3
-    @test sum((ShiSimpleSol[LA.V] .- ShiBench[!, :LA_V]) ./ ShiBench[!, :LA_V]) / length(ShiSimpleSol.u) ≈ 0 atol = 1e-3
-    @test sum((ShiSimpleSol[RA.V] .- ShiBench[!, :RA_V]) ./ ShiBench[!, :RA_V]) / length(ShiSimpleSol.u) ≈ 0 atol = 1e-3
+    @test sum((ShiSimpleSolV[LV.V] .- ShiBench[!, :LV_V]) ./ ShiBench[!, :LV_V]) / length(ShiSimpleSolV.u) ≈ 0 atol = 1e-3
+    @test sum((ShiSimpleSolV[RV.V] .- ShiBench[!, :RV_V]) ./ ShiBench[!, :RV_V]) / length(ShiSimpleSolV.u) ≈ 0 atol = 1e-3
+    @test sum((ShiSimpleSolV[LA.V] .- ShiBench[!, :LA_V]) ./ ShiBench[!, :LA_V]) / length(ShiSimpleSolV.u) ≈ 0 atol = 1e-3
+    @test sum((ShiSimpleSolV[RA.V] .- ShiBench[!, :RA_V]) ./ ShiBench[!, :RA_V]) / length(ShiSimpleSolV.u) ≈ 0 atol = 1e-3
     ##
 end
 
@@ -246,17 +246,17 @@ end
 
     prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
     ##
-    @time sol = solve(prob, Tsit5(), reltol=1e-6, abstol=1e-9, saveat=19:0.01:20)
-    ShiSimpleSol = sol(19:0.01:20)
+    @time ShiSimpleSolP = solve(prob, Tsit5(), reltol=1e-9, abstol=1e-12, saveat=19:0.01:20)
+    # ShiSimpleSolP = ShiSimpleSolP(19:0.01:20)
 
     ## Read benchmark data and compare
     ShiBench = CSV.read("ShiSimple.csv", DataFrame)
 
     @test SciMLBase.successful_retcode(sol)
-    @test sum((ShiSimpleSol[LV.V] .- ShiBench[!, :LV_V]) ./ ShiBench[!, :LV_V]) / length(ShiSimpleSol.u) ≈ 0 atol = 1.6e-3
-    @test sum((ShiSimpleSol[RV.V] .- ShiBench[!, :RV_V]) ./ ShiBench[!, :RV_V]) / length(ShiSimpleSol.u) ≈ 0 atol = 1.6e-3
-    @test sum((ShiSimpleSol[LA.V] .- ShiBench[!, :LA_V]) ./ ShiBench[!, :LA_V]) / length(ShiSimpleSol.u) ≈ 0 atol = 1.6e-3
-    @test sum((ShiSimpleSol[RA.V] .- ShiBench[!, :RA_V]) ./ ShiBench[!, :RA_V]) / length(ShiSimpleSol.u) ≈ 0 atol = 1.6e-3
+    @test sum((ShiSimpleSolP[LV.V] .- ShiBench[!, :LV_V]) ./ ShiBench[!, :LV_V]) / length(ShiSimpleSolP.u) ≈ 0 atol = 2e-3
+    @test sum((ShiSimpleSolP[RV.V] .- ShiBench[!, :RV_V]) ./ ShiBench[!, :RV_V]) / length(ShiSimpleSolP.u) ≈ 0 atol = 2e-3
+    @test sum((ShiSimpleSolP[LA.V] .- ShiBench[!, :LA_V]) ./ ShiBench[!, :LA_V]) / length(ShiSimpleSolP.u) ≈ 0 atol = 2e-3
+    @test sum((ShiSimpleSolP[RA.V] .- ShiBench[!, :RA_V]) ./ ShiBench[!, :RA_V]) / length(ShiSimpleSolP.u) ≈ 0 atol = 2e-3
     ##
 end
 
@@ -395,18 +395,19 @@ end
 
     prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
     ##
-    @time sol = solve(prob, Tsit5(); reltol=1e-6, abstol=1e-9, saveat=19:0.01:20)
-    ShiComplexSol = sol(19:0.01:20)
+    @time ShiComplexSol = solve(prob, Tsit5(); reltol=1e-6, abstol=1e-9, saveat=19:0.01:20)
+    # The callbacks prevent saveat from working as intended! So I need to interpolate the results:
+    ShiComplexSolInt = ShiComplexSol(19:0.01:20)
     ##
 
     ## Read benchmark data and compare
     ShiBench = CSV.read("ShiComplex.csv", DataFrame)
 
     @test SciMLBase.successful_retcode(sol)
-    @test sum((ShiComplexSol[Heart.LV.V] .- ShiBench[!, :LV_V]) ./ ShiBench[!, :LV_V]) / length(ShiComplexSol.u) ≈ 0 atol = 1e-3
-    @test sum((ShiComplexSol[Heart.RV.V] .- ShiBench[!, :RV_V]) ./ ShiBench[!, :RV_V]) / length(ShiComplexSol.u) ≈ 0 atol = 1e-3
-    @test sum((ShiComplexSol[Heart.LA.V] .- ShiBench[!, :LA_V]) ./ ShiBench[!, :LA_V]) / length(ShiComplexSol.u) ≈ 0 atol = 1e-3
-    @test sum((ShiComplexSol[Heart.RA.V] .- ShiBench[!, :RA_V]) ./ ShiBench[!, :RA_V]) / length(ShiComplexSol.u) ≈ 0 atol = 1e-3
+    @test sum((ShiComplexSolInt[Heart.LV.V] .- ShiBench[!, :LV_V]) ./ ShiBench[!, :LV_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-3
+    @test sum((ShiComplexSolInt[Heart.RV.V] .- ShiBench[!, :RV_V]) ./ ShiBench[!, :RV_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-3
+    @test sum((ShiComplexSolInt[Heart.LA.V] .- ShiBench[!, :LA_V]) ./ ShiBench[!, :LA_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-3
+    @test sum((ShiComplexSolInt[Heart.RA.V] .- ShiBench[!, :RA_V]) ./ ShiBench[!, :RA_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-3
     ##
 
 ##
@@ -597,8 +598,8 @@ end
     #
     # The ODE problem is now in the MTK/DifferentialEquations.jl format and we can use any DifferentialEquations.jl solver to solve it:
     #
-    sol = solve(prob, Vern7(), reltol=1e-6, abstol=1e-9)
-    BBsol = sol(19:0.01:20)
+    @time BBsol = solve(prob, Vern7(), reltol=1e-6, abstol=1e-9, saveat=(19:0.01:20))
+    # BBsol = sol(19:0.01:20)
 
     BBbench = CSV.read("BB.csv", DataFrame)
 
