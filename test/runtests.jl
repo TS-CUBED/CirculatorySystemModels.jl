@@ -126,7 +126,7 @@ using DataFrames
     ## Read benchmark data and compare
     ShiBench = CSV.read("ShiSimple.csv", DataFrame)
 
-    @test SciMLBase.successful_retcode(sol)
+    @test SciMLBase.successful_retcode(ShiSimpleSolV)
     @test sum((ShiSimpleSolV[LV.V] .- ShiBench[!, :LV_V]) ./ ShiBench[!, :LV_V]) / length(ShiSimpleSolV.u) ≈ 0 atol = 1e-3
     @test sum((ShiSimpleSolV[RV.V] .- ShiBench[!, :RV_V]) ./ ShiBench[!, :RV_V]) / length(ShiSimpleSolV.u) ≈ 0 atol = 1e-3
     @test sum((ShiSimpleSolV[LA.V] .- ShiBench[!, :LA_V]) ./ ShiBench[!, :LA_V]) / length(ShiSimpleSolV.u) ≈ 0 atol = 1e-3
@@ -252,7 +252,7 @@ end
     ## Read benchmark data and compare
     ShiBench = CSV.read("ShiSimple.csv", DataFrame)
 
-    @test SciMLBase.successful_retcode(sol)
+    @test SciMLBase.successful_retcode(ShiSimpleSolP)
     @test sum((ShiSimpleSolP[LV.V] .- ShiBench[!, :LV_V]) ./ ShiBench[!, :LV_V]) / length(ShiSimpleSolP.u) ≈ 0 atol = 2e-3
     @test sum((ShiSimpleSolP[RV.V] .- ShiBench[!, :RV_V]) ./ ShiBench[!, :RV_V]) / length(ShiSimpleSolP.u) ≈ 0 atol = 2e-3
     @test sum((ShiSimpleSolP[LA.V] .- ShiBench[!, :LA_V]) ./ ShiBench[!, :LA_V]) / length(ShiSimpleSolP.u) ≈ 0 atol = 2e-3
@@ -403,7 +403,7 @@ end
     ## Read benchmark data and compare
     ShiBench = CSV.read("ShiComplex.csv", DataFrame)
 
-    @test SciMLBase.successful_retcode(sol)
+    @test SciMLBase.successful_retcode(ShiComplexSol)
     @test sum((ShiComplexSolInt[Heart.LV.V] .- ShiBench[!, :LV_V]) ./ ShiBench[!, :LV_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-3
     @test sum((ShiComplexSolInt[Heart.RV.V] .- ShiBench[!, :RV_V]) ./ ShiBench[!, :RV_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-3
     @test sum((ShiComplexSolInt[Heart.LA.V] .- ShiBench[!, :LA_V]) ./ ShiBench[!, :LA_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-3
@@ -603,7 +603,7 @@ end
 
     BBbench = CSV.read("BB.csv", DataFrame)
 
-    @test SciMLBase.successful_retcode(sol)
+    @test SciMLBase.successful_retcode(BBsol)
     @test sum((BBsol[LV.V] .- BBbench[!, :LV_V]) ./ BBbench[!, :LV_V]) / length(BBsol.u) ≈ 0 atol = 1.5e-3
     @test sum((BBsol[Csa.p] .- BBbench[!, :Csa_p]) ./ BBbench[!, :Csa_p]) / length(BBsol.u) ≈ 0 atol = 1.5e-3
     @test sum((BBsol[Csv.p] .- BBbench[!, :Csv_p]) ./ BBbench[!, :Csv_p]) / length(BBsol.u) ≈ 0 atol = 1.5e-3
