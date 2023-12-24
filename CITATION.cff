@@ -1,7 +1,9 @@
 cff-version: 1.2.0
 authors:
-- family-names: "Schenkel"
-  given-names: "Torsten"
+    - family-names: "Schenkel"
+      given-names: "Torsten"
+    - family-names: "Saxton"
+      given-names: "Harry"
 title: "Circulatory System Models"
 doi: 10.5281/zenodo.7497881
 url: "https://github.com/TS-CUBED/CirculatorySystemModels.jl"
