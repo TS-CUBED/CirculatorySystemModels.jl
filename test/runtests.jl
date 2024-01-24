@@ -35,27 +35,27 @@ using DataFrames
 
     ####### Systemic Loop #######
     # Systemic Aortic Sinus ##
-    @named SAS = CRL(C.C = Csas, R.R = Rsas, L.L = Lsas)
+    @named SAS = CRL(C=Csas, R=Rsas, L=Lsas)
     # Systemic Artery ##
-    @named SAT = CRL(C.C = Csat, R.R = Rsat, L.L = Lsat)
+    @named SAT = CRL(C=Csat, R=Rsat, L=Lsat)
     # Systemic Arteriole ##
     @named SAR = Resistor(R = Rsar)
     # Systemic Capillary ##
     @named SCP = Resistor(R = Rscp)
     # Systemic Vein ##
-    @named SVN = CR(R.R = Rsvn, C.C = Csvn)
+    @named SVN = CR(R=Rsvn, C=Csvn)
 
     ####### Pulmonary Loop #######
     # Pulmonary Aortic Sinus ##
-    @named PAS = CRL(C.C = Cpas, R.R = Rpas, L.L = Lpas)
+    @named PAS = CRL(C=Cpas, R=Rpas, L=Lpas)
     # Pulmonary Artery ##
-    @named PAT = CRL(C.C = Cpat, R.R = Rpat, L.L = Lpat)
+    @named PAT = CRL(C=Cpat, R=Rpat, L=Lpat)
     # Pulmonary Arteriole ##
     @named PAR = Resistor(R = Rpar)
     # Pulmonary Capillary ##
     @named PCP = Resistor(R = Rpcp)
     # Pulmonary Vein ##
-    @named PVN = CR(R.R = Rpvn, C.C = Cpvn)
+    @named PVN = CR(R=Rpvn, C=Cpvn)
 
     ##
     circ_eqs = [
