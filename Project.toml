@@ -10,12 +10,11 @@ DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
 ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
 
 [compat]
-
-julia = "1.6"
-DataFrames = "1"
 CSV = "0.10"
+DataFrames = "1"
 DifferentialEquations = "7"
-ModelingToolkit = "8"
+ModelingToolkit = "8, 9"
+julia = "1.6"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
