@@ -21,10 +21,10 @@ t \\
 \right]
 \end{equation}
  \]</p><p>Heart is modelled as a single chamber (we call it <code>LV</code> for &quot;Left Ventricle&quot; so the model can be extended later, if required):</p><pre><code class="language-julia hljs">@named LV = DHChamber(V₀ = 0.0, Eₘₐₓ=Eₘₐₓ, Eₘᵢₙ=Eₘᵢₙ, n₁=n1LV, n₂=n2LV, τ = τ, τ₁=Tau1fLV, τ₂=Tau2fLV, k = kLV, Eshift=0.0)</code></pre><p class="math-container">\[ \begin{align}
-0 =&amp;  - out_{+}p\left( t \right) + in_{+}p\left( t \right) \\
-p\left( t \right) =&amp; in_{+}p\left( t \right) \\
 p\left( t \right) =&amp; p_0 + \left( E_{m i n} + \frac{\left( \frac{\mathrm{rem}\left( t + \left( 1 - Eshift \right) \tau, \tau \right)}{\tau_1} \right)^{n_1} \left(  - E_{m i n} + E_{m a x} \right) k}{\left( 1 + \left( \frac{\mathrm{rem}\left( t + \left( 1 - Eshift \right) \tau, \tau \right)}{\tau_1} \right)^{n_1} \right) \left( 1 + \left( \frac{\mathrm{rem}\left( t + \left( 1 - Eshift \right) \tau, \tau \right)}{\tau_2} \right)^{n_2} \right)} \right) \left(  - V_0 + V\left( t \right) \right) \\
-\frac{\mathrm{d} V\left( t \right)}{\mathrm{d}t} =&amp; out_{+}q\left( t \right) + in_{+}q\left( t \right)
+\frac{\mathrm{d} V\left( t \right)}{\mathrm{d}t} =&amp; out_{+}q\left( t \right) + in_{+}q\left( t \right) \\
+0 =&amp;  - out_{+}p\left( t \right) + in_{+}p\left( t \right) \\
+p\left( t \right) =&amp; in_{+}p\left( t \right)
 \end{align}
  \]</p><p>The two valves are simple diodes with a small resistance (resistance is needed, since perfect diodes would connect two elastances/compliances, which will lead to unstable oscillations):</p><pre><code class="language-julia hljs">@named AV = ResistorDiode(R=Zao)
 @named MV = ResistorDiode(R=Rmv)</code></pre><p class="math-container">\[ \begin{align}
@@ -73,10 +73,10 @@ V\left( t \right) =&amp; V_0 + C p\left( t \right) \\
 \mathrm{connect}\left( Rs_{+}out, Csv_{+}in \right) \\
 \mathrm{connect}\left( Csv_{+}out, MV_{+}in \right) \\
 \mathrm{connect}\left( MV_{+}out, LV_{+}in \right) \\
-0 = LV_{+}in_{+}p\left( t \right) - LV_{+}out_{+}p\left( t \right) \\
-LV_{+}p\left( t \right) = LV_{+}in_{+}p\left( t \right) \\
 LV_{+}p\left( t \right) = LV_{+}p_0 + \left( LV_{+}E_{m i n} + \frac{\left( \frac{\mathrm{rem}\left( t + \left( 1 - LV_{+}Eshift \right) LV_+\tau, LV_+\tau \right)}{LV_+\tau_1} \right)^{LV_{+}n_1} \left(  - LV_{+}E_{m i n} + LV_{+}E_{m a x} \right) LV_{+}k}{\left( 1 + \left( \frac{\mathrm{rem}\left( t + \left( 1 - LV_{+}Eshift \right) LV_+\tau, LV_+\tau \right)}{LV_+\tau_1} \right)^{LV_{+}n_1} \right) \left( 1 + \left( \frac{\mathrm{rem}\left( t + \left( 1 - LV_{+}Eshift \right) LV_+\tau, LV_+\tau \right)}{LV_+\tau_2} \right)^{LV_{+}n_2} \right)} \right) \left(  - LV_{+}V_0 + LV_{+}V\left( t \right) \right) \\
 \frac{\mathrm{d} LV_{+}V\left( t \right)}{\mathrm{d}t} = LV_{+}in_{+}q\left( t \right) + LV_{+}out_{+}q\left( t \right) \\
+0 = LV_{+}in_{+}p\left( t \right) - LV_{+}out_{+}p\left( t \right) \\
+LV_{+}p\left( t \right) = LV_{+}in_{+}p\left( t \right) \\
 AV_+{\Delta}p\left( t \right) =  - AV_{+}in_{+}p\left( t \right) + AV_{+}out_{+}p\left( t \right) \\
 0 = AV_{+}in_{+}q\left( t \right) + AV_{+}out_{+}q\left( t \right) \\
 AV_{+}q\left( t \right) = AV_{+}in_{+}q\left( t \right) \\
@@ -113,8 +113,8 @@ LV_{+}p\left( t \right) =&amp; LV_{+}p_0 + \left( LV_{+}E_{m i n} + \frac{\left(
 Csa_{+}p\left( t \right) =&amp; \frac{ - Csa_{+}V_0 + Csa_{+}V\left( t \right)}{Csa_{+}C} \\
 Csv_{+}in_{+}p\left( t \right) =&amp; Csv_{+}p\left( t \right) \\
 Csv_{+}V\left( t \right) =&amp; Csv_{+}V_0 + Csv_{+}C Csv_{+}p\left( t \right) \\
-LV_{+}out_{+}p\left( t \right) =&amp; LV_{+}p\left( t \right) \\
 MV_+{\Delta}p\left( t \right) =&amp; LV_{+}p\left( t \right) - Csv_{+}p\left( t \right) \\
+LV_{+}out_{+}p\left( t \right) =&amp; LV_{+}p\left( t \right) \\
 AV_{+}in_{+}p\left( t \right) =&amp; LV_{+}p\left( t \right) \\
 MV_{+}out_{+}p\left( t \right) =&amp; LV_{+}p\left( t \right) \\
 Rs_+{\Delta}p\left( t \right) =&amp;  - Csa_{+}p\left( t \right) + Csv_{+}p\left( t \right) \\
@@ -124,9 +124,9 @@ Rs_{+}in_{+}p\left( t \right) =&amp; Csa_{+}p\left( t \right) \\
 Csv_{+}out_{+}p\left( t \right) =&amp; Csv_{+}in_{+}p\left( t \right) \\
 Rs_{+}out_{+}p\left( t \right) =&amp; Csv_{+}in_{+}p\left( t \right) \\
 MV_{+}in_{+}p\left( t \right) =&amp; Csv_{+}in_{+}p\left( t \right) \\
-LV_{+}in_{+}p\left( t \right) =&amp; LV_{+}out_{+}p\left( t \right) \\
 MV_{+}q\left( t \right) =&amp; \frac{ - \left( MV_+{\Delta}p\left( t \right) &lt; 0 \right) MV_+{\Delta}p\left( t \right)}{MV_{+}R} \\
 AV_+{\Delta}p\left( t \right) =&amp; Csa_{+}p\left( t \right) - MV_+{\Delta}p\left( t \right) - Csv_{+}p\left( t \right) \\
+LV_{+}in_{+}p\left( t \right) =&amp; LV_{+}out_{+}p\left( t \right) \\
 Rs_{+}q\left( t \right) =&amp; \frac{ - Rs_+{\Delta}p\left( t \right)}{Rs_{+}R} \\
 Csa_{+}out_{+}p\left( t \right) =&amp; Csa_{+}in_{+}p\left( t \right) \\
 Csv_{+}out_{+}q\left( t \right) =&amp;  - MV_{+}q\left( t \right) \\
@@ -188,4 +188,4 @@ img = plot(p1, p2, p3, p4; layout=@layout([a b; c d]), legend = true)
 
 img = DisplayAs.Text(DisplayAs.PNG(img))
 
-img</code></pre><img src="cf8bc8f9.png" alt="Example block output"/><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« Home</a><a class="docs-footer-nextpage" href="../../autodoc/">Method Index »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.2.1 on <span class="colophon-date" title="Friday 23 February 2024 09:44">Friday 23 February 2024</span>. Using Julia version 1.10.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+img</code></pre><img src="cf8bc8f9.png" alt="Example block output"/><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« Home</a><a class="docs-footer-nextpage" href="../../autodoc/">Method Index »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.2.1 on <span class="colophon-date" title="Friday 23 February 2024 10:16">Friday 23 February 2024</span>. Using Julia version 1.10.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
