@@ -184,7 +184,7 @@ _Note: this reduces and optimises the ODE system. It is, therefore, not always o
 States in the system are now:
 
 ````@example BjordalsbakkeModel
-states(circ_sys)
+unknowns(circ_sys)
 ````
 
 Observed variables - the system will drop these from the ODE system that is solved, but it keeps all the algebraic equations needed to calculate them in the system object, as well as the `ODEProblem` and solution object - are:
