@@ -79,7 +79,7 @@ using DataFrames
         connect(MV.out, LV.in)
     ]
 
-    ## Compose the whole ODAE system
+    ## Compose the whole ODE system
     @named _circ_model = ODESystem(circ_eqs, t)
     @named circ_model = compose(_circ_model,
         [LV, RV, LA, RA, AV, MV, PV, TV, SAS, SAT, SAR, SCP, SVN, PAS, PAT, PAR, PCP, PVN])
@@ -94,28 +94,28 @@ using DataFrames
     # u0 = [LV_Vt0, RV_Vt0, LA_Vt0, RA_Vt0, pt0sas, qt0sas, pt0sat, qt0sat, pt0svn, pt0pas, qt0pas, pt0pat, qt0pat, pt0pvn]
 
     u0 = [
-            LV.V => LV_Vt0
-            LV.p => (LV_Vt0 - v0_lv) * Emin_lv + p0_lv
-            RV.V => RV_Vt0
-            RV.p => (RV_Vt0 - v0_rv) * Emin_rv + p0_rv
-            LA.V => LA_Vt0
-            RA.V => RA_Vt0
-            SAS.C.p => pt0sas
-            SAS.C.V => pt0sas * Csas
-            SAS.L.q => qt0sas
-            SAT.C.p => pt0sat
-            SAT.C.V => pt0sat * Csat
-            SAT.L.q => qt0sat
-            SVN.C.p => pt0svn
-            SVN.C.V => pt0svn * Csvn
-            PAS.C.p => pt0pas
-            PAS.C.V => pt0pas * Cpas
-            PAS.L.q => qt0pas
-            PAT.C.p => pt0pat
-            PAT.C.V => pt0pat * Cpat
-            PAT.L.q => qt0pat
-            PVN.C.p => pt0pvn
-            PVN.C.V => pt0pvn * Cpvn
+        LV.V => LV_Vt0
+        LV.p => (LV_Vt0 - v0_lv) * Emin_lv + p0_lv
+        RV.V => RV_Vt0
+        RV.p => (RV_Vt0 - v0_rv) * Emin_rv + p0_rv
+        LA.V => LA_Vt0
+        RA.V => RA_Vt0
+        SAS.C.p => pt0sas
+        SAS.C.V => pt0sas * Csas
+        SAS.L.q => qt0sas
+        SAT.C.p => pt0sat
+        SAT.C.V => pt0sat * Csat
+        SAT.L.q => qt0sat
+        SVN.C.p => pt0svn
+        SVN.C.V => pt0svn * Csvn
+        PAS.C.p => pt0pas
+        PAS.C.V => pt0pas * Cpas
+        PAS.L.q => qt0pas
+        PAT.C.p => pt0pat
+        PAT.C.V => pt0pat * Cpat
+        PAT.L.q => qt0pat
+        PVN.C.p => pt0pvn
+        PVN.C.V => pt0pvn * Cpvn
     ]
 
     prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
@@ -131,12 +131,10 @@ using DataFrames
     @test sum((ShiSimpleSolV[RV.V] .- ShiBench[!, :RV_V]) ./ ShiBench[!, :RV_V]) / length(ShiSimpleSolV.u) ≈ 0 atol = 1e-3
     @test sum((ShiSimpleSolV[LA.V] .- ShiBench[!, :LA_V]) ./ ShiBench[!, :LA_V]) / length(ShiSimpleSolV.u) ≈ 0 atol = 1e-3
     @test sum((ShiSimpleSolV[RA.V] .- ShiBench[!, :RA_V]) ./ ShiBench[!, :RA_V]) / length(ShiSimpleSolV.u) ≈ 0 atol = 1e-3
-    ##
 end
 
 ##
 @testset "Shi Model in P" begin
-    ##
     include("ShiParam.jl")
 
     ## Start Modelling
@@ -203,7 +201,7 @@ end
         connect(MV.out, LV.in)
     ]
 
-    ## Compose the whole ODAE system
+    ## Compose the whole ODE system
     @named _circ_model = ODESystem(circ_eqs, t)
     @named circ_model = compose(_circ_model,
         [LV, RV, LA, RA, AV, MV, PV, TV, SAS, SAT, SAR, SCP, SVN, PAS, PAT, PAR, PCP, PVN])
@@ -218,30 +216,30 @@ end
     # u0 = [LV_Vt0, RV_Vt0, LA_Vt0, RA_Vt0, pt0sas, qt0sas, pt0sat, qt0sat, pt0svn, pt0pas, qt0pas, pt0pat, qt0pat, pt0pvn]
 
     u0 = [
-            LV.V => LV_Vt0
-            LV.p => (LV_Vt0 - v0_lv) * Emin_lv + p0_lv
-            RV.V => RV_Vt0
-            RV.p => (RV_Vt0 - v0_rv) * Emin_rv + p0_rv
-            LA.V => LA_Vt0
-            LA.p => (LA_Vt0 - v0_la) * Emin_la + p0_la
-            RA.V => RA_Vt0
-            RA.p => (RA_Vt0 - v0_ra) * Emin_ra + p0_ra
-            SAS.C.p => pt0sas
-            SAS.C.V => pt0sas * Csas
-            SAS.L.q => qt0sas
-            SAT.C.p => pt0sat
-            SAT.C.V => pt0sat * Csat
-            SAT.L.q => qt0sat
-            SVN.C.p => pt0svn
-            SVN.C.V => pt0svn * Csvn
-            PAS.C.p => pt0pas
-            PAS.C.V => pt0pas * Cpas
-            PAS.L.q => qt0pas
-            PAT.C.p => pt0pat
-            PAT.C.V => pt0pat * Cpat
-            PAT.L.q => qt0pat
-            PVN.C.p => pt0pvn
-            PVN.C.V => pt0pvn * Cpvn
+        LV.V => LV_Vt0
+        LV.p => (LV_Vt0 - v0_lv) * Emin_lv + p0_lv
+        RV.V => RV_Vt0
+        RV.p => (RV_Vt0 - v0_rv) * Emin_rv + p0_rv
+        LA.V => LA_Vt0
+        LA.p => (LA_Vt0 - v0_la) * Emin_la + p0_la
+        RA.V => RA_Vt0
+        RA.p => (RA_Vt0 - v0_ra) * Emin_ra + p0_ra
+        SAS.C.p => pt0sas
+        SAS.C.V => pt0sas * Csas
+        SAS.L.q => qt0sas
+        SAT.C.p => pt0sat
+        SAT.C.V => pt0sat * Csat
+        SAT.L.q => qt0sat
+        SVN.C.p => pt0svn
+        SVN.C.V => pt0svn * Csvn
+        PAS.C.p => pt0pas
+        PAS.C.V => pt0pas * Cpas
+        PAS.L.q => qt0pas
+        PAT.C.p => pt0pat
+        PAT.C.V => pt0pat * Cpat
+        PAT.L.q => qt0pat
+        PVN.C.p => pt0pvn
+        PVN.C.V => pt0pvn * Cpvn
     ]
 
     prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
@@ -257,140 +255,78 @@ end
     @test sum((ShiSimpleSolP[RV.V] .- ShiBench[!, :RV_V]) ./ ShiBench[!, :RV_V]) / length(ShiSimpleSolP.u) ≈ 0 atol = 2e-3
     @test sum((ShiSimpleSolP[LA.V] .- ShiBench[!, :LA_V]) ./ ShiBench[!, :LA_V]) / length(ShiSimpleSolP.u) ≈ 0 atol = 2e-3
     @test sum((ShiSimpleSolP[RA.V] .- ShiBench[!, :RA_V]) ./ ShiBench[!, :RA_V]) / length(ShiSimpleSolP.u) ≈ 0 atol = 2e-3
-    ##
 end
 
 ##
 
 @testset "Shi Model Complex" begin
-
-##
-    ##
     include("ShiParam.jl")
-    ##
+
     ## Start Modelling
     @variables t
 
-    ### Shi Heart (with AV stenosis: max AV opening angle = 40 degrees!)
-    @named Heart = ShiHeart(τ=τ,
-        LV_V₀=v0_lv, LV_p0=p0_lv, LV_Emin=Emin_lv, LV_Emax=Emax_lv, LV_τes=τes_lv, LV_τed=τed_lv, LV_Eshift=0.0,
-        RV_V₀=v0_rv, RV_p0=p0_rv, RV_Emin=Emin_rv, RV_Emax=Emax_rv, RV_τes=τes_rv, RV_τed=τed_rv, RV_Eshift=0.0,
-        LA_V₀=v0_la, LA_p0=p0_la, LA_Emin=Emin_la, LA_Emax=Emax_la, LA_τes=τpww_la / 2, LA_τed=τpww_la, LA_Eshift=τpwb_la,
-        RA_V₀=v0_ra, RA_p0=p0_ra, RA_Emin=Emin_ra, RA_Emax=Emax_ra, RA_τes=τpww_ra / 2, RA_τed=τpww_ra, RA_Eshift=τpwb_ra,
-        AV_CQ=CQ_AV, AV_Kp=Kp_av, AV_Kf=Kf_av, AV_Kb=0.0, AV_Kv=3.5, AV_θmax=40.0 * pi / 180, AV_θmin=5.0 * pi / 180,
-        MV_CQ=CQ_MV, MV_Kp=Kp_mv, MV_Kf=Kf_mv, MV_Kb=0.0, MV_Kv=3.5, MV_θmax=75.0 * pi / 180, MV_θmin=5.0 * pi / 180,
-        TV_CQ=CQ_TV, TV_Kp=Kp_tv, TV_Kf=Kf_tv, TV_Kb=0.0, TV_Kv=3.5, TV_θmax=75.0 * pi / 180, TV_θmin=5.0 * pi / 180,
-        PV_CQ=CQ_PV, PV_Kp=Kp_pv, PV_Kf=Kf_pv, PV_Kb=0.0, PV_Kv=3.5, PV_θmax=75.0 * pi / 180, PV_θmin=5.0 * pi / 180,
-    )
-    ### Ventricles
-    # @named LV = ShiChamber(V₀=v0_lv, p₀ = p0_lv, Eₘᵢₙ=Emin_lv, Eₘₐₓ=Emax_lv, τ=τ, τₑₛ=τes_lv, τₑₚ=τed_lv, Eshift=0.0)
-    # # The atrium can be defined either as a ShiChamber with changed timing parameters, or as defined in the paper
-    # @named LA = ShiChamber(V₀=v0_la, p₀ = p0_la, Eₘᵢₙ=Emin_la, Eₘₐₓ=Emax_la, τ=τ, τₑₛ=τpww_la/2, τₑₚ=τpww_la, Eshift=τpwb_la)
-    # @named RV = ShiChamber(V₀=v0_rv, p₀ = p0_rv, Eₘᵢₙ=Emin_rv, Eₘₐₓ=Emax_rv, τ=τ, τₑₛ=τes_rv, τₑₚ=τed_rv, Eshift=0.0)
-    # # The atrium can be defined either as a ShiChamber with changed timing parameters, or as defined in the paper
-    # # @named RA = ShiChamber(V₀=v0_ra, p₀ = p0_ra, Eₘᵢₙ=Emin_ra, Eₘₐₓ=Emax_ra, τ=τ, τₑₛ=τpww_ra/2, τₑₚ =τpww_ra, Eshift=τpwb_ra)
-    # @named RA = ShiAtrium(V₀=v0_ra, p₀ = 1, Eₘᵢₙ=Emin_ra, Eₘₐₓ=Emax_ra, τ=τ, τpwb=τpwb_ra, τpww=τpww_ra) #, Ev=Inf)
+    ## Shi Heart (with AV stenosis: max AV opening angle = 40 degrees!)
+    @mtkmodel CirculatoryModel begin
+        @components begin
+            heart = ShiHeart(τ=τ,
+                LV.V₀=v0_lv, LV.p₀=p0_lv, LV.Eₘᵢₙ=Emin_lv, LV.Eₘₐₓ=Emax_lv, LV.τ=τ, LV.τₑₛ=τes_lv, LV.τₑₚ=τed_lv, LV.Eshift=0.0,
+                RV.V₀=v0_rv, RV.p₀=p0_rv, RV.Eₘᵢₙ=Emin_rv, RV.Eₘₐₓ=Emax_rv, RV.τ=τ, RV.τₑₛ=τes_rv, RV.τₑₚ=τed_rv, RV.Eshift=0.0,
+                LA.V₀=v0_la, LA.p₀=p0_la, LA.Eₘᵢₙ=Emin_la, LA.Eₘₐₓ=Emax_la, LA.τ=τ, LA.τₑₛ=τpww_la / 2, LA.τₑₚ=τpww_la, LA.Eshift=τpwb_la,
+                RA.V₀=v0_ra, RA.p₀=p0_ra, RA.Eₘᵢₙ=Emin_ra, RA.Eₘₐₓ=Emax_ra, RA.τ=τ, RA.τₑₛ=τpww_ra / 2, RA.τₑₚ=τpww_ra, RA.Eshift=τpwb_ra,
+                AV.CQ=CQ_AV, AV.Kp=Kp_av, AV.Kf=Kf_av, AV.Kb=0.0, AV.Kv=3.5, AV.θmax=40.0 * pi / 180, AV.θmin=5.0 * pi / 180,
+                MV.CQ=CQ_MV, MV.Kp=Kp_mv, MV.Kf=Kf_mv, MV.Kb=0.0, MV.Kv=3.5, MV.θmax=75.0 * pi / 180, MV.θmin=5.0 * pi / 180,
+                TV.CQ=CQ_TV, TV.Kp=Kp_tv, TV.Kf=Kf_tv, TV.Kb=0.0, TV.Kv=3.5, TV.θmax=75.0 * pi / 180, TV.θmin=5.0 * pi / 180,
+                PV.CQ=CQ_PV, PV.Kp=Kp_pv, PV.Kf=Kf_pv, PV.Kb=0.0, PV.Kv=3.5, PV.θmax=75.0 * pi / 180, PV.θmin=5.0 * pi / 180
+            )
+            syst_loop = ShiSystemicLoop(SAS.C=Csas, SAS.R=Rsas, SAS.L=Lsas,
+                SAT.C=Csat, SAT.R=Rsat, SAT.L=Lsat,
+                SAR.R=Rsar, SCP.R=Rscp, SVN.C=Csvn, SVN.R=Rsvn
+            )
+            pulm_loop = ShiPulmonaryLoop(PAS.C=Cpas, PAS.R=Rpas, PAS.L=Lpas,
+                PAT.C=Cpat, PAT.R=Rpat, PAT.L=Lpat,
+                PAR.R=Rpar, PCP.R=Rpcp, PVN.C=Cpvn, PVN.R=Rpvn
+            )
+        end
+        @equations begin
+            connect(heart.LHout, syst_loop.in)
+            connect(syst_loop.out, heart.RHin)
+            connect(heart.RHout, pulm_loop.in)
+            connect(pulm_loop.out, heart.LHin)
+        end
 
-    # ## 4 Valves
-    # @named AV = ShiValve(CQ=CQ_AV, Kp=Kp_av, Kf=Kf_av, Kb= 0.0, Kv=3.5, θmax=40.0 * pi / 180, θmin=5.0 * pi / 180)
-    # @named MV = ShiValve(CQ=CQ_MV, Kp=Kp_mv, Kf=Kf_mv, Kb= 0.0, Kv=3.5, θmax=75.0 * pi / 180, θmin=5.0 * pi / 180)
-    # @named TV = ShiValve(CQ=CQ_TV, Kp=Kp_tv, Kf=Kf_tv, Kb= 0.0, Kv=3.5, θmax=75.0 * pi / 180, θmin=5.0 * pi / 180)
-    # @named PV = ShiValve(CQ=CQ_PV, Kp=Kp_pv, Kf=Kf_pv, Kb= 0.0, Kv=3.5, θmax=75.0 * pi / 180, θmin=5.0 * pi / 180)
+    end
 
-    @named SystLoop = ShiSystemicLoop(SAS_C=Csas, SAS_R=Rsas, SAS_L=Lsas,
-        SAT_C=Csat, SAT_R=Rsat, SAT_L=Lsat,
-        SAR_R=Rsar, SCP_R=Rscp, SVN_C=Csvn, SVN_R=Rsvn)
-    # ####### Systemic Loop #######
-    # # Systemic Aortic Sinus ##
-    # @named SAS = CRL(C=Csas, R=Rsas, L=Lsas)
-    # # Systemic Artery ##
-    # @named SAT = CRL(C=Csat, R=Rsat, L=Lsat)
-    # # Systemic Arteriole ##
-    # @named SAR = Resistor(R=Rsar)
-    # # Systemic Capillary ##
-    # @named SCP = Resistor(R=Rscp)
-    # # Systemic Vein ##
-    # @named SVN = CR(R=Rsvn, C=Csvn)
-
-    @named PulmLoop = ShiPulmonaryLoop(PAS_C=Cpas, PAS_R=Rpas, PAS_L=Lpas,
-        PAT_C=Cpat, PAT_R=Rpat, PAT_L=Lpat,
-        PAR_R=Rpar, PCP_R=Rpcp, PVN_C=Cpvn, PVN_R=Rpvn)
-    # ####### Pulmonary Loop #######
-    # # Pulmonary Aortic Sinus ##
-    # @named PAS = CRL(C=Cpas, R=Rpas, L=Lpas)
-    # # Pulmonary Artery ##
-    # @named PAT = CRL(C=Cpat, R=Rpat, L=Lpat)
-    # # Pulmonary Arteriole ##
-    # @named PAR = Resistor(R=Rpar)
-    # # Pulmonary Capillary ##
-    # @named PCP = Resistor(R=Rpcp)
-    # # Pulmonary Vein ##
-    # @named PVN = CR(R=Rpvn, C=Cpvn)
-
-    ##
-    circ_eqs = [
-        connect(Heart.LHout, SystLoop.in)
-        connect(SystLoop.out, Heart.RHin)
-        connect(Heart.RHout, PulmLoop.in)
-        connect(PulmLoop.out, Heart.LHin)
-    ]
-    # circ_eqs = [
-    #     connect(Heart.LHout, SAS.in)
-    #     connect(SAS.out, SAT.in)
-    #     connect(SAT.out, SAR.in)
-    #     connect(SAR.out, SCP.in)
-    #     connect(SCP.out, SVN.in)
-    #     connect(SVN.out, Heart.RHin)
-    #     connect(Heart.RHout, PAS.in)
-    #     connect(PAS.out, PAT.in)
-    #     connect(PAT.out, PAR.in)
-    #     connect(PAR.out, PCP.in)
-    #     connect(PCP.out, PVN.in)
-    #     connect(PVN.out, Heart.LHin)
-    # ]
-
-    ## Compose the whole ODAE system
-    @named _circ_model = ODESystem(circ_eqs, t)
-    @named circ_model = compose(_circ_model,
-        [Heart, SystLoop, PulmLoop])
-    # [Heart, SAS, SAT, SAR, SCP, SVN, PAS, PAT, PAR, PCP, PVN])
-
-    ## And simplify it
-    circ_sys = structural_simplify(circ_model)
-
-    ## Setup ODE
-    # Initial Conditions for Shi Valve
-    # u0 = [LV_Vt0, RV_Vt0, LA_Vt0, RA_Vt0, 0, 0, 0, 0, 0, 0, 0, 0, pt0sas, qt0sas, pt0sat, qt0sat, pt0svn, pt0pas, qt0pas, pt0pat, qt0pat, pt0pvn]
+    @mtkbuild circ_sys = CirculatoryModel()
 
     u0 = [
-        Heart.LV.V => LV_Vt0
-        Heart.RV.V => RV_Vt0
-        Heart.LA.V => LA_Vt0
-        Heart.RA.V => RA_Vt0
-        Heart.AV.θ => 0
-        Heart.AV.ω => 0
-        Heart.MV.θ => 0
-        Heart.MV.ω => 0
-        Heart.TV.θ => 0
-        Heart.TV.ω => 0
-        Heart.PV.θ => 0
-        Heart.PV.ω => 0
-        SystLoop.SAS.C.p => pt0sas
-        SystLoop.SAS.C.V => pt0sas * Csas
-        SystLoop.SAS.L.q => qt0sas
-        SystLoop.SAT.C.p => pt0sat
-        SystLoop.SAT.C.V => pt0sat * Csat
-        SystLoop.SAT.L.q => qt0sat
-        SystLoop.SVN.C.p => pt0svn
-        SystLoop.SVN.C.V => pt0svn * Csvn
-        PulmLoop.PAS.C.p => pt0pas
-        PulmLoop.PAS.C.V => pt0pas * Cpas
-        PulmLoop.PAS.L.q => qt0pas
-        PulmLoop.PAT.C.p => pt0pat
-        PulmLoop.PAT.C.V => pt0pat * Cpat
-        PulmLoop.PAT.L.q => qt0pat
-        PulmLoop.PVN.C.p => pt0pvn
-        PulmLoop.PVN.C.V => pt0pvn * Cpvn
+        circ_sys.heart.LV.V => LV_Vt0
+        circ_sys.heart.RV.V => RV_Vt0
+        circ_sys.heart.LA.V => LA_Vt0
+        circ_sys.heart.RA.V => RA_Vt0
+        circ_sys.heart.AV.θ => 0
+        circ_sys.heart.AV.ω => 0
+        circ_sys.heart.MV.θ => 0
+        circ_sys.heart.MV.ω => 0
+        circ_sys.heart.TV.θ => 0
+        circ_sys.heart.TV.ω => 0
+        circ_sys.heart.PV.θ => 0
+        circ_sys.heart.PV.ω => 0
+        circ_sys.syst_loop.SAS.C.p => pt0sas
+        circ_sys.syst_loop.SAS.C.V => pt0sas * Csas
+        circ_sys.syst_loop.SAS.L.q => qt0sas
+        circ_sys.syst_loop.SAT.C.p => pt0sat
+        circ_sys.syst_loop.SAT.C.V => pt0sat * Csat
+        circ_sys.syst_loop.SAT.L.q => qt0sat
+        circ_sys.syst_loop.SVN.C.p => pt0svn
+        circ_sys.syst_loop.SVN.C.V => pt0svn * Csvn
+        circ_sys.pulm_loop.PAS.C.p => pt0pas
+        circ_sys.pulm_loop.PAS.C.V => pt0pas * Cpas
+        circ_sys.pulm_loop.PAS.L.q => qt0pas
+        circ_sys.pulm_loop.PAT.C.p => pt0pat
+        circ_sys.pulm_loop.PAT.C.V => pt0pat * Cpat
+        circ_sys.pulm_loop.PAT.L.q => qt0pat
+        circ_sys.pulm_loop.PVN.C.p => pt0pvn
+        circ_sys.pulm_loop.PVN.C.V => pt0pvn * Cpvn
     ]
 
     prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
@@ -404,20 +340,18 @@ end
     ShiBench = CSV.read("ShiComplex.csv", DataFrame)
 
     @test SciMLBase.successful_retcode(ShiComplexSol)
-    @test sum((ShiComplexSolInt[Heart.LV.V] .- ShiBench[!, :LV_V]) ./ ShiBench[!, :LV_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-3
-    @test sum((ShiComplexSolInt[Heart.RV.V] .- ShiBench[!, :RV_V]) ./ ShiBench[!, :RV_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-3
-    @test sum((ShiComplexSolInt[Heart.LA.V] .- ShiBench[!, :LA_V]) ./ ShiBench[!, :LA_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-3
-    @test sum((ShiComplexSolInt[Heart.RA.V] .- ShiBench[!, :RA_V]) ./ ShiBench[!, :RA_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-3
+    @test sum((ShiComplexSolInt[circ_sys.heart.LV.V] .- ShiBench[!, :LV_V]) ./ ShiBench[!, :LV_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-3
+    @test sum((ShiComplexSolInt[circ_sys.heart.RV.V] .- ShiBench[!, :RV_V]) ./ ShiBench[!, :RV_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-3
+    @test sum((ShiComplexSolInt[circ_sys.heart.LA.V] .- ShiBench[!, :LA_V]) ./ ShiBench[!, :LA_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-3
+    @test sum((ShiComplexSolInt[circ_sys.heart.RA.V] .- ShiBench[!, :RA_V]) ./ ShiBench[!, :RA_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-3
     ##
-
-##
 end
 
 
 ##
 @testset "Bjørdalsbakke" begin
 
-##
+    ##
     using ModelingToolkit, DifferentialEquations
     using CirculatorySystemModels
 
@@ -565,7 +499,7 @@ end
     # _Note: `structural_simplify` reduces and optimises the ODE system. It is, therefore, not always obvious, which states it will use and which it will drop. We can use the `states` and `observed` function to check this. It is recommended to do this, since small changes can reorder states, observables, and parameters._
     #
     # States in the system are now:
-    states(circ_sys)
+    unknowns(circ_sys)
 
     # Observed variables - the system will drop these from the ODE system that is solved, but it keeps all the algebraic equations needed to calculate them in the system object, as well as the `ODEProblem` and solution object - are:
     observed(circ_sys)
@@ -584,7 +518,7 @@ end
         Csa.V => MCFP*C_sa
         Csv.p => MCFP
         Csv.V => MCFP*C_sv
-        ]
+    ]
 
     tspan = (0, 20)
 
@@ -608,7 +542,7 @@ end
     @test sum((BBsol[Csa.p] .- BBbench[!, :Csa_p]) ./ BBbench[!, :Csa_p]) / length(BBsol.u) ≈ 0 atol = 1.5e-3
     @test sum((BBsol[Csv.p] .- BBbench[!, :Csv_p]) ./ BBbench[!, :Csv_p]) / length(BBsol.u) ≈ 0 atol = 1.5e-3
 
-##
+    ##
 end
 
 
