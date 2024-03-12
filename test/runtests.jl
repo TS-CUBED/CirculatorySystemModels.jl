@@ -499,13 +499,13 @@ end
     # _Note: `structural_simplify` reduces and optimises the ODE system. It is, therefore, not always obvious, which states it will use and which it will drop. We can use the `states` and `observed` function to check this. It is recommended to do this, since small changes can reorder states, observables, and parameters._
     #
     # States in the system are now:
-    unknowns(circ_sys)
+    #unknowns(circ_sys)
 
     # Observed variables - the system will drop these from the ODE system that is solved, but it keeps all the algebraic equations needed to calculate them in the system object, as well as the `ODEProblem` and solution object - are:
-    observed(circ_sys)
+    #observed(circ_sys)
 
     # And the parameters (these could be reordered, so check these, too):
-    parameters(circ_sys)
+    #parameters(circ_sys)
 
     # ### Define the ODE problem
     #
