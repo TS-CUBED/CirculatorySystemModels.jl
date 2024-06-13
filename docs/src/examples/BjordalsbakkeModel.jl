@@ -1,8 +1,8 @@
 # # Importing the required packages
 
 using CirculatorySystemModels
-using CirculatorySystemModels.ModelingToolkit
-using CirculatorySystemModels.DifferentialEquations
+using ModelingToolkit
+using OrdinaryDiffEq
 using Plots
 using DisplayAs
 
