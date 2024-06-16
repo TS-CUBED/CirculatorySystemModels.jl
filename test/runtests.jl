@@ -1,7 +1,7 @@
 ##
 using CirculatorySystemModels
-using CirculatorySystemModels.DifferentialEquations
-using CirculatorySystemModels.ModelingToolkit
+using ModelingToolkit
+using OrdinaryDiffEq
 using Test
 using CSV
 using DataFrames
@@ -118,7 +118,7 @@ using DataFrames
         PVN.C.V => pt0pvn * Cpvn
     ]
 
-    prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
+    prob = ODEProblem(circ_sys, u0, (0.0, 20.0))
     ##
     @time ShiSimpleSolV = solve(prob, Tsit5(), reltol=1e-9, abstol=1e-12, saveat=19:0.01:20)
     # ShiSimpleSolV = ShiSimpleSolV(19:0.01:20)
@@ -242,7 +242,7 @@ end
         PVN.C.V => pt0pvn * Cpvn
     ]
 
-    prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
+    prob = ODEProblem(circ_sys, u0, (0.0, 20.0))
     ##
     @time ShiSimpleSolP = solve(prob, Tsit5(), reltol=1e-9, abstol=1e-12, saveat=19:0.01:20)
     # ShiSimpleSolP = ShiSimpleSolP(19:0.01:20)
@@ -329,7 +329,7 @@ end
         circ_sys.pulm_loop.PVN.C.V => pt0pvn * Cpvn
     ]
 
-    prob = ODAEProblem(circ_sys, u0, (0.0, 20.0))
+    prob = ODEProblem(circ_sys, u0, (0.0, 20.0))
     ##
     @time ShiComplexSol = solve(prob, Tsit5(); reltol=1e-6, abstol=1e-9, saveat=19:0.01:20)
     # The callbacks prevent saveat from working as intended! So I need to interpolate the results:
@@ -352,7 +352,7 @@ end
 @testset "Bjørdalsbakke" begin
 
     ##
-    using ModelingToolkit, DifferentialEquations
+    using ModelingToolkit
     using CirculatorySystemModels
 
     # # A simple single-chamber model
