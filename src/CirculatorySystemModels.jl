@@ -1361,7 +1361,7 @@ Flow in cm^3/s (ml/s)
 
 Named parameters:
 
-`Rc`:      Characteristic impedence in mmHg*s/ml
+`Rc`:      Characteristic impedance in mmHg*s/ml
 
 `Rp`:      Peripheral resistance in mmHg*s/ml
 
@@ -1396,7 +1396,7 @@ Flow in cm^3/s (ml/s)
 
 Named parameters:
 
-`Rc`:      Characteristic impedence in mmHg*s/ml
+`Rc`:      Characteristic impedance in mmHg*s/ml
 
 `Rp`:      Peripheral resistance in mmHg*s/ml
 
@@ -1432,7 +1432,7 @@ Flow in cm^3/s (ml/s)
 
 Named parameters:
 
-`Rc`:      Characteristic impedence in mmHg*s/ml
+`Rc`:      Characteristic impedance in mmHg*s/ml
 
 `L`:       Inertance/Inductance in mmHg*s^2*ml^-1
 
@@ -1475,7 +1475,7 @@ Flow in cm^3/s (ml/s)
 
 Named parameters:
 
-`Rc`:      Characteristic impedence in mmHg*s/ml
+`Rc`:      Characteristic impedance in mmHg*s/ml
 
 `L`:       Inertance/Inductance in mmHg*s^2*ml^-1
 
@@ -1519,7 +1519,7 @@ Flow in cm^3/s (ml/s)
 
 Named parameters:
 
-`Rc`:      Characteristic impedence in mmHg*s/ml
+`Rc`:      Characteristic impedance in mmHg*s/ml
 
 `L`:       Inertance/Inductance in mmHg*s^2*ml^-1
 
@@ -1560,7 +1560,7 @@ Flow in cm^3/s (ml/s)
 
 Named parameters:
 
-`Rc`:      Characteristic impedence in mmHg*s/ml
+`Rc`:      Characteristic impedance in mmHg*s/ml
 
 `L`:       Inertance/Inductance in mmHg*s^2*ml^-1
 
