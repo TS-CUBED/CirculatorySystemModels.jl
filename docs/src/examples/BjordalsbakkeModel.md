@@ -105,7 +105,7 @@ kLV = 1 / maximum((t ./ Tau1fLV).^n1LV ./ (1 .+ (t ./ Tau1fLV).^n1LV) .* 1 ./ (1
 Set up time as a variable `t`
 
 ````@example BjordalsbakkeModel
-@independent_variables t
+@variables t
 ````
 
 Heart is modelled as a single chamber (we call it `LV` for "Left Ventricle" so the model can be extended later, if required):
