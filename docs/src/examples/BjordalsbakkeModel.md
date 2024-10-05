@@ -6,10 +6,10 @@ EditURL = "BjordalsbakkeModel.jl"
 
 ````@example BjordalsbakkeModel
 using CirculatorySystemModels
-using CirculatorySystemModels.ModelingToolkit
-using CirculatorySystemModels.DifferentialEquations
+using ModelingToolkit
+using OrdinaryDiffEq
 using Plots
-using DisplayAs
+import DisplayAs
 ````
 
 # A simple single-chamber model

@@ -1,6 +1,6 @@
 module CirculatorySystemModels
 
-using ModelingToolkit, DifferentialEquations
+using ModelingToolkit
 
 export Pin, OnePort, Ground, Resistor, QResistor, PoiseuilleResistor, Capacitor, Inductance, Compliance, Elastance, VariableElastance, ConstantPressure, ConstantFlow, DrivenPressure, DrivenFlow, DHChamber, ShiChamber, ShiAtrium, ShiHeart, WK3, WK3E, CR, CRL, RRCR, ShiSystemicLoop, ShiPulmonaryLoop, ResistorDiode, OrificeValve, ShiValve, MynardValve_SemiLunar, MynardValve_Atrioventricular
 
@@ -1362,7 +1362,7 @@ Flow in cm^3/s (ml/s)
 
 Named parameters:
 
-`Rc`:      Characteristic impedence in mmHg*s/ml
+`Rc`:      Characteristic impedance in mmHg*s/ml
 
 `Rp`:      Peripheral resistance in mmHg*s/ml
 
@@ -1397,7 +1397,7 @@ Flow in cm^3/s (ml/s)
 
 Named parameters:
 
-`Rc`:      Characteristic impedence in mmHg*s/ml
+`Rc`:      Characteristic impedance in mmHg*s/ml
 
 `Rp`:      Peripheral resistance in mmHg*s/ml
 
@@ -1433,7 +1433,7 @@ Flow in cm^3/s (ml/s)
 
 Named parameters:
 
-`Rc`:      Characteristic impedence in mmHg*s/ml
+`Rc`:      Characteristic impedance in mmHg*s/ml
 
 `L`:       Inertance/Inductance in mmHg*s^2*ml^-1
 
@@ -1476,7 +1476,7 @@ Flow in cm^3/s (ml/s)
 
 Named parameters:
 
-`Rc`:      Characteristic impedence in mmHg*s/ml
+`Rc`:      Characteristic impedance in mmHg*s/ml
 
 `L`:       Inertance/Inductance in mmHg*s^2*ml^-1
 
@@ -1520,7 +1520,7 @@ Flow in cm^3/s (ml/s)
 
 Named parameters:
 
-`Rc`:      Characteristic impedence in mmHg*s/ml
+`Rc`:      Characteristic impedance in mmHg*s/ml
 
 `L`:       Inertance/Inductance in mmHg*s^2*ml^-1
 
@@ -1561,7 +1561,7 @@ Flow in cm^3/s (ml/s)
 
 Named parameters:
 
-`Rc`:      Characteristic impedence in mmHg*s/ml
+`Rc`:      Characteristic impedance in mmHg*s/ml
 
 `L`:       Inertance/Inductance in mmHg*s^2*ml^-1
 
