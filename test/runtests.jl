@@ -14,8 +14,6 @@ using DataFrames
     ##
     include("ShiParam.jl")
 
-    ## Start Modelling
-    @variables t
 
     ## Ventricles
     @named LV = ShiChamber(V₀=v0_lv, p₀=p0_lv, Eₘᵢₙ=Emin_lv, Eₘₐₓ=Emax_lv, τ=τ, τₑₛ=τes_lv, τₑₚ=τed_lv, Eshift=0.0)
@@ -94,27 +92,19 @@ using DataFrames
 
     u0 = [
         LV.V => LV_Vt0
-        LV.p => (LV_Vt0 - v0_lv) * Emin_lv + p0_lv
         RV.V => RV_Vt0
-        RV.p => (RV_Vt0 - v0_rv) * Emin_rv + p0_rv
         LA.V => LA_Vt0
         RA.V => RA_Vt0
         SAS.C.p => pt0sas
-        SAS.C.V => pt0sas * Csas
         SAS.L.q => qt0sas
         SAT.C.p => pt0sat
-        SAT.C.V => pt0sat * Csat
         SAT.L.q => qt0sat
         SVN.C.p => pt0svn
-        SVN.C.V => pt0svn * Csvn
         PAS.C.p => pt0pas
-        PAS.C.V => pt0pas * Cpas
         PAS.L.q => qt0pas
         PAT.C.p => pt0pat
-        PAT.C.V => pt0pat * Cpat
         PAT.L.q => qt0pat
         PVN.C.p => pt0pvn
-        PVN.C.V => pt0pvn * Cpvn
     ]
 
     prob = ODEProblem(circ_sys, u0, (0.0, 20.0))
@@ -241,7 +231,7 @@ end
         PVN.C.V => pt0pvn * Cpvn
     ]
 
-    prob = ODEProblem(circ_sys, u0, (0.0, 20.0))
+    prob = ODEProblem(circ_sys, u0, (0.0, 20.0), fully_determined=false)
     ##
     @time ShiSimpleSolP = solve(prob, Tsit5(), reltol=1e-9, abstol=1e-12, saveat=19:0.01:20)
     # ShiSimpleSolP = ShiSimpleSolP(19:0.01:20)
@@ -311,21 +301,15 @@ end
         circ_sys.heart.PV.θ => 0
         circ_sys.heart.PV.ω => 0
         circ_sys.syst_loop.SAS.C.p => pt0sas
-        circ_sys.syst_loop.SAS.C.V => pt0sas * Csas
         circ_sys.syst_loop.SAS.L.q => qt0sas
         circ_sys.syst_loop.SAT.C.p => pt0sat
-        circ_sys.syst_loop.SAT.C.V => pt0sat * Csat
         circ_sys.syst_loop.SAT.L.q => qt0sat
         circ_sys.syst_loop.SVN.C.p => pt0svn
-        circ_sys.syst_loop.SVN.C.V => pt0svn * Csvn
         circ_sys.pulm_loop.PAS.C.p => pt0pas
-        circ_sys.pulm_loop.PAS.C.V => pt0pas * Cpas
         circ_sys.pulm_loop.PAS.L.q => qt0pas
         circ_sys.pulm_loop.PAT.C.p => pt0pat
-        circ_sys.pulm_loop.PAT.C.V => pt0pat * Cpat
         circ_sys.pulm_loop.PAT.L.q => qt0pat
         circ_sys.pulm_loop.PVN.C.p => pt0pvn
-        circ_sys.pulm_loop.PVN.C.V => pt0pvn * Cpvn
     ]
 
     prob = ODEProblem(circ_sys, u0, (0.0, 20.0))
