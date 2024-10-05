@@ -14,7 +14,7 @@ using DataFrames
     ##
     include("ShiParam.jl")
 
-    @variables t
+    @parameters t
 
     ## Ventricles
     @named LV = ShiChamber(V₀=v0_lv, p₀=p0_lv, Eₘᵢₙ=Emin_lv, Eₘₐₓ=Emax_lv, τ=τ, τₑₛ=τes_lv, τₑₚ=τed_lv, Eshift=0.0)
@@ -128,7 +128,7 @@ end
     include("ShiParam.jl")
 
     ## Start Modelling
-    @variables t
+    @parameters t
 
     ## Ventricles
     @named LV = ShiChamber(V₀=v0_lv, p₀=p0_lv, Eₘᵢₙ=Emin_lv, Eₘₐₓ=Emax_lv, τ=τ, τₑₛ=τes_lv, τₑₚ=τed_lv, Eshift=0.0, inP=true)
@@ -243,7 +243,7 @@ end
     include("ShiParam.jl")
 
     ## Start Modelling
-    @variables t
+    @parameters t
 
     ## Shi Heart (with AV stenosis: max AV opening angle = 40 degrees!)
     @mtkmodel CirculatoryModel begin
@@ -475,7 +475,7 @@ end
     # States in the system are now:
     #unknowns(circ_sys)
 
-    # Observed variables - the system will drop these from the ODE system that is solved, but it keeps all the algebraic equations needed to calculate them in the system object, as well as the `ODEProblem` and solution object - are:
+    # Observed parameters - the system will drop these from the ODE system that is solved, but it keeps all the algebraic equations needed to calculate them in the system object, as well as the `ODEProblem` and solution object - are:
     #observed(circ_sys)
 
     # And the parameters (these could be reordered, so check these, too):
