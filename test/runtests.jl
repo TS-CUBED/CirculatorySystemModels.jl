@@ -5,7 +5,6 @@ using CirculatorySystemModels.ModelingToolkit
 using Test
 using CSV
 using DataFrames
-
 ##
 # @testset "WK5" begin
 

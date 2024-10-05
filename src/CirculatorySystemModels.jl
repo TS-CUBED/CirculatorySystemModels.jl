@@ -19,7 +19,7 @@ end
                 g = Pin()
         end
         @parameters begin
-                P
+                P = 0.0
         end
         @equations begin
                 g.p ~ P
@@ -81,7 +81,7 @@ Named parameters:
 @mtkmodel Resistor begin
         @extend OnePort()
         @parameters begin
-                R
+                R = 1.0
         end
         @equations begin
                 Δp ~ -q * R
@@ -131,7 +131,7 @@ Named parameters:
 @mtkmodel Capacitor begin
         @extend OnePort()
         @parameters begin
-                C
+                C = 1.0
         end
         @equations begin
                 D(Δp) ~ -q / C
@@ -556,7 +556,7 @@ Named parameters:
 @mtkmodel DrivenPressure begin
         @extend OnePort()
         @structural_parameters begin
-                fun
+                fun = sin
         end
         @parameters begin
                 P = 1.0
@@ -587,13 +587,14 @@ Named parameters:
 @mtkmodel DrivenFlow begin
         @extend OnePort()
         @structural_parameters begin
-                f
+                fun = sin
         end
         @parameters begin
+
                 Q = 1.0
         end
         @equations begin
-                q ~ Q * f(t)
+                q ~ Q * fun(t)
         end
 end
 

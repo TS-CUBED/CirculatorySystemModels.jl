@@ -1,4 +1,4 @@
-# # Importing the required packages
+## # Importing the required packages
 
 using CirculatorySystemModels
 using CirculatorySystemModels.ModelingToolkit
@@ -30,7 +30,7 @@ using DisplayAs
 #
 
 # Cycle time in seconds
-#
+##
 τ = 0.85
 
 # Double Hill parameters for the ventricle
@@ -41,7 +41,7 @@ n1LV    = 1.32;
 n2LV    = 21.9;
 Tau1fLV = 0.303 * τ;
 Tau2fLV = 0.508 * τ
-
+##
 # Resistances and Compliances
 #
 R_s = 1.11
@@ -55,10 +55,10 @@ Zao = 0.033
 # Mitral valve basic
 Rmv = 0.006
 
-# Inital Pressure (mean cardiac filling pressure)
+## Inital Pressure (mean cardiac filling pressure)
 MCFP = 7.0
 
-# ## Calculating the additional `k` parameter
+### Calculating the additional `k` parameter
 #
 # The ventricle elastance is modelled as:
 #
@@ -199,3 +199,4 @@ img = plot(p1, p2, p3, p4; layout=@layout([a b; c d]), legend = true)
 img = DisplayAs.Text(DisplayAs.PNG(img))
 
 img
+##
