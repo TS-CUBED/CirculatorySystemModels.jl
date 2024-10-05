@@ -14,7 +14,7 @@ using DataFrames
     ##
     include("ShiParam.jl")
 
-    @parameters t
+    @independent_variables t
 
     ## Ventricles
     @named LV = ShiChamber(V₀=v0_lv, p₀=p0_lv, Eₘᵢₙ=Emin_lv, Eₘₐₓ=Emax_lv, τ=τ, τₑₛ=τes_lv, τₑₚ=τed_lv, Eshift=0.0)
@@ -128,7 +128,7 @@ end
     include("ShiParam.jl")
 
     ## Start Modelling
-    @parameters t
+    @independent_variables t
 
     ## Ventricles
     @named LV = ShiChamber(V₀=v0_lv, p₀=p0_lv, Eₘᵢₙ=Emin_lv, Eₘₐₓ=Emax_lv, τ=τ, τₑₛ=τes_lv, τₑₚ=τed_lv, Eshift=0.0, inP=true)
@@ -243,7 +243,7 @@ end
     include("ShiParam.jl")
 
     ## Start Modelling
-    @parameters t
+    @independent_variables t
 
     ## Shi Heart (with AV stenosis: max AV opening angle = 40 degrees!)
     @mtkmodel CirculatoryModel begin
@@ -406,7 +406,7 @@ end
     #
     # Set up time as a parameter `t`
     #
-    @parameters t
+    @independent_variables t
 
     # Heart is modelled as a single chamber (we call it `LV` for "Left Ventricle" so the model can be extended later, if required):
     #
