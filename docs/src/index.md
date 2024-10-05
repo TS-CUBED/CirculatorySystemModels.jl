@@ -51,6 +51,9 @@ defined as such (do not use `t` as a variable name elsewhere!). This can be set 
 @independent_variables t
 ```
 
+### Compatibility
+
+From version 0.4.0 CirculatorySystemModels is only compatible with Julia 1.10 and up, and with MTK 9 and higher.
 
 
 
