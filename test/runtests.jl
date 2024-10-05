@@ -14,6 +14,7 @@ using DataFrames
     ##
     include("ShiParam.jl")
 
+    @independent_variables t
 
     ## Ventricles
     @named LV = ShiChamber(V₀=v0_lv, p₀=p0_lv, Eₘᵢₙ=Emin_lv, Eₘₐₓ=Emax_lv, τ=τ, τₑₛ=τes_lv, τₑₚ=τed_lv, Eshift=0.0)
