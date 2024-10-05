@@ -14,7 +14,7 @@ using DataFrames
     ##
     include("ShiParam.jl")
 
-    @independent_variables t
+    @variables t
 
     ## Ventricles
     @named LV = ShiChamber(V₀=v0_lv, p₀=p0_lv, Eₘᵢₙ=Emin_lv, Eₘₐₓ=Emax_lv, τ=τ, τₑₛ=τes_lv, τₑₚ=τed_lv, Eshift=0.0)
@@ -207,32 +207,22 @@ end
 
     u0 = [
         LV.V => LV_Vt0
-        LV.p => (LV_Vt0 - v0_lv) * Emin_lv + p0_lv
         RV.V => RV_Vt0
-        RV.p => (RV_Vt0 - v0_rv) * Emin_rv + p0_rv
         LA.V => LA_Vt0
-        LA.p => (LA_Vt0 - v0_la) * Emin_la + p0_la
         RA.V => RA_Vt0
-        RA.p => (RA_Vt0 - v0_ra) * Emin_ra + p0_ra
         SAS.C.p => pt0sas
-        SAS.C.V => pt0sas * Csas
         SAS.L.q => qt0sas
         SAT.C.p => pt0sat
-        SAT.C.V => pt0sat * Csat
         SAT.L.q => qt0sat
         SVN.C.p => pt0svn
-        SVN.C.V => pt0svn * Csvn
         PAS.C.p => pt0pas
-        PAS.C.V => pt0pas * Cpas
         PAS.L.q => qt0pas
         PAT.C.p => pt0pat
-        PAT.C.V => pt0pat * Cpat
         PAT.L.q => qt0pat
         PVN.C.p => pt0pvn
-        PVN.C.V => pt0pvn * Cpvn
     ]
 
-    prob = ODEProblem(circ_sys, u0, (0.0, 20.0), fully_determined=false)
+    prob = ODEProblem(circ_sys, u0, (0.0, 20.0))
     ##
     @time ShiSimpleSolP = solve(prob, Tsit5(), reltol=1e-9, abstol=1e-12, saveat=19:0.01:20)
     # ShiSimpleSolP = ShiSimpleSolP(19:0.01:20)
@@ -497,11 +487,8 @@ end
     #
     u0 = [
         LV.p => MCFP
-        LV.V => 10 + (MCFP - 1) / Eₘᵢₙ
         Csa.p => MCFP
-        Csa.V => MCFP*C_sa
         Csv.p => MCFP
-        Csv.V => MCFP*C_sv
     ]
 
     tspan = (0, 20)
