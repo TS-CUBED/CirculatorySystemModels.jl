@@ -44,9 +44,26 @@ the difference in potential over a component, as is commonly done in
 electrical analogon models. To denote the pressure drop over a
 component, this model uses the symbol $\Delta p$.
 
-Time is a variable in all the symbolic operations, so needs to be
-defined as such (do not use `t` as a variable name elsewhere!). Variables can be set using the `@variables` macro.
+Time is the independent variable in all the symbolic operations, so needs to be
+defined as such (do not use `t` as a variable name elsewhere!). This can be set using the `@independent_variables` macro.
 
 ```julia
-@variables t
+@independent_variables t
 ```
+
+### Compatibility
+
+From version 0.4.0 CirculatorySystemModels is only compatible with Julia 1.10 and up, and with MTK 9 and higher.
+
+
+
+
+
+
+
+
+
+
+
+
+

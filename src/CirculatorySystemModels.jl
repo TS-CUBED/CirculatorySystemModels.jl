@@ -5,12 +5,13 @@ using ModelingToolkit
 export Pin, OnePort, Ground, Resistor, QResistor, PoiseuilleResistor, Capacitor, Inductance, Compliance, Elastance, VariableElastance, ConstantPressure, ConstantFlow, DrivenPressure, DrivenFlow, DHChamber, ShiChamber, ShiAtrium, ShiHeart, WK3, WK3E, CR, CRL, RRCR, ShiSystemicLoop, ShiPulmonaryLoop, ResistorDiode, OrificeValve, ShiValve, MynardValve_SemiLunar, MynardValve_Atrioventricular
 
 
-@variables t
+@parameters t
+
 D = Differential(t)
 
 @connector Pin begin
-        p(t) = 1.0
-        q(t) = 1.0, [connect = Flow]
+        p(t)
+        q(t), [connect = Flow]
 end
 
 
@@ -33,8 +34,8 @@ end
                 in = Pin()
         end
         @variables begin
-                Δp(t) = 0.0
-                q(t) = 0.0
+                Δp(t)
+                q(t)
         end
         @equations begin
                 Δp ~ out.p - in.p
@@ -50,9 +51,9 @@ end
                 ep = Pin()
         end
         @variables begin
-                Δp(t) = 0.0
-                q(t) = 0.0
-                pg(t) = 0.0
+                Δp(t)
+                q(t)
+                pg(t)
         end
         @equations begin
                 Δp ~ out.p - in.p
@@ -238,8 +239,8 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
         end
 
         sts = @variables begin
-                V(t) = V₀
-                p(t) = 0.0
+                V(t)
+                p(t)
         end
 
         ps = @parameters begin
@@ -258,7 +259,7 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
 
         if has_variable_ep
                 push!(sts,
-                        (@variables p_rel(t) = p₀)[1]
+                        (@variables p_rel(t))[1]
                 )
                 if has_ep
                         push!(ps,
@@ -337,8 +338,8 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
         end
 
         sts = @variables begin
-                V(t) = V₀
-                p(t) = 0.0
+                V(t)
+                p(t)
         end
 
         ps = @parameters begin
@@ -355,7 +356,7 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
 
         if has_variable_ep
                 push!(sts,
-                        (@variables p_rel(t) = p₀)[1]
+                        (@variables p_rel(t))[1]
                 )
                 if has_ep
                         push!(ps,
@@ -433,8 +434,8 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
         end
 
         sts = @variables begin
-                V(t) = V₀
-                p(t) = 0.0
+                V(t)
+                p(t)
         end
 
         ps = @parameters begin
@@ -452,7 +453,7 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
 
         if has_variable_ep
                 push!(sts,
-                        (@variables p_rel(t) = p₀)[1]
+                        (@variables p_rel(t))[1]
                 )
                 push!(eqs,
                         p_rel ~ ep.p,
@@ -657,8 +658,8 @@ E(t) varies between Eₘᵢₙ and Eₘₐₓ.
                 inP = false
         end
         @variables begin
-                V(t) = 2.0
-                p(t) = 0.0
+                V(t)
+                p(t)
         end
         @parameters begin
                 V₀
@@ -757,8 +758,8 @@ Named parameters:
                 inP = false
         end
         @variables begin
-                V(t) = 0.0
-                p(t) = 0.0
+                V(t)
+                p(t)
         end
         @parameters begin
                 V₀
@@ -890,8 +891,8 @@ name    name of the element
                 out = Pin()
         end
         @variables begin
-                V(t) = 0.0
-                p(t) = 0.0
+                V(t)
+                p(t)
         end
         @structural_parameters begin
                 inP = false
@@ -1077,8 +1078,8 @@ Named parameters:
                 out = Pin()
         end
         @variables begin
-                Δp(t) = 0.0
-                q(t) = 0.0
+                Δp(t)
+                q(t)
         end
         # sts = []
         # ps = @parameters Rc=Rc Rp=Rp C=C
@@ -1193,7 +1194,7 @@ Named parameters:
         @named oneport = OnePort()
         @unpack Δp, q = oneport
         ps = @parameters CQ = CQ Kp = Kp Kf = Kf Kb = Kb Kv = Kv θmax = θmax θmin = θmin
-        sts = @variables θ(t) = 0.0 ω(t) = 0.0 AR(t) = 0.0 Fp(t) = 0.0 Ff(t) = 0.0 Fb(t) = 0.0 Fv(t) = 0.0 F(t) = 0.0
+        sts = @variables θ(t) ω(t) AR(t) Fp(t) Ff(t) Fb(t) Fv(t) F(t)
         D = Differential(t)
         limits = [
                 [(θ ~ θmax)] => [ω ~ 0]
@@ -1266,12 +1267,12 @@ q is calculated in cm^3/s (ml/s)
                 Kvo
         end
         @variables begin
-                Aeff(t) = 0.0
-                ζ(t) = 0.0
-                B(t) = 0.0
-                Aeff_min(t) = 0.0
-                Aeff_max(t) = 0.0
-                L(t) = 0.0
+                Aeff(t)
+                ζ(t)
+                B(t)
+                Aeff_min(t)
+                Aeff_max(t)
+                L(t)
         end
         begin
                 Δp = -1333.22 * Δp
@@ -1327,12 +1328,12 @@ q is calculated in cm^3/s (ml/s)
                 Kvo
         end
         @variables begin
-                Aeff(t) = 0.0
-                ζ(t) = 0.0
-                B(t) = 0.0
-                Aeff_min(t) = 0.0
-                Aeff_max(t) = 0.0
-                L(t) = 0.0
+                Aeff(t)
+                ζ(t)
+                B(t)
+                Aeff_min(t)
+                Aeff_max(t)
+                L(t)
         end
         begin
                 p = -1333.22 * p
@@ -1656,8 +1657,8 @@ Named parameters:
                 C=1.0
         end
         @variables begin
-                Δp(t) = 0.0
-                q(t) = 0.0
+                Δp(t)
+                q(t)
         end
         @components begin
                 in = Pin()
@@ -1700,8 +1701,8 @@ Named parameters:
                 L=1.0
         end
         @variables begin
-                Δp(t) = 0.0
-                q(t) = 0.0
+                Δp(t)
+                q(t)
         end
         @components begin
                 in = Pin()
@@ -1744,8 +1745,8 @@ Named parameters:
 @mtkmodel RRCR begin
 
         @variables begin
-                p(t) = 0.0
-                q(t) = 0.0
+                p(t)
+                q(t)
         end
 
         @components begin
@@ -1805,8 +1806,8 @@ Named parameters:
 """
 @mtkmodel ShiSystemicLoop begin
         @variables begin
-                Δp(t) = 0.0
-                q(t) = 0.0
+                Δp(t)
+                q(t)
         end
         @components begin
                 in = Pin()
@@ -1871,8 +1872,8 @@ Named parameters:
 """
 @mtkmodel ShiPulmonaryLoop begin
         @variables begin
-                Δp(t) = 0.0
-                q(t) = 0.0
+                Δp(t)
+                q(t)
         end
 
         @components begin

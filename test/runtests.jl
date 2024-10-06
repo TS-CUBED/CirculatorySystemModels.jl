@@ -14,8 +14,7 @@ using DataFrames
     ##
     include("ShiParam.jl")
 
-    ## Start Modelling
-    @variables t
+    @independent_variables t
 
     ## Ventricles
     @named LV = ShiChamber(V₀=v0_lv, p₀=p0_lv, Eₘᵢₙ=Emin_lv, Eₘₐₓ=Emax_lv, τ=τ, τₑₛ=τes_lv, τₑₚ=τed_lv, Eshift=0.0)
@@ -94,27 +93,19 @@ using DataFrames
 
     u0 = [
         LV.V => LV_Vt0
-        LV.p => (LV_Vt0 - v0_lv) * Emin_lv + p0_lv
         RV.V => RV_Vt0
-        RV.p => (RV_Vt0 - v0_rv) * Emin_rv + p0_rv
         LA.V => LA_Vt0
         RA.V => RA_Vt0
         SAS.C.p => pt0sas
-        SAS.C.V => pt0sas * Csas
         SAS.L.q => qt0sas
         SAT.C.p => pt0sat
-        SAT.C.V => pt0sat * Csat
         SAT.L.q => qt0sat
         SVN.C.p => pt0svn
-        SVN.C.V => pt0svn * Csvn
         PAS.C.p => pt0pas
-        PAS.C.V => pt0pas * Cpas
         PAS.L.q => qt0pas
         PAT.C.p => pt0pat
-        PAT.C.V => pt0pat * Cpat
         PAT.L.q => qt0pat
         PVN.C.p => pt0pvn
-        PVN.C.V => pt0pvn * Cpvn
     ]
 
     prob = ODEProblem(circ_sys, u0, (0.0, 20.0))
@@ -137,7 +128,7 @@ end
     include("ShiParam.jl")
 
     ## Start Modelling
-    @variables t
+    @independent_variables t
 
     ## Ventricles
     @named LV = ShiChamber(V₀=v0_lv, p₀=p0_lv, Eₘᵢₙ=Emin_lv, Eₘₐₓ=Emax_lv, τ=τ, τₑₛ=τes_lv, τₑₚ=τed_lv, Eshift=0.0, inP=true)
@@ -216,29 +207,19 @@ end
 
     u0 = [
         LV.V => LV_Vt0
-        LV.p => (LV_Vt0 - v0_lv) * Emin_lv + p0_lv
         RV.V => RV_Vt0
-        RV.p => (RV_Vt0 - v0_rv) * Emin_rv + p0_rv
         LA.V => LA_Vt0
-        LA.p => (LA_Vt0 - v0_la) * Emin_la + p0_la
         RA.V => RA_Vt0
-        RA.p => (RA_Vt0 - v0_ra) * Emin_ra + p0_ra
         SAS.C.p => pt0sas
-        SAS.C.V => pt0sas * Csas
         SAS.L.q => qt0sas
         SAT.C.p => pt0sat
-        SAT.C.V => pt0sat * Csat
         SAT.L.q => qt0sat
         SVN.C.p => pt0svn
-        SVN.C.V => pt0svn * Csvn
         PAS.C.p => pt0pas
-        PAS.C.V => pt0pas * Cpas
         PAS.L.q => qt0pas
         PAT.C.p => pt0pat
-        PAT.C.V => pt0pat * Cpat
         PAT.L.q => qt0pat
         PVN.C.p => pt0pvn
-        PVN.C.V => pt0pvn * Cpvn
     ]
 
     prob = ODEProblem(circ_sys, u0, (0.0, 20.0))
@@ -262,7 +243,7 @@ end
     include("ShiParam.jl")
 
     ## Start Modelling
-    @variables t
+    @independent_variables t
 
     ## Shi Heart (with AV stenosis: max AV opening angle = 40 degrees!)
     @mtkmodel CirculatoryModel begin
@@ -311,21 +292,15 @@ end
         circ_sys.heart.PV.θ => 0
         circ_sys.heart.PV.ω => 0
         circ_sys.syst_loop.SAS.C.p => pt0sas
-        circ_sys.syst_loop.SAS.C.V => pt0sas * Csas
         circ_sys.syst_loop.SAS.L.q => qt0sas
         circ_sys.syst_loop.SAT.C.p => pt0sat
-        circ_sys.syst_loop.SAT.C.V => pt0sat * Csat
         circ_sys.syst_loop.SAT.L.q => qt0sat
         circ_sys.syst_loop.SVN.C.p => pt0svn
-        circ_sys.syst_loop.SVN.C.V => pt0svn * Csvn
         circ_sys.pulm_loop.PAS.C.p => pt0pas
-        circ_sys.pulm_loop.PAS.C.V => pt0pas * Cpas
         circ_sys.pulm_loop.PAS.L.q => qt0pas
         circ_sys.pulm_loop.PAT.C.p => pt0pat
-        circ_sys.pulm_loop.PAT.C.V => pt0pat * Cpat
         circ_sys.pulm_loop.PAT.L.q => qt0pat
         circ_sys.pulm_loop.PVN.C.p => pt0pvn
-        circ_sys.pulm_loop.PVN.C.V => pt0pvn * Cpvn
     ]
 
     prob = ODEProblem(circ_sys, u0, (0.0, 20.0))
@@ -431,7 +406,7 @@ end
     #
     # Set up time as a parameter `t`
     #
-    @parameters t
+    @independent_variables t
 
     # Heart is modelled as a single chamber (we call it `LV` for "Left Ventricle" so the model can be extended later, if required):
     #
@@ -500,7 +475,7 @@ end
     # States in the system are now:
     #unknowns(circ_sys)
 
-    # Observed variables - the system will drop these from the ODE system that is solved, but it keeps all the algebraic equations needed to calculate them in the system object, as well as the `ODEProblem` and solution object - are:
+    # Observed parameters - the system will drop these from the ODE system that is solved, but it keeps all the algebraic equations needed to calculate them in the system object, as well as the `ODEProblem` and solution object - are:
     #observed(circ_sys)
 
     # And the parameters (these could be reordered, so check these, too):
@@ -512,11 +487,8 @@ end
     #
     u0 = [
         LV.p => MCFP
-        LV.V => 10 + (MCFP - 1) / Eₘᵢₙ
         Csa.p => MCFP
-        Csa.V => MCFP*C_sa
         Csv.p => MCFP
-        Csv.V => MCFP*C_sv
     ]
 
     tspan = (0, 20)
