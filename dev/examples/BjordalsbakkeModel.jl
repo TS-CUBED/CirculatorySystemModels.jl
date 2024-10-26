@@ -160,16 +160,15 @@ parameters(circ_sys)
 # First defined initial conditions `u0` and the time span for simulation:
 #
 # _Note: the initial conditions are defined as a parameter map, rather than a vector, since the parameter map allows for changes in order.
-# This map can include non-existant states (like `LV.p` in this case), which allows for exchanging the compliances or the ventricle
-# for one that's defined in terms of $dp/dt$)._
+# This map can include not only state-variables, but also observables (like `LV.p` in this case), which makes setting up the initial conditions easier, if the known initial conditions are not included in the resulting model states, which is often the case in MTK models. Since MTK9 these cannot be redundant, however, so we need to decide if we want to define pressures or volumes in this case._
 
 u0 = [
         LV.p => MCFP
-        LV.V => MCFP/Eₘᵢₙ
+        # LV.V => MCFP/Eₘᵢₙ
         Csa.p => MCFP
-        Csa.V => MCFP*C_sa
+        # Csa.V => MCFP*C_sa
         Csv.p => MCFP
-        Csv.V => MCFP*C_sv
+        # Csv.V => MCFP*C_sv
         ]
 
 # 
