@@ -2,14 +2,14 @@
 EditURL = "BjordalsbakkeModel.jl"
 ```
 
-# Importing the required packages
-
 ````@example BjordalsbakkeModel
+# # Importing the required packages
+
 using CirculatorySystemModels
 using ModelingToolkit
 using OrdinaryDiffEq
 using Plots
-import DisplayAs
+using DisplayAs
 ````
 
 # A simple single-chamber model
@@ -37,6 +37,7 @@ All the parameters are taken from table 1 of [Bjørdalsbakke2022].
 Cycle time in seconds
 
 ````@example BjordalsbakkeModel
+#
 τ = 0.85
 ````
 
@@ -49,6 +50,7 @@ n1LV    = 1.32;
 n2LV    = 21.9;
 Tau1fLV = 0.303 * τ;
 Tau2fLV = 0.508 * τ
+#
 ````
 
 Resistances and Compliances
@@ -71,15 +73,12 @@ Mitral valve basic
 
 ````@example BjordalsbakkeModel
 Rmv = 0.006
-````
 
-Inital Pressure (mean cardiac filling pressure)
-
-````@example BjordalsbakkeModel
+# Inital Pressure (mean cardiac filling pressure)
 MCFP = 7.0
-````
 
-## Calculating the additional `k` parameter
+### Calculating the additional `k` parameter
+````
 
 The ventricle elastance is modelled as:
 
@@ -204,17 +203,13 @@ parameters(circ_sys)
 First defined initial conditions `u0` and the time span for simulation:
 
 _Note: the initial conditions are defined as a parameter map, rather than a vector, since the parameter map allows for changes in order.
-This map can include non-existant states (like `LV.p` in this case), which allows for exchanging the compliances or the ventricle
-for one that's defined in terms of $dp/dt$)._
+This map can include not only state-variables, but also observables (like `LV.p` in this case), which makes setting up the initial conditions easier, if the known initial conditions are not included in the resulting model states, which is often the case in MTK models. Since MTK9 these cannot be redundant, however, so we need to decide if we want to define pressures or volumes in this case._
 
 ````@example BjordalsbakkeModel
 u0 = [
         LV.p => MCFP
-        LV.V => MCFP/Eₘᵢₙ
         Csa.p => MCFP
-        Csa.V => MCFP*C_sa
         Csv.p => MCFP
-        Csv.V => MCFP*C_sv
         ]
 ````
 
@@ -252,6 +247,7 @@ img = plot(p1, p2, p3, p4; layout=@layout([a b; c d]), legend = true)
 img = DisplayAs.Text(DisplayAs.PNG(img))
 
 img
+#
 ````
 
 ---
