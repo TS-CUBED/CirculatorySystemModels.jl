@@ -164,11 +164,8 @@ parameters(circ_sys)
 
 u0 = [
         LV.p => MCFP
-        # LV.V => MCFP/Eₘᵢₙ
         Csa.p => MCFP
-        # Csa.V => MCFP*C_sa
         Csv.p => MCFP
-        # Csv.V => MCFP*C_sv
         ]
 
 # 
