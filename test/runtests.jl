@@ -1,7 +1,7 @@
 ##
 using CirculatorySystemModels
 using ModelingToolkit
-using OrdinaryDiffEq
+using OrdinaryDiffEqTsit5
 using Test
 using CSV
 using DataFrames
