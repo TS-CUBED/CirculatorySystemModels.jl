@@ -1198,23 +1198,14 @@ Named parameters:
         D = Differential(t)
 
         function bb_affect_min!(mod, obs, integ, ctx)
-                # return (; θ = mod.θmin+1e-5, ω = 0.0)
                 return (; ω = 0.0)
         end
         function bb_affect_max!(mod, obs, integ, ctx)
-                # return (; θ = mod.θmax-1e-5, ω = 0.0)
                 return (; ω = 0.0)
         end
         limits = [
-                # v1
-                # [(θ ~ θmax)] => [ω ~ -Pre(ω)]
-                # [(θ ~ θmin)] => [ω ~ -Pre(ω)]
-                # v2
-                # [(θ ~ θmax)] => [θ ~ Pre(θ), ω ~ 0.0]
-                # [(θ ~ θmin)] => [θ ~ Pre(θ), ω ~ 0.0]
-                # v3
-                [θ ~ θmax] => (bb_affect_max!, (; ω, θ, θmax))
-                [θ ~ θmin] => (bb_affect_min!, (; ω, θ, θmin))
+                [θ ~ θmax] => (bb_affect_max!, (; ω))
+                [θ ~ θmin] => (bb_affect_min!, (; ω))
         ]
 
         # make θmax the real opening angle and define a θmaxopen for a healthy valve

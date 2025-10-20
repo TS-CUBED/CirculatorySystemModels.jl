@@ -304,8 +304,7 @@ end
 
     prob = ODEProblem(circ_sys, u0, (0.0, 20.0))
     ##
-    # @time ShiComplexSol = solve(prob, Tsit5(); adaptive=false, dt=0.005, maxiters=1e7)
-    @time ShiComplexSol = solve(prob, Tsit5(); adaptive=true, dt=0.005)
+    @time ShiComplexSol = solve(prob, Tsit5(); reltol=1e-6, abstol=1e-9, saveat=19:0.01:20)
     # The callbacks prevent saveat from working as intended! So I need to interpolate the results:
     ShiComplexSolInt = ShiComplexSol(19:0.01:20)
     ##
@@ -314,10 +313,10 @@ end
     ShiBench = CSV.read("ShiComplex.csv", DataFrame)
 
     @test SciMLBase.successful_retcode(ShiComplexSol)
-    @test sum((ShiComplexSolInt[circ_sys.heart.LV.V] .- ShiBench[!, :LV_V]) ./ ShiBench[!, :LV_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-2
-    @test sum((ShiComplexSolInt[circ_sys.heart.RV.V] .- ShiBench[!, :RV_V]) ./ ShiBench[!, :RV_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-2
-    @test sum((ShiComplexSolInt[circ_sys.heart.LA.V] .- ShiBench[!, :LA_V]) ./ ShiBench[!, :LA_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-2
-    @test sum((ShiComplexSolInt[circ_sys.heart.RA.V] .- ShiBench[!, :RA_V]) ./ ShiBench[!, :RA_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-2
+    @test sum((ShiComplexSolInt[circ_sys.heart.LV.V] .- ShiBench[!, :LV_V]) ./ ShiBench[!, :LV_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-3
+    @test sum((ShiComplexSolInt[circ_sys.heart.RV.V] .- ShiBench[!, :RV_V]) ./ ShiBench[!, :RV_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-3
+    @test sum((ShiComplexSolInt[circ_sys.heart.LA.V] .- ShiBench[!, :LA_V]) ./ ShiBench[!, :LA_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-3
+    @test sum((ShiComplexSolInt[circ_sys.heart.RA.V] .- ShiBench[!, :RA_V]) ./ ShiBench[!, :RA_V]) / length(ShiComplexSolInt.u) ≈ 0 atol = 1e-3
     ##
 end
 
