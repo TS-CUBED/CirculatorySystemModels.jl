@@ -2,7 +2,7 @@
 
 using CirculatorySystemModels
 using ModelingToolkit
-using OrdinaryDiffEqTsit5
+using OrdinaryDiffEqVerner
 using Plots
 using DisplayAs
 
@@ -182,7 +182,7 @@ prob = ODEProblem(circ_sys, u0, tspan)
 #
 # The ODE problem is now in the MTK/DifferentialEquations.jl format and we can use any DifferentialEquations.jl solver to solve it:
 #
-sol = solve(prob, Tsit5(), reltol=1e-12, abstol=1e-12);
+sol = solve(prob, Vern5(), reltol=1e-12, abstol=1e-12);
 
 # ## Results
 p1 = plot(sol, idxs=[LV.p,  Csa.in.p], tspan=(16 * τ, 17 * τ), xlabel = "Time [s]", ylabel = "Pressure [mmHg]",  hidexaxis = nothing) # Make a line plot
