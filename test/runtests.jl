@@ -1,7 +1,7 @@
 ##
 using CirculatorySystemModels
 using ModelingToolkit
-using OrdinaryDiffEq
+using OrdinaryDiffEqTsit5, OrdinaryDiffEqVerner
 using Test
 using CSV
 using DataFrames
@@ -78,12 +78,12 @@ using DataFrames
     ]
 
     ## Compose the whole ODE system
-    @named _circ_model = ODESystem(circ_eqs, t)
+    @named _circ_model = System(circ_eqs, t)
     @named circ_model = compose(_circ_model,
         [LV, RV, LA, RA, AV, MV, PV, TV, SAS, SAT, SAR, SCP, SVN, PAS, PAT, PAR, PCP, PVN])
 
     ## And simplify it
-    circ_sys = structural_simplify(circ_model)
+    circ_sys = mtkcompile(circ_model)
 
     ## Setup ODE
     # Initial Conditions for Shi Valve
@@ -192,12 +192,12 @@ end
     ]
 
     ## Compose the whole ODE system
-    @named _circ_model = ODESystem(circ_eqs, t)
+    @named _circ_model = System(circ_eqs, t)
     @named circ_model = compose(_circ_model,
         [LV, RV, LA, RA, AV, MV, PV, TV, SAS, SAT, SAR, SCP, SVN, PAS, PAT, PAR, PCP, PVN])
 
     ## And simplify it
-    circ_sys = structural_simplify(circ_model)
+    circ_sys = mtkcompile(circ_model)
 
     ## Setup ODE
     # Initial Conditions for Shi Valve
@@ -273,23 +273,22 @@ end
             connect(heart.RHout, pulm_loop.in)
             connect(pulm_loop.out, heart.LHin)
         end
-
     end
 
-    @mtkbuild circ_sys = CirculatoryModel()
+    @mtkcompile circ_sys = CirculatoryModel()
 
     u0 = [
         circ_sys.heart.LV.V => LV_Vt0
         circ_sys.heart.RV.V => RV_Vt0
         circ_sys.heart.LA.V => LA_Vt0
         circ_sys.heart.RA.V => RA_Vt0
-        circ_sys.heart.AV.θ => 0
+        circ_sys.heart.AV.θ => 5.0 * pi / 180 + 0.01
         circ_sys.heart.AV.ω => 0
-        circ_sys.heart.MV.θ => 0
+        circ_sys.heart.MV.θ => 5.0 * pi / 180 + 0.01
         circ_sys.heart.MV.ω => 0
-        circ_sys.heart.TV.θ => 0
+        circ_sys.heart.TV.θ => 5.0 * pi / 180 + 0.01
         circ_sys.heart.TV.ω => 0
-        circ_sys.heart.PV.θ => 0
+        circ_sys.heart.PV.θ => 5.0 * pi / 180 + 0.01
         circ_sys.heart.PV.ω => 0
         circ_sys.syst_loop.SAS.C.p => pt0sas
         circ_sys.syst_loop.SAS.L.q => qt0sas
@@ -456,21 +455,21 @@ end
     #
     # _Note: we do this in two steps._
     #
-    @named _circ_model = ODESystem(circ_eqs, t)
+    @named _circ_model = System(circ_eqs, t)
 
     @named circ_model = compose(_circ_model,
         [LV, AV, MV, Rs, Csa, Csv])
 
     # ### Simplify the ODE system
     #
-    # The crucial step in any acausal modelling is the sympification and reduction of the OD(A)E system to the minimal set of equations. ModelingToolkit.jl does this in the `structural_simplify` function.
+    # The crucial step in any acausal modelling is the sympification and reduction of the OD(A)E system to the minimal set of equations. ModelingToolkit.jl does this in the `mtkcompile` function.
     #
-    circ_sys = structural_simplify(circ_model)
+    circ_sys = mtkcompile(circ_model)
 
     # `circ_sys` is now the minimal system of equations. In this case it consists of 3 ODEs for the three pressures.
 
     #
-    # _Note: `structural_simplify` reduces and optimises the ODE system. It is, therefore, not always obvious, which states it will use and which it will drop. We can use the `states` and `observed` function to check this. It is recommended to do this, since small changes can reorder states, observables, and parameters._
+    # _Note: `mtkcompile` reduces and optimises the ODE system. It is, therefore, not always obvious, which states it will use and which it will drop. We can use the `states` and `observed` function to check this. It is recommended to do this, since small changes can reorder states, observables, and parameters._
     #
     # States in the system are now:
     #unknowns(circ_sys)

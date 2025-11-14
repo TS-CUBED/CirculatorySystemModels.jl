@@ -292,9 +292,9 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
         end
 
         if has_variable_ep
-                compose(ODESystem(eqs, t, sts, ps; name=name), in, out, ep)
+                compose(System(eqs, t, sts, ps; name=name), in, out, ep)
         else
-                compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
+                compose(System(eqs, t, sts, ps; name=name), in, out)
         end
 end
 
@@ -389,9 +389,9 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
         end
 
         if has_variable_ep
-                compose(ODESystem(eqs, t, sts, ps; name=name), in, out, ep)
+                compose(System(eqs, t, sts, ps; name=name), in, out, ep)
         else
-                compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
+                compose(System(eqs, t, sts, ps; name=name), in, out)
         end
 end
 
@@ -481,9 +481,9 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
         end
 
         if has_variable_ep
-                compose(ODESystem(eqs, t, sts, ps; name=name), in, out, ep)
+                compose(System(eqs, t, sts, ps; name=name), in, out, ep)
         else
-                compose(ODESystem(eqs, t, sts, ps; name=name), in, out)
+                compose(System(eqs, t, sts, ps; name=name), in, out)
         end
 end
 
@@ -1196,9 +1196,16 @@ Named parameters:
         ps = @parameters CQ = CQ Kp = Kp Kf = Kf Kb = Kb Kv = Kv θmax = θmax θmin = θmin
         sts = @variables θ(t) ω(t) AR(t) Fp(t) Ff(t) Fb(t) Fv(t) F(t)
         D = Differential(t)
+
+        function bb_affect_min!(mod, obs, integ, ctx)
+                return (; ω = 0.0)
+        end
+        function bb_affect_max!(mod, obs, integ, ctx)
+                return (; ω = 0.0)
+        end
         limits = [
-                [(θ ~ θmax)] => [ω ~ 0]
-                [(θ ~ θmin)] => [ω ~ 0]
+                [θ ~ θmax] => (bb_affect_max!, (; ω))
+                [θ ~ θmin] => (bb_affect_min!, (; ω))
         ]
 
         # make θmax the real opening angle and define a θmaxopen for a healthy valve
@@ -1224,7 +1231,7 @@ Named parameters:
 
         # include the `continuous_events` definition `limits` in the ODE system
         # this is the MTK equivalent to callbacks
-        extend(ODESystem(eqs, t, sts, ps; name=name, continuous_events=limits), oneport)
+        extend(System(eqs, t, sts, ps; name=name, continuous_events=limits), oneport)
 end
 
 

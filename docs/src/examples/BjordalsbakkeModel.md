@@ -7,7 +7,7 @@ EditURL = "BjordalsbakkeModel.jl"
 
 using CirculatorySystemModels
 using ModelingToolkit
-using OrdinaryDiffEq
+using OrdinaryDiffEqVerner
 using Plots
 using DisplayAs
 ````

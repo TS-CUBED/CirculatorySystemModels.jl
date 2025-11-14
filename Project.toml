@@ -4,20 +4,20 @@ authors = ["Torsten Schenkel <t.schenkel@shu.ac.uk>, Harry Saxton <harry.saxton@
 version = "0.4.1"
 
 [deps]
-CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
-DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
 
 [compat]
 CSV = "0.10"
 DataFrames = "1"
-
-ModelingToolkit = "9"
+ModelingToolkit = "10"
 julia = "1.10"
 
 [extras]
-OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+OrdinaryDiffEqTsit5 = "b1df2697-797e-41e3-8120-5422d3b24e4a"
+OrdinaryDiffEqVerner = "79d7bb75-1356-48c1-b8c0-6832512096c2"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["OrdinaryDiffEq", "Test"]
+test = ["CSV", "DataFrames", "OrdinaryDiffEqTsit5", "OrdinaryDiffEqVerner", "Test"]
