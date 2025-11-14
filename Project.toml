@@ -1,7 +1,7 @@
 name = "CirculatorySystemModels"
 uuid = "4211d73e-f4e8-40c4-b600-92e4b82f0e1a"
 authors = ["Torsten Schenkel <t.schenkel@shu.ac.uk>, Harry Saxton <harry.saxton@student.shu.ac.uk> and contributors"]
-version = "0.4.1"
+version = "0.5.0"
 
 [deps]
 ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
