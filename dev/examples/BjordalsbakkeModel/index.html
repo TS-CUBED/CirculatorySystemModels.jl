@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Bjørdalsbakke - Simple Single-Chamber CV-Circuit · CirculatorySystemModels.jl</title><meta name="title" content="Bjørdalsbakke - Simple Single-Chamber CV-Circuit · CirculatorySystemModels.jl"/><meta property="og:title" content="Bjørdalsbakke - Simple Single-Chamber CV-Circuit · CirculatorySystemModels.jl"/><meta property="twitter:title" content="Bjørdalsbakke - Simple Single-Chamber CV-Circuit · CirculatorySystemModels.jl"/><meta name="description" content="Documentation for CirculatorySystemModels.jl."/><meta property="og:description" content="Documentation for CirculatorySystemModels.jl."/><meta property="twitter:description" content="Documentation for CirculatorySystemModels.jl."/><meta property="og:url" content="https://TS-CUBED.github.io/CirculatorySystemModels.jl/examples/BjordalsbakkeModel/"/><meta property="twitter:url" content="https://TS-CUBED.github.io/CirculatorySystemModels.jl/examples/BjordalsbakkeModel/"/><link rel="canonical" href="https://TS-CUBED.github.io/CirculatorySystemModels.jl/examples/BjordalsbakkeModel/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../">CirculatorySystemModels.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Examples</span><ul><li class="is-active"><a class="tocitem" href>Bjørdalsbakke - Simple Single-Chamber CV-Circuit</a><ul class="internal"><li><a class="tocitem" href="#Define-the-parameters"><span>Define the parameters</span></a></li><li><a class="tocitem" href="#Set-up-the-model-elements"><span>Set up the model elements</span></a></li><li><a class="tocitem" href="#Build-the-system"><span>Build the system</span></a></li><li><a class="tocitem" href="#Simulate"><span>Simulate</span></a></li><li><a class="tocitem" href="#Results"><span>Results</span></a></li></ul></li></ul></li><li><a class="tocitem" href="../../autodoc/">Method Index</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Examples</a></li><li class="is-active"><a href>Bjørdalsbakke - Simple Single-Chamber CV-Circuit</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Bjørdalsbakke - Simple Single-Chamber CV-Circuit</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/TS-CUBED/CirculatorySystemModels.jl/blob/main/docs/src/examples/BjordalsbakkeModel.jl#" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><pre><code class="language-julia hljs"># # Importing the required packages
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Bjørdalsbakke - Simple Single-Chamber CV-Circuit · CirculatorySystemModels.jl</title><meta name="title" content="Bjørdalsbakke - Simple Single-Chamber CV-Circuit · CirculatorySystemModels.jl"/><meta property="og:title" content="Bjørdalsbakke - Simple Single-Chamber CV-Circuit · CirculatorySystemModels.jl"/><meta property="twitter:title" content="Bjørdalsbakke - Simple Single-Chamber CV-Circuit · CirculatorySystemModels.jl"/><meta name="description" content="Documentation for CirculatorySystemModels.jl."/><meta property="og:description" content="Documentation for CirculatorySystemModels.jl."/><meta property="twitter:description" content="Documentation for CirculatorySystemModels.jl."/><meta property="og:url" content="https://TS-CUBED.github.io/CirculatorySystemModels.jl/examples/BjordalsbakkeModel/"/><meta property="twitter:url" content="https://TS-CUBED.github.io/CirculatorySystemModels.jl/examples/BjordalsbakkeModel/"/><link rel="canonical" href="https://TS-CUBED.github.io/CirculatorySystemModels.jl/examples/BjordalsbakkeModel/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../">CirculatorySystemModels.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Examples</span><ul><li class="is-active"><a class="tocitem" href>Bjørdalsbakke - Simple Single-Chamber CV-Circuit</a><ul class="internal"><li><a class="tocitem" href="#Define-the-parameters"><span>Define the parameters</span></a></li><li><a class="tocitem" href="#Set-up-the-model-elements"><span>Set up the model elements</span></a></li><li><a class="tocitem" href="#Build-the-system"><span>Build the system</span></a></li><li><a class="tocitem" href="#Simulate"><span>Simulate</span></a></li><li><a class="tocitem" href="#Results"><span>Results</span></a></li></ul></li></ul></li><li><a class="tocitem" href="../../autodoc/">Method Index</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Examples</a></li><li class="is-active"><a href>Bjørdalsbakke - Simple Single-Chamber CV-Circuit</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Bjørdalsbakke - Simple Single-Chamber CV-Circuit</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/TS-CUBED/CirculatorySystemModels.jl/blob/main/docs/src/examples/BjordalsbakkeModel.jl#" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><pre><code class="language-julia hljs"># # Importing the required packages
 
 using CirculatorySystemModels
 using ModelingToolkit
-using OrdinaryDiffEq
+using OrdinaryDiffEqVerner
 using Plots
 using DisplayAs</code></pre><h1 id="A-simple-single-chamber-model"><a class="docs-heading-anchor" href="#A-simple-single-chamber-model">A simple single-chamber model</a><a id="A-simple-single-chamber-model-1"></a><a class="docs-heading-anchor-permalink" href="#A-simple-single-chamber-model" title="Permalink"></a></h1><p><img src="../BjordalsbakkeModelSketch.png" alt="Single chamber, closed-loop, lumped parameter model of the systemic circulation and the left ventricle. The circuit equivalent formulation of the model is depicted, with the pressures of each compartment, as well as most of the mechanical parameters. The model describes three compartments: the left ventricular, arterial and venous compartments. 𝑃𝑡ℎ is the intrathoracic pressure, 𝑃𝑙𝑣 is the left ventricular pressure and 𝐸𝑙𝑣(𝑡) indicates the left ventricular elastance function."/></p><p>This follows Bjørdalsbakke et al.</p><p>Bjørdalsbakke, N.L., Sturdy, J.T., Hose, D.R., Hellevik, L.R., 2022. Parameter estimation for closed-loop lumped parameter models of the systemic circulation using synthetic data. Mathematical Biosciences 343, 108731. https://doi.org/10.1016/j.mbs.2021.108731</p><p>Changes from the published version above:</p><ul><li>Capacitors are replaced by compliances. These are identical to capacitors, but have an additional parameter, the unstrained volume <span>$V_0$</span>, which allows for realistic blood volume modelling. Compliances have an inlet and an oulet in line with the flow, rather than the ground connector of the dangling capacitor.</li><li>The aortic resistor is combined with the valve (diode) in the <code>ResistorDiode</code> element.</li></ul><p><a href="../BjordalsbakkeModel.ipynb">Jupyter Notebook</a></p><h2 id="Define-the-parameters"><a class="docs-heading-anchor" href="#Define-the-parameters">Define the parameters</a><a id="Define-the-parameters-1"></a><a class="docs-heading-anchor-permalink" href="#Define-the-parameters" title="Permalink"></a></h2><p>All the parameters are taken from table 1 of [Bjørdalsbakke2022].</p><p>Cycle time in seconds</p><pre><code class="language-julia hljs">#
 τ = 0.85</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">0.85</code></pre><p>Double Hill parameters for the ventricle</p><pre><code class="language-julia hljs">Eₘᵢₙ = 0.03
@@ -30,26 +30,26 @@ t \\
 \right]
 \end{equation}
  \]</p><p>Heart is modelled as a single chamber (we call it <code>LV</code> for &quot;Left Ventricle&quot; so the model can be extended later, if required):</p><pre><code class="language-julia hljs">@named LV = DHChamber(V₀ = 0.0, Eₘₐₓ=Eₘₐₓ, Eₘᵢₙ=Eₘᵢₙ, n₁=n1LV, n₂=n2LV, τ = τ, τ₁=Tau1fLV, τ₂=Tau2fLV, k = kLV, Eshift=0.0)</code></pre><p class="math-container">\[ \begin{align}
-p\left( t \right) &amp;= p_0 + \left( E_{m i n} + \frac{\left( \frac{\mathrm{rem}\left( t + \left( 1 - Eshift \right) \tau, \tau \right)}{\tau_1} \right)^{n_1} \left(  - E_{m i n} + E_{m a x} \right) k}{\left( 1 + \left( \frac{\mathrm{rem}\left( t + \left( 1 - Eshift \right) \tau, \tau \right)}{\tau_1} \right)^{n_1} \right) \left( 1 + \left( \frac{\mathrm{rem}\left( t + \left( 1 - Eshift \right) \tau, \tau \right)}{\tau_2} \right)^{n_2} \right)} \right) \left(  - V_0 + V\left( t \right) \right) \\
-\frac{\mathrm{d} V\left( t \right)}{\mathrm{d}t} &amp;= out_{+}q\left( t \right) + in_{+}q\left( t \right) \\
-0 &amp;=  - out_{+}p\left( t \right) + in_{+}p\left( t \right) \\
-p\left( t \right) &amp;= in_{+}p\left( t \right)
+p\left( t \right) &amp;= \mathtt{p{_0}} + \left( \mathtt{E{_{m i n}}} + \frac{\left( \frac{rem\left( t + \left( 1 - \mathtt{Eshift} \right) \tau, \tau \right)}{\mathtt{\tau{_1}}} \right)^{\mathtt{n{_1}}} \left(  - \mathtt{E{_{m i n}}} + \mathtt{E{_{m a x}}} \right) k}{\left( 1 + \left( \frac{rem\left( t + \left( 1 - \mathtt{Eshift} \right) \tau, \tau \right)}{\mathtt{\tau{_1}}} \right)^{\mathtt{n{_1}}} \right) \left( 1 + \left( \frac{rem\left( t + \left( 1 - \mathtt{Eshift} \right) \tau, \tau \right)}{\mathtt{\tau{_2}}} \right)^{\mathtt{n{_2}}} \right)} \right) \left(  - \mathtt{V{_0}} + V\left( t \right) \right) \\
+\frac{\mathrm{d} V\left( t \right)}{\mathrm{d}t} &amp;= \mathtt{out.q}\left( t \right) + \mathtt{in.q}\left( t \right) \\
+0 &amp;=  - \mathtt{out.p}\left( t \right) + \mathtt{in.p}\left( t \right) \\
+p\left( t \right) &amp;= \mathtt{in.p}\left( t \right)
 \end{align}
  \]</p><p>The two valves are simple diodes with a small resistance (resistance is needed, since perfect diodes would connect two elastances/compliances, which will lead to unstable oscillations):</p><pre><code class="language-julia hljs">@named AV = ResistorDiode(R=Zao)
 @named MV = ResistorDiode(R=Rmv)</code></pre><p class="math-container">\[ \begin{align}
-{\Delta}p\left( t \right) &amp;= out_{+}p\left( t \right) - in_{+}p\left( t \right) \\
-0 &amp;= out_{+}q\left( t \right) + in_{+}q\left( t \right) \\
-q\left( t \right) &amp;= in_{+}q\left( t \right) \\
-q\left( t \right) &amp;= \frac{ - {\Delta}p\left( t \right) \left( {\Delta}p\left( t \right) &lt; 0 \right)}{R}
+\mathtt{{\Delta}p}\left( t \right) &amp;= \mathtt{out.p}\left( t \right) - \mathtt{in.p}\left( t \right) \\
+0 &amp;= \mathtt{out.q}\left( t \right) + \mathtt{in.q}\left( t \right) \\
+q\left( t \right) &amp;= \mathtt{in.q}\left( t \right) \\
+q\left( t \right) &amp;= \frac{ - \mathtt{{\Delta}p}\left( t \right) \left( \mathtt{{\Delta}p}\left( t \right) &lt; 0 \right)}{R}
 \end{align}
  \]</p><p>The main components of the circuit are 1 resistor <code>Rs</code> and two compliances for systemic arteries <code>Csa</code>, and systemic veins <code>Csv</code> (names are arbitrary). <em>Note: one of the compliances is defined in terms of <span>$dV/dt$</span> using the option <code>inV = true</code>. The other without that option is in <span>$dp/dt$</span>.</em></p><pre><code class="language-julia hljs">@named Rs = Resistor(R=R_s)
 
 @named Csa = Compliance(C=C_sa)
 @named Csv = Compliance(C=C_sv, inP=true)</code></pre><p class="math-container">\[ \begin{align}
-0 &amp;=  - out_{+}p\left( t \right) + in_{+}p\left( t \right) \\
-p\left( t \right) &amp;= in_{+}p\left( t \right) \\
-V\left( t \right) &amp;= V_0 + C p\left( t \right) \\
-\frac{\mathrm{d} p\left( t \right)}{\mathrm{d}t} &amp;= \frac{out_{+}q\left( t \right) + in_{+}q\left( t \right)}{C}
+0 &amp;=  - \mathtt{out.p}\left( t \right) + \mathtt{in.p}\left( t \right) \\
+p\left( t \right) &amp;= \mathtt{in.p}\left( t \right) \\
+V\left( t \right) &amp;= \mathtt{V{_0}} + C p\left( t \right) \\
+\frac{\mathrm{d} p\left( t \right)}{\mathrm{d}t} &amp;= \frac{\mathtt{out.q}\left( t \right) + \mathtt{in.q}\left( t \right)}{C}
 \end{align}
  \]</p><h2 id="Build-the-system"><a class="docs-heading-anchor" href="#Build-the-system">Build the system</a><a id="Build-the-system-1"></a><a class="docs-heading-anchor-permalink" href="#Build-the-system" title="Permalink"></a></h2><h3 id="Connections"><a class="docs-heading-anchor" href="#Connections">Connections</a><a id="Connections-1"></a><a class="docs-heading-anchor-permalink" href="#Connections" title="Permalink"></a></h3><p>The system is built using the <code>connect</code> function. <code>connect</code> sets up the Kirchhoff laws:</p><ul><li>pressures are the same in all connected branches on a connector</li><li>sum of all flow rates at a connector is zero</li></ul><p>The resulting set of Kirchhoff equations is stored in <code>circ_eqs</code>:</p><pre><code class="language-julia hljs">circ_eqs = [
     connect(LV.out, AV.in)
@@ -82,77 +82,77 @@ V\left( t \right) &amp;= V_0 + C p\left( t \right) \\
 \mathrm{connect}\left( Rs_{+}out, Csv_{+}in \right) \\
 \mathrm{connect}\left( Csv_{+}out, MV_{+}in \right) \\
 \mathrm{connect}\left( MV_{+}out, LV_{+}in \right) \\
-LV_{+}p\left( t \right) = LV_{+}p_0 + \left( LV_{+}E_{m i n} + \frac{\left( \frac{\mathrm{rem}\left( t + \left( 1 - LV_{+}Eshift \right) LV_+\tau, LV_+\tau \right)}{LV_+\tau_1} \right)^{LV_{+}n_1} \left(  - LV_{+}E_{m i n} + LV_{+}E_{m a x} \right) LV_{+}k}{\left( 1 + \left( \frac{\mathrm{rem}\left( t + \left( 1 - LV_{+}Eshift \right) LV_+\tau, LV_+\tau \right)}{LV_+\tau_1} \right)^{LV_{+}n_1} \right) \left( 1 + \left( \frac{\mathrm{rem}\left( t + \left( 1 - LV_{+}Eshift \right) LV_+\tau, LV_+\tau \right)}{LV_+\tau_2} \right)^{LV_{+}n_2} \right)} \right) \left(  - LV_{+}V_0 + LV_{+}V\left( t \right) \right) \\
-\frac{\mathrm{d} LV_{+}V\left( t \right)}{\mathrm{d}t} = LV_{+}in_{+}q\left( t \right) + LV_{+}out_{+}q\left( t \right) \\
-0 = LV_{+}in_{+}p\left( t \right) - LV_{+}out_{+}p\left( t \right) \\
-LV_{+}p\left( t \right) = LV_{+}in_{+}p\left( t \right) \\
-AV_+{\Delta}p\left( t \right) =  - AV_{+}in_{+}p\left( t \right) + AV_{+}out_{+}p\left( t \right) \\
-0 = AV_{+}in_{+}q\left( t \right) + AV_{+}out_{+}q\left( t \right) \\
-AV_{+}q\left( t \right) = AV_{+}in_{+}q\left( t \right) \\
-AV_{+}q\left( t \right) = \frac{ - \left( AV_+{\Delta}p\left( t \right) &lt; 0 \right) AV_+{\Delta}p\left( t \right)}{AV_{+}R} \\
-MV_+{\Delta}p\left( t \right) = MV_{+}out_{+}p\left( t \right) - MV_{+}in_{+}p\left( t \right) \\
-0 = MV_{+}in_{+}q\left( t \right) + MV_{+}out_{+}q\left( t \right) \\
-MV_{+}q\left( t \right) = MV_{+}in_{+}q\left( t \right) \\
-MV_{+}q\left( t \right) = \frac{ - \left( MV_+{\Delta}p\left( t \right) &lt; 0 \right) MV_+{\Delta}p\left( t \right)}{MV_{+}R} \\
-Rs_+{\Delta}p\left( t \right) = Rs_{+}out_{+}p\left( t \right) - Rs_{+}in_{+}p\left( t \right) \\
-0 = Rs_{+}in_{+}q\left( t \right) + Rs_{+}out_{+}q\left( t \right) \\
-Rs_{+}q\left( t \right) = Rs_{+}in_{+}q\left( t \right) \\
-Rs_+{\Delta}p\left( t \right) =  - Rs_{+}R Rs_{+}q\left( t \right) \\
-0 =  - Csa_{+}out_{+}p\left( t \right) + Csa_{+}in_{+}p\left( t \right) \\
-Csa_{+}p\left( t \right) = Csa_{+}in_{+}p\left( t \right) \\
-Csa_{+}p\left( t \right) = \frac{ - Csa_{+}V_0 + Csa_{+}V\left( t \right)}{Csa_{+}C} \\
-\frac{\mathrm{d} Csa_{+}V\left( t \right)}{\mathrm{d}t} = Csa_{+}out_{+}q\left( t \right) + Csa_{+}in_{+}q\left( t \right) \\
-0 =  - Csv_{+}out_{+}p\left( t \right) + Csv_{+}in_{+}p\left( t \right) \\
-Csv_{+}p\left( t \right) = Csv_{+}in_{+}p\left( t \right) \\
-Csv_{+}V\left( t \right) = Csv_{+}V_0 + Csv_{+}C Csv_{+}p\left( t \right) \\
-\frac{\mathrm{d} Csv_{+}p\left( t \right)}{\mathrm{d}t} = \frac{Csv_{+}out_{+}q\left( t \right) + Csv_{+}in_{+}q\left( t \right)}{Csv_{+}C} \\
+\mathtt{LV.p}\left( t \right) = \mathtt{LV.p{_0}} + \left( \mathtt{LV.E{_{m i n}}} + \frac{\left( \frac{rem\left( t + \left( 1 - \mathtt{LV.Eshift} \right) \mathtt{LV.\tau}, \mathtt{LV.\tau} \right)}{\mathtt{LV.\tau{_1}}} \right)^{\mathtt{LV.n{_1}}} \left(  - \mathtt{LV.E{_{m i n}}} + \mathtt{LV.E{_{m a x}}} \right) \mathtt{LV.k}}{\left( 1 + \left( \frac{rem\left( t + \left( 1 - \mathtt{LV.Eshift} \right) \mathtt{LV.\tau}, \mathtt{LV.\tau} \right)}{\mathtt{LV.\tau{_1}}} \right)^{\mathtt{LV.n{_1}}} \right) \left( 1 + \left( \frac{rem\left( t + \left( 1 - \mathtt{LV.Eshift} \right) \mathtt{LV.\tau}, \mathtt{LV.\tau} \right)}{\mathtt{LV.\tau{_2}}} \right)^{\mathtt{LV.n{_2}}} \right)} \right) \left(  - \mathtt{LV.V{_0}} + \mathtt{LV.V}\left( t \right) \right) \\
+\frac{\mathrm{d} \mathtt{LV.V}\left( t \right)}{\mathrm{d}t} = \mathtt{LV.in.q}\left( t \right) + \mathtt{LV.out.q}\left( t \right) \\
+0 = \mathtt{LV.in.p}\left( t \right) - \mathtt{LV.out.p}\left( t \right) \\
+\mathtt{LV.p}\left( t \right) = \mathtt{LV.in.p}\left( t \right) \\
+\mathtt{AV.{\Delta}p}\left( t \right) =  - \mathtt{AV.in.p}\left( t \right) + \mathtt{AV.out.p}\left( t \right) \\
+0 = \mathtt{AV.in.q}\left( t \right) + \mathtt{AV.out.q}\left( t \right) \\
+\mathtt{AV.q}\left( t \right) = \mathtt{AV.in.q}\left( t \right) \\
+\mathtt{AV.q}\left( t \right) = \frac{ - \left( \mathtt{AV.{\Delta}p}\left( t \right) &lt; 0 \right) \mathtt{AV.{\Delta}p}\left( t \right)}{\mathtt{AV.R}} \\
+\mathtt{MV.{\Delta}p}\left( t \right) = \mathtt{MV.out.p}\left( t \right) - \mathtt{MV.in.p}\left( t \right) \\
+0 = \mathtt{MV.in.q}\left( t \right) + \mathtt{MV.out.q}\left( t \right) \\
+\mathtt{MV.q}\left( t \right) = \mathtt{MV.in.q}\left( t \right) \\
+\mathtt{MV.q}\left( t \right) = \frac{ - \left( \mathtt{MV.{\Delta}p}\left( t \right) &lt; 0 \right) \mathtt{MV.{\Delta}p}\left( t \right)}{\mathtt{MV.R}} \\
+\mathtt{Rs.{\Delta}p}\left( t \right) = \mathtt{Rs.out.p}\left( t \right) - \mathtt{Rs.in.p}\left( t \right) \\
+0 = \mathtt{Rs.in.q}\left( t \right) + \mathtt{Rs.out.q}\left( t \right) \\
+\mathtt{Rs.q}\left( t \right) = \mathtt{Rs.in.q}\left( t \right) \\
+\mathtt{Rs.{\Delta}p}\left( t \right) =  - \mathtt{Rs.R} \mathtt{Rs.q}\left( t \right) \\
+0 =  - \mathtt{Csa.out.p}\left( t \right) + \mathtt{Csa.in.p}\left( t \right) \\
+\mathtt{Csa.p}\left( t \right) = \mathtt{Csa.in.p}\left( t \right) \\
+\mathtt{Csa.p}\left( t \right) = \frac{ - \mathtt{Csa.V{_0}} + \mathtt{Csa.V}\left( t \right)}{\mathtt{Csa.C}} \\
+\frac{\mathrm{d} \mathtt{Csa.V}\left( t \right)}{\mathrm{d}t} = \mathtt{Csa.out.q}\left( t \right) + \mathtt{Csa.in.q}\left( t \right) \\
+0 =  - \mathtt{Csv.out.p}\left( t \right) + \mathtt{Csv.in.p}\left( t \right) \\
+\mathtt{Csv.p}\left( t \right) = \mathtt{Csv.in.p}\left( t \right) \\
+\mathtt{Csv.V}\left( t \right) = \mathtt{Csv.V{_0}} + \mathtt{Csv.C} \mathtt{Csv.p}\left( t \right) \\
+\frac{\mathrm{d} \mathtt{Csv.p}\left( t \right)}{\mathrm{d}t} = \frac{\mathtt{Csv.out.q}\left( t \right) + \mathtt{Csv.in.q}\left( t \right)}{\mathtt{Csv.C}} \\
 \end{array}
 \right]
 \end{equation}
  \]</p><h3 id="Simplify-the-ODE-system"><a class="docs-heading-anchor" href="#Simplify-the-ODE-system">Simplify the ODE system</a><a id="Simplify-the-ODE-system-1"></a><a class="docs-heading-anchor-permalink" href="#Simplify-the-ODE-system" title="Permalink"></a></h3><p>The crucial step in any acausal modelling is the sympification and reduction of the OD(A)E system to the minimal set of equations. ModelingToolkit.jl does this in the <code>structural_simplify</code> function.</p><pre><code class="language-julia hljs">circ_sys = structural_simplify(circ_model)</code></pre><p class="math-container">\[ \begin{align}
-\frac{\mathrm{d} LV_{+}V\left( t \right)}{\mathrm{d}t} &amp;=  - Csv_{+}out_{+}q\left( t \right) - Csa_{+}in_{+}q\left( t \right) \\
-\frac{\mathrm{d} Csa_{+}V\left( t \right)}{\mathrm{d}t} &amp;=  - Csv_{+}in_{+}q\left( t \right) + Csa_{+}in_{+}q\left( t \right) \\
-\frac{\mathrm{d} Csv_{+}p\left( t \right)}{\mathrm{d}t} &amp;= \frac{Csv_{+}out_{+}q\left( t \right) + Csv_{+}in_{+}q\left( t \right)}{Csv_{+}C}
+\frac{\mathrm{d} \mathtt{Csv.p}\left( t \right)}{\mathrm{d}t} &amp;= \frac{\mathtt{Csv.out.q}\left( t \right) + \mathtt{Csv.in.q}\left( t \right)}{\mathtt{Csv.C}} \\
+\frac{\mathrm{d} \mathtt{Csa.V}\left( t \right)}{\mathrm{d}t} &amp;=  - \mathtt{Csv.in.q}\left( t \right) + \mathtt{Csa.in.q}\left( t \right) \\
+\frac{\mathrm{d} \mathtt{LV.V}\left( t \right)}{\mathrm{d}t} &amp;=  - \mathtt{Csv.out.q}\left( t \right) - \mathtt{Csa.in.q}\left( t \right)
 \end{align}
  \]</p><p><code>circ_sys</code> is now the minimal system of equations. In this case it consists of 3 ODEs for the ventricular volume and the systemic and venous pressures.</p><p><em>Note: this reduces and optimises the ODE system. It is, therefore, not always obvious, which states it will use and which it will drop. We can use the <code>states</code> and <code>observed</code> function to check this. It is recommended to do this, since small changes can reorder states, observables, and parameters.</em></p><p>States in the system are now:</p><pre><code class="language-julia hljs">unknowns(circ_sys)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">3-element Vector{SymbolicUtils.BasicSymbolic{Real}}:
- LV₊V(t)
+ Csv₊p(t)
  Csa₊V(t)
- Csv₊p(t)</code></pre><p>Observed variables - the system will drop these from the ODE system that is solved, but it keeps all the algebraic equations needed to calculate them in the system object, as well as the <code>ODEProblem</code> and solution object - are:</p><pre><code class="language-julia hljs">observed(circ_sys)</code></pre><p class="math-container">\[ \begin{align}
-LV_{+}p\left( t \right) &amp;= LV_{+}p_0 + \left( LV_{+}E_{m i n} + \frac{\left( \frac{\mathrm{rem}\left( t + \left( 1 - LV_{+}Eshift \right) LV_+\tau, LV_+\tau \right)}{LV_+\tau_1} \right)^{LV_{+}n_1} \left(  - LV_{+}E_{m i n} + LV_{+}E_{m a x} \right) LV_{+}k}{\left( 1 + \left( \frac{\mathrm{rem}\left( t + \left( 1 - LV_{+}Eshift \right) LV_+\tau, LV_+\tau \right)}{LV_+\tau_1} \right)^{LV_{+}n_1} \right) \left( 1 + \left( \frac{\mathrm{rem}\left( t + \left( 1 - LV_{+}Eshift \right) LV_+\tau, LV_+\tau \right)}{LV_+\tau_2} \right)^{LV_{+}n_2} \right)} \right) \left(  - LV_{+}V_0 + LV_{+}V\left( t \right) \right) \\
-Csa_{+}p\left( t \right) &amp;= \frac{ - Csa_{+}V_0 + Csa_{+}V\left( t \right)}{Csa_{+}C} \\
-Csv_{+}in_{+}p\left( t \right) &amp;= Csv_{+}p\left( t \right) \\
-Csv_{+}V\left( t \right) &amp;= Csv_{+}V_0 + Csv_{+}C Csv_{+}p\left( t \right) \\
-MV_+{\Delta}p\left( t \right) &amp;= LV_{+}p\left( t \right) - Csv_{+}p\left( t \right) \\
-LV_{+}out_{+}p\left( t \right) &amp;= LV_{+}p\left( t \right) \\
-AV_{+}in_{+}p\left( t \right) &amp;= LV_{+}p\left( t \right) \\
-MV_{+}out_{+}p\left( t \right) &amp;= LV_{+}p\left( t \right) \\
-Rs_+{\Delta}p\left( t \right) &amp;=  - Csa_{+}p\left( t \right) + Csv_{+}p\left( t \right) \\
-Csa_{+}out_{+}p\left( t \right) &amp;= Csa_{+}p\left( t \right) \\
-AV_{+}out_{+}p\left( t \right) &amp;= Csa_{+}p\left( t \right) \\
-Rs_{+}in_{+}p\left( t \right) &amp;= Csa_{+}p\left( t \right) \\
-Csv_{+}out_{+}p\left( t \right) &amp;= Csv_{+}in_{+}p\left( t \right) \\
-Rs_{+}out_{+}p\left( t \right) &amp;= Csv_{+}in_{+}p\left( t \right) \\
-MV_{+}in_{+}p\left( t \right) &amp;= Csv_{+}in_{+}p\left( t \right) \\
-MV_{+}q\left( t \right) &amp;= \frac{ - \left( MV_+{\Delta}p\left( t \right) &lt; 0 \right) MV_+{\Delta}p\left( t \right)}{MV_{+}R} \\
-AV_+{\Delta}p\left( t \right) &amp;= Csa_{+}p\left( t \right) - MV_+{\Delta}p\left( t \right) - Csv_{+}p\left( t \right) \\
-LV_{+}in_{+}p\left( t \right) &amp;= LV_{+}out_{+}p\left( t \right) \\
-Rs_{+}q\left( t \right) &amp;= \frac{ - Rs_+{\Delta}p\left( t \right)}{Rs_{+}R} \\
-Csa_{+}in_{+}p\left( t \right) &amp;= Csa_{+}out_{+}p\left( t \right) \\
-Csv_{+}out_{+}q\left( t \right) &amp;=  - MV_{+}q\left( t \right) \\
-MV_{+}out_{+}q\left( t \right) &amp;=  - MV_{+}q\left( t \right) \\
-AV_{+}q\left( t \right) &amp;= \frac{ - \left( AV_+{\Delta}p\left( t \right) &lt; 0 \right) AV_+{\Delta}p\left( t \right)}{AV_{+}R} \\
-Rs_{+}out_{+}q\left( t \right) &amp;=  - Rs_{+}q\left( t \right) \\
-Csa_{+}out_{+}q\left( t \right) &amp;=  - Rs_{+}q\left( t \right) \\
-LV_{+}in_{+}q\left( t \right) &amp;=  - Csv_{+}out_{+}q\left( t \right) \\
-MV_{+}in_{+}q\left( t \right) &amp;=  - MV_{+}out_{+}q\left( t \right) \\
-Csa_{+}in_{+}q\left( t \right) &amp;= AV_{+}q\left( t \right) \\
-AV_{+}out_{+}q\left( t \right) &amp;=  - AV_{+}q\left( t \right) \\
-LV_{+}out_{+}q\left( t \right) &amp;=  - AV_{+}q\left( t \right) \\
-Rs_{+}in_{+}q\left( t \right) &amp;=  - Rs_{+}out_{+}q\left( t \right) \\
-Csv_{+}in_{+}q\left( t \right) &amp;=  - Csa_{+}out_{+}q\left( t \right) \\
-AV_{+}in_{+}q\left( t \right) &amp;=  - AV_{+}out_{+}q\left( t \right)
+ LV₊V(t)</code></pre><p>Observed variables - the system will drop these from the ODE system that is solved, but it keeps all the algebraic equations needed to calculate them in the system object, as well as the <code>ODEProblem</code> and solution object - are:</p><pre><code class="language-julia hljs">observed(circ_sys)</code></pre><p class="math-container">\[ \begin{align}
+\mathtt{Csv.in.p}\left( t \right) &amp;= \mathtt{Csv.p}\left( t \right) \\
+\mathtt{Csa.p}\left( t \right) &amp;= \frac{ - \mathtt{Csa.V{_0}} + \mathtt{Csa.V}\left( t \right)}{\mathtt{Csa.C}} \\
+\mathtt{LV.p}\left( t \right) &amp;= \mathtt{LV.p{_0}} + \left( \mathtt{LV.E{_{m i n}}} + \frac{\left( \frac{rem\left( t + \left( 1 - \mathtt{LV.Eshift} \right) \mathtt{LV.\tau}, \mathtt{LV.\tau} \right)}{\mathtt{LV.\tau{_1}}} \right)^{\mathtt{LV.n{_1}}} \left(  - \mathtt{LV.E{_{m i n}}} + \mathtt{LV.E{_{m a x}}} \right) \mathtt{LV.k}}{\left( 1 + \left( \frac{rem\left( t + \left( 1 - \mathtt{LV.Eshift} \right) \mathtt{LV.\tau}, \mathtt{LV.\tau} \right)}{\mathtt{LV.\tau{_1}}} \right)^{\mathtt{LV.n{_1}}} \right) \left( 1 + \left( \frac{rem\left( t + \left( 1 - \mathtt{LV.Eshift} \right) \mathtt{LV.\tau}, \mathtt{LV.\tau} \right)}{\mathtt{LV.\tau{_2}}} \right)^{\mathtt{LV.n{_2}}} \right)} \right) \left(  - \mathtt{LV.V{_0}} + \mathtt{LV.V}\left( t \right) \right) \\
+\mathtt{Csv.V}\left( t \right) &amp;= \mathtt{Csv.V{_0}} + \mathtt{Csv.C} \mathtt{Csv.p}\left( t \right) \\
+\mathtt{Rs.out.p}\left( t \right) &amp;= \mathtt{Csv.in.p}\left( t \right) \\
+\mathtt{MV.in.p}\left( t \right) &amp;= \mathtt{Csv.in.p}\left( t \right) \\
+\mathtt{Csv.out.p}\left( t \right) &amp;= \mathtt{Csv.in.p}\left( t \right) \\
+\mathtt{Rs.{\Delta}p}\left( t \right) &amp;=  - \mathtt{Csa.p}\left( t \right) + \mathtt{Csv.p}\left( t \right) \\
+\mathtt{Rs.in.p}\left( t \right) &amp;= \mathtt{Csa.p}\left( t \right) \\
+\mathtt{AV.out.p}\left( t \right) &amp;= \mathtt{Csa.p}\left( t \right) \\
+\mathtt{Csa.in.p}\left( t \right) &amp;= \mathtt{Csa.p}\left( t \right) \\
+\mathtt{MV.out.p}\left( t \right) &amp;= \mathtt{LV.p}\left( t \right) \\
+\mathtt{AV.in.p}\left( t \right) &amp;= \mathtt{LV.p}\left( t \right) \\
+\mathtt{AV.{\Delta}p}\left( t \right) &amp;=  - \mathtt{LV.p}\left( t \right) + \mathtt{Csa.p}\left( t \right) \\
+\mathtt{Rs.q}\left( t \right) &amp;= \frac{ - \mathtt{Rs.{\Delta}p}\left( t \right)}{\mathtt{Rs.R}} \\
+\mathtt{Csa.out.p}\left( t \right) &amp;= \mathtt{Csa.in.p}\left( t \right) \\
+\mathtt{LV.in.p}\left( t \right) &amp;= \mathtt{AV.in.p}\left( t \right) \\
+\mathtt{LV.out.p}\left( t \right) &amp;= \mathtt{AV.in.p}\left( t \right) \\
+\mathtt{MV.{\Delta}p}\left( t \right) &amp;= \mathtt{Csa.p}\left( t \right) - \mathtt{AV.{\Delta}p}\left( t \right) - \mathtt{Csv.p}\left( t \right) \\
+\mathtt{AV.q}\left( t \right) &amp;= \frac{ - \left( \mathtt{AV.{\Delta}p}\left( t \right) &lt; 0 \right) \mathtt{AV.{\Delta}p}\left( t \right)}{\mathtt{AV.R}} \\
+\mathtt{Csv.in.q}\left( t \right) &amp;= \mathtt{Rs.q}\left( t \right) \\
+\mathtt{MV.q}\left( t \right) &amp;= \frac{ - \left( \mathtt{MV.{\Delta}p}\left( t \right) &lt; 0 \right) \mathtt{MV.{\Delta}p}\left( t \right)}{\mathtt{MV.R}} \\
+\mathtt{Csa.in.q}\left( t \right) &amp;= \mathtt{AV.q}\left( t \right) \\
+\mathtt{LV.out.q}\left( t \right) &amp;=  - \mathtt{AV.q}\left( t \right) \\
+\mathtt{AV.out.q}\left( t \right) &amp;=  - \mathtt{AV.q}\left( t \right) \\
+\mathtt{AV.in.q}\left( t \right) &amp;= \mathtt{AV.q}\left( t \right) \\
+\mathtt{Csa.out.q}\left( t \right) &amp;=  - \mathtt{Csv.in.q}\left( t \right) \\
+\mathtt{Rs.out.q}\left( t \right) &amp;=  - \mathtt{Csv.in.q}\left( t \right) \\
+\mathtt{Csv.out.q}\left( t \right) &amp;=  - \mathtt{MV.q}\left( t \right) \\
+\mathtt{Rs.in.q}\left( t \right) &amp;=  - \mathtt{Csa.out.q}\left( t \right) \\
+\mathtt{LV.in.q}\left( t \right) &amp;=  - \mathtt{Csv.out.q}\left( t \right) \\
+\mathtt{MV.in.q}\left( t \right) &amp;=  - \mathtt{Csv.out.q}\left( t \right) \\
+\mathtt{MV.out.q}\left( t \right) &amp;=  - \mathtt{LV.in.q}\left( t \right)
 \end{align}
- \]</p><p>And the parameters (these could be reordered, so check these, too):</p><pre><code class="language-julia hljs">parameters(circ_sys)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">18-element Vector{SymbolicUtils.BasicSymbolic{Real}}:
+ \]</p><p>And the parameters (these could be reordered, so check these, too):</p><pre><code class="language-julia hljs">parameters(circ_sys)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">18-element Vector{Any}:
  LV₊V₀
  LV₊p₀
  LV₊Eₘᵢₙ
@@ -178,11 +178,13 @@ AV_{+}in_{+}q\left( t \right) &amp;=  - AV_{+}out_{+}q\left( t \right)
   LV₊p(t) =&gt; 7.0
  Csa₊p(t) =&gt; 7.0
  Csv₊p(t) =&gt; 7.0</code></pre><pre><code class="language-julia hljs">tspan = (0, 20)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(0, 20)</code></pre><p>in this case we use the mean cardiac filling pressure as initial condition, and simulate 20 seconds.</p><p>Then we can define the problem:</p><pre><code class="language-julia hljs">prob = ODEProblem(circ_sys, u0, tspan)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr38_2" style="color:#56b6c2">ODEProblem</span> with uType <span class="sgr38_2" style="color:#56b6c2">Vector{Float64}</span> and tType <span class="sgr38_2" style="color:#56b6c2">Int64</span>. In-place: <span class="sgr38_2" style="color:#56b6c2">true</span>
+Initialization status: <span class="sgr38_2" style="color:#56b6c2">FULLY_DETERMINED</span>
+Non-trivial mass matrix: <span class="sgr38_2" style="color:#56b6c2">false</span>
 timespan: (0, 20)
 u0: 3-element Vector{Float64}:
- 0.0
- 0.0
- 7.0</code></pre><h2 id="Simulate"><a class="docs-heading-anchor" href="#Simulate">Simulate</a><a id="Simulate-1"></a><a class="docs-heading-anchor-permalink" href="#Simulate" title="Permalink"></a></h2><p>The ODE problem is now in the MTK/DifferentialEquations.jl format and we can use any DifferentialEquations.jl solver to solve it:</p><pre><code class="language-julia hljs">sol = solve(prob, Vern7(), reltol=1e-12, abstol=1e-12);</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><pre><code class="language-julia hljs">p1 = plot(sol, idxs=[LV.p,  Csa.in.p], tspan=(16 * τ, 17 * τ), xlabel = &quot;Time [s]&quot;, ylabel = &quot;Pressure [mmHg]&quot;,  hidexaxis = nothing) # Make a line plot
+   7.0
+   7.909999999999999
+ 233.33333333333334</code></pre><h2 id="Simulate"><a class="docs-heading-anchor" href="#Simulate">Simulate</a><a id="Simulate-1"></a><a class="docs-heading-anchor-permalink" href="#Simulate" title="Permalink"></a></h2><p>The ODE problem is now in the MTK/DifferentialEquations.jl format and we can use any DifferentialEquations.jl solver to solve it:</p><pre><code class="language-julia hljs">sol = solve(prob, Vern7(), reltol=1e-12, abstol=1e-12);</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><pre><code class="language-julia hljs">p1 = plot(sol, idxs=[LV.p,  Csa.in.p], tspan=(16 * τ, 17 * τ), xlabel = &quot;Time [s]&quot;, ylabel = &quot;Pressure [mmHg]&quot;,  hidexaxis = nothing) # Make a line plot
 p2 = plot(sol, idxs=[LV.V], tspan=(16 * τ, 17 * τ),xlabel = &quot;Time [s]&quot;, ylabel = &quot;Volume [ml]&quot;,  linkaxes = :all)
 p3 = plot(sol, idxs=[Csa.in.q,Csv.in.q], tspan=(16 * τ, 17 * τ),xlabel = &quot;Time [s]&quot;, ylabel = &quot;Flow rate [ml/s]&quot;, linkaxes = :all)
 p4 = plot(sol, idxs=(LV.V, LV.p), tspan=(16 * τ, 17 * τ),xlabel = &quot;Volume [ml]&quot;, ylabel = &quot;Pressure [mmHg]&quot;, linkaxes = :all)
@@ -192,4 +194,4 @@ img = plot(p1, p2, p3, p4; layout=@layout([a b; c d]), legend = true)
 img = DisplayAs.Text(DisplayAs.PNG(img))
 
 img
-#</code></pre><img src="e09b1302.png" alt="Example block output"/><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« Home</a><a class="docs-footer-nextpage" href="../../autodoc/">Method Index »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Tuesday 29 October 2024 21:56">Tuesday 29 October 2024</span>. Using Julia version 1.11.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+#</code></pre><img src="dad441a4.png" alt="Example block output"/><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« Home</a><a class="docs-footer-nextpage" href="../../autodoc/">Method Index »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Friday 14 November 2025 22:37">Friday 14 November 2025</span>. Using Julia version 1.11.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
