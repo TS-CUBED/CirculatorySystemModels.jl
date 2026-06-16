@@ -1,63 +1,67 @@
 module CirculatorySystemModels
 
 using ModelingToolkit
-using Setfield
 
 export Pin, OnePort, Ground, Resistor, QResistor, PoiseuilleResistor, Capacitor, Inductance, Compliance, Elastance, VariableElastance, ConstantPressure, ConstantFlow, DrivenPressure, DrivenFlow, DHChamber, ShiChamber, ShiAtrium, ShiHeart, WK3, WK3E, CR, CRL, RRCR, ShiSystemicLoop, ShiPulmonaryLoop, ResistorDiode, OrificeValve, ShiValve, MynardValve_SemiLunar, MynardValve_Atrioventricular
 
 
-@independent_variables t
+@parameters t
 
 D = Differential(t)
 
-function Pin(; name)
-        @variables p(t) q(t) [connect = Flow]
-        sys = System(Equation[], t, [p, q], []; name)
-        sys = @set sys.connector_type = ModelingToolkit.connector_type(sys)
-        return sys
+@connector Pin begin
+        p(t)
+        q(t), [connect = Flow]
 end
 
 
-function Ground(; name, P=0.0)
-        @named g = Pin()
-        ps = @parameters P = P
-        eqs = [g.p ~ P]
-        compose(System(eqs, t, [], ps; name), g)
+@mtkmodel Ground begin
+        @components begin
+                g = Pin()
+        end
+        @parameters begin
+                P = 0.0
+        end
+        @equations begin
+                g.p ~ P
+        end
 end
 
 
-function OnePort(; name)
-        @named out = Pin()
-        @named in = Pin()
-        sts = @variables begin
+@mtkmodel OnePort begin
+        @components begin
+                out = Pin()
+                in = Pin()
+        end
+        @variables begin
                 Δp(t)
                 q(t)
         end
-        eqs = [
+        @equations begin
                 Δp ~ out.p - in.p
                 0 ~ in.q + out.q
                 q ~ in.q
-        ]
-        compose(System(eqs, t, sts, []; name), in, out)
+        end
 end
 
-function OnePortWithExtPressure(; name)
-        @named out = Pin()
-        @named in = Pin()
-        @named ep = Pin()
-        sts = @variables begin
+@mtkmodel OnePortWithExtPressure begin
+        @components begin
+                out = Pin()
+                in = Pin()
+                ep = Pin()
+        end
+        @variables begin
                 Δp(t)
                 q(t)
                 pg(t)
         end
-        eqs = [
+        @equations begin
                 Δp ~ out.p - in.p
                 0 ~ in.q + out.q
                 0 ~ ep.q
                 q ~ in.q
                 pg ~ p - ep.p
-        ]
-        compose(System(eqs, t, sts, []; name), in, out, ep)
+        end
 end
 
 
@@ -75,12 +79,14 @@ Named parameters:
 
 `R`:       Resistance of the vessel to the fluid in mmHg*s/ml
 """
-function Resistor(; name, R=1.0)
-        @named oneport = OnePort()
-        @unpack Δp, q = oneport
-        ps = @parameters R = R
-        eqs = [Δp ~ -q * R]
-        extend(System(eqs, t, [], ps; name), oneport)
+@mtkmodel Resistor begin
+        @extend OnePort()
+        @parameters begin
+                R = 1.0
+        end
+        @equations begin
+                Δp ~ -q * R
+        end
 end
 
 
@@ -98,12 +104,14 @@ Named parameters:
 
 `K`: non-linear resistance of the vessel to the fluid in mmHg*s^2/ml^2
 """
-function QResistor(; name, K=1.0)
-        @named oneport = OnePort()
-        @unpack Δp, q = oneport
-        ps = @parameters K = K
-        eqs = [Δp ~ -q * abs(q) * K]
-        extend(System(eqs, t, [], ps; name), oneport)
+@mtkmodel QResistor begin
+        @extend OnePort()
+        @parameters begin
+                K = 1.0
+        end
+        @equations begin
+                Δp ~ -q * abs(q) * K
+        end
 end
 
 
@@ -121,12 +129,14 @@ Named parameters:
 
 `C`:      capacitance of the vessel in ml/mmHg
 """
-function Capacitor(; name, C=1.0)
-        @named oneport = OnePort()
-        @unpack Δp, q = oneport
-        ps = @parameters C = C
-        eqs = [D(Δp) ~ -q / C]
-        extend(System(eqs, t, [], ps; name), oneport)
+@mtkmodel Capacitor begin
+        @extend OnePort()
+        @parameters begin
+                C = 1.0
+        end
+        @equations begin
+                D(Δp) ~ -q / C
+        end
 end
 
 
@@ -144,12 +154,14 @@ Named parameters:
 
 `L`:       Inertia of the fluid in mmHg*s^2/ml
 """
-function Inductance(; name, L=1.0)
-        @named oneport = OnePort()
-        @unpack Δp, q = oneport
-        ps = @parameters L = L
-        eqs = [D(q) ~ -Δp / L]
-        extend(System(eqs, t, [], ps; name), oneport)
+@mtkmodel Inductance begin
+        @extend OnePort()
+        @parameters begin
+                L = 1.0
+        end
+        @equations begin
+                D(q) ~ -Δp / L
+        end
 end
 
 
@@ -171,13 +183,19 @@ Named parameters:
 
 `L`:       length of vessel segment in cm
 """
-function PoiseuilleResistor(; name, μ=3e-2, r=0.1, L=1)
-        @named oneport = OnePort()
-        @unpack Δp, q = oneport
-        ps = @parameters μ = μ r = r L = L
-        R = 8 * μ * L / (π * r^4) * (1 / 1333.2)
-        eqs = [Δp ~ -q * R]
-        extend(System(eqs, t, [], ps; name), oneport)
+@mtkmodel PoiseuilleResistor begin
+        @extend OnePort()
+        @parameters begin
+                μ = 3e-2
+                r = 0.1
+                L = 1
+        end
+        begin
+                R = 8 * μ * L / (π * r^4) * (1 / 1333.2)
+        end
+        @equations begin
+                Δp ~ -q * R
+        end
 end
 
 
@@ -212,7 +230,7 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
                    _Note: if `has_variable_ep` is set to `true` this pin is created, independent of
                    `has_ep`!_
 """
-function Compliance(; name, V₀=0.0, C=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0)
+@component function Compliance(; name, V₀=0.0, C=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0)
         @named in = Pin()
         @named out = Pin()
 
@@ -311,7 +329,7 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
                    _Note: if `has_variable_ep` is set to `true` this pin is created, independent of
                    `has_ep`!_
 """
-function Elastance(; name, V₀=0.0, E=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0)
+@component function Elastance(; name, V₀=0.0, E=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0)
         @named in = Pin()
         @named out = Pin()
 
@@ -407,7 +425,7 @@ has_variable_ep`: (Bool) expose pin for variable external pressure (default: fal
                    _Note: if `has_variable_ep` is set to `true` this pin is created, independent of
                    `has_ep`!_
 """
-function VariableElastance(; name, V₀=0.0, C=1.0, Escale=1.0, fun, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0)
+@component function VariableElastance(; name, V₀=0.0, C=1.0, Escale=1.0, fun, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0)
         @named in = Pin()
         @named out = Pin()
 
@@ -484,12 +502,14 @@ Named parameters:
 
 `P`:     Constant pressure in mmHg
 """
-function ConstantPressure(; name, P=1.0)
-        @named oneport = OnePort()
-        @unpack Δp, q = oneport
-        ps = @parameters P = P
-        eqs = [Δp ~ P]
-        extend(System(eqs, t, [], ps; name), oneport)
+@mtkmodel ConstantPressure begin
+        @extend OnePort()
+        @parameters begin
+                P = 1.0
+        end
+        @equations begin
+                Δp ~ P
+        end
 end
 
 
@@ -507,12 +527,14 @@ Named parameters:
 
 `Q`:     Constant flow in cm^3/s (ml/s)
 """
-function ConstantFlow(; name, Q=1.0)
-        @named oneport = OnePort()
-        @unpack Δp, q = oneport
-        ps = @parameters Q = Q
-        eqs = [q ~ Q]
-        extend(System(eqs, t, [], ps; name), oneport)
+@mtkmodel ConstantFlow begin
+        @extend OnePort()
+        @parameters begin
+                Q = 1.0
+        end
+        @equations begin
+                q ~ Q
+        end
 end
 
 
@@ -532,12 +554,17 @@ Named parameters:
 
 `fun`:   Function which modulates the input
 """
-function DrivenPressure(; name, fun=sin, P=1.0)
-        @named oneport = OnePort()
-        @unpack Δp, q = oneport
-        ps = @parameters P = P
-        eqs = [Δp ~ P * fun(t)]
-        extend(System(eqs, t, [], ps; name), oneport)
+@mtkmodel DrivenPressure begin
+        @extend OnePort()
+        @structural_parameters begin
+                fun = sin
+        end
+        @parameters begin
+                P = 1.0
+        end
+        @equations begin
+                Δp ~ P * fun(t)
+        end
 end
 
 """
@@ -558,12 +585,18 @@ Named parameters:
 
 `fun`:   Function which modulates the input
 """
-function DrivenFlow(; name, fun=sin, Q=1.0)
-        @named oneport = OnePort()
-        @unpack Δp, q = oneport
-        ps = @parameters Q = Q
-        eqs = [q ~ Q * fun(t)]
-        extend(System(eqs, t, [], ps; name), oneport)
+@mtkmodel DrivenFlow begin
+        @extend OnePort()
+        @structural_parameters begin
+                fun = sin
+        end
+        @parameters begin
+
+                Q = 1.0
+        end
+        @equations begin
+                q ~ Q * fun(t)
+        end
 end
 
 """
@@ -616,49 +649,49 @@ Named parameters:
 to 1/max(e(t)), which ensures that e(t) varies between zero and 1.0, such that
 E(t) varies between Eₘᵢₙ and Eₘₐₓ.
 """
-function DHChamber(; name, V₀, p₀=0.0, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, k, Eshift=0.0, inP=false)
-        @named in = Pin()
-        @named out = Pin()
-        sts = @variables begin
+@mtkmodel DHChamber begin
+        @components begin
+                in = Pin()
+                out = Pin()
+        end
+        @structural_parameters begin
+                inP = false
+        end
+        @variables begin
                 V(t)
                 p(t)
         end
-        ps = @parameters begin
-                V₀ = V₀
-                p₀ = p₀
-                Eₘᵢₙ = Eₘᵢₙ
-                Eₘₐₓ = Eₘₐₓ
-                n₁ = n₁
-                n₂ = n₂
-                τ = τ
-                τ₁ = τ₁
-                τ₂ = τ₂
-                k = k
-                Eshift = Eshift
+        @parameters begin
+                V₀
+                p₀ = 0.0
+                Eₘᵢₙ
+                Eₘₐₓ
+                n₁
+                n₂
+                τ
+                τ₁
+                τ₂
+                k
+                Eshift = 0.0
         end
 
-        E = DHelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)
-        DE = DHdelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)
-        p_rel = p₀
+        begin
+                E = DHelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)
+                DE = DHdelastance(t, Eₘᵢₙ, Eₘₐₓ, n₁, n₂, τ, τ₁, τ₂, Eshift, k)
+                p_rel = p₀
+        end
 
-        eqs = [
+        @equations begin
                 0 ~ in.p - out.p
                 p ~ in.p
-        ]
-
-        if inP
-                push!(eqs,
-                        V ~ (p - p_rel) / E + V₀,
+                if inP
+                        V ~ (p - p_rel) / E + V₀
                         D(p) ~ (in.q + out.q) * E + (p - p_rel) / E * DE
-                )
-        else
-                push!(eqs,
-                        p ~ (V - V₀) * E + p_rel,
+                else
+                        p ~ (V - V₀) * E + p_rel
                         D(V) ~ in.q + out.q
-                )
+                end
         end
-
-        compose(System(eqs, t, sts, ps; name), in, out)
 end
 
 
@@ -720,46 +753,47 @@ Named parameters:
 
 `inP`:    (Bool) formulate in dp/dt (default: false)
 """
-function ShiChamber(; name, V₀, p₀=0.0, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift, inP=false)
-        @named in = Pin()
-        @named out = Pin()
-        sts = @variables begin
+@mtkmodel ShiChamber begin
+        @structural_parameters begin
+                inP = false
+        end
+        @variables begin
                 V(t)
                 p(t)
         end
-        ps = @parameters begin
-                V₀ = V₀
-                p₀ = p₀
-                Eₘᵢₙ = Eₘᵢₙ
-                Eₘₐₓ = Eₘₐₓ
-                τ = τ
-                τₑₛ = τₑₛ
-                τₑₚ = τₑₚ
-                Eshift = Eshift
+        @parameters begin
+                V₀
+                p₀ = 0.0
+                Eₘᵢₙ
+                Eₘₐₓ
+                τ
+                τₑₛ
+                τₑₚ
+                Eshift
         end
 
-        E = ShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
-        DE = DShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
-        p_rel = p₀
+        @components begin
+                in = Pin()
+                out = Pin()
+        end
+        begin
+                E = ShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
+                DE = DShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
+                p_rel = p₀
+        end
 
-        eqs = [
+        @equations begin
                 0 ~ in.p - out.p
                 p ~ in.p
-        ]
+                if inP
 
-        if inP
-                push!(eqs,
-                        V ~ (p - p_rel) / E + V₀,
+                        V ~ (p - p_rel) / E + V₀
                         D(p) ~ (in.q + out.q) * E + (p - p_rel) / E * DE
-                )
-        else
-                push!(eqs,
-                        p ~ (V - V₀) * E + p_rel,
+                else
+                        p ~ (V - V₀) * E + p_rel
                         D(V) ~ in.q + out.q
-                )
+                end
         end
-
-        compose(System(eqs, t, sts, ps; name), in, out)
 end
 
 
@@ -851,47 +885,49 @@ name    name of the element
 
 `τpww`  Atrial offset time in s
 """
-function ShiAtrium(; name, V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τpwb, τpww, inP=false)
-        @named in = Pin()
-        @named out = Pin()
-        sts = @variables begin
+@mtkmodel ShiAtrium begin
+        @components begin
+                in = Pin()
+                out = Pin()
+        end
+        @variables begin
                 V(t)
                 p(t)
         end
-        ps = @parameters begin
-                V₀ = V₀
-                p₀ = p₀
-                Eₘᵢₙ = Eₘᵢₙ
-                Eₘₐₓ = Eₘₐₓ
-                τ = τ
-                τpwb = τpwb
-                τpww = τpww
+        @structural_parameters begin
+                inP = false
+        end
+        @parameters begin
+                V₀
+                p₀
+                Eₘᵢₙ
+                Eₘₐₓ
+                τ
+                τpwb
+                τpww
         end
 
-        # adjust timing parameters to fit the elastance functions for the ventricle
-        # define elastance based on ventricle E function
-        E = ShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, 0.5 * τpww, τpww, τpwb)
-        DE = DShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, 0.5 * τpww, τpww, τpwb)
-        p_rel = p₀
+        begin
+                # adjust timing parameters to fit the elastance functions for the ventricle
+                # define elastance based on ventricle E function
+                E = ShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, 0.5 * τpww, τpww, τpwb)
+                DE = DShiElastance(t, Eₘᵢₙ, Eₘₐₓ, τ, 0.5 * τpww, τpww, τpwb)
+                p_rel = p₀
+        end
 
-        eqs = [
+        @equations begin
                 0 ~ in.p - out.p
                 p ~ in.p
-        ]
 
-        if inP
-                push!(eqs,
-                        V ~ (p - p_rel) / E + V₀,
+                if inP
+                        V ~ (p - p_rel) / E + V₀
                         D(p) ~ (in.q + out.q) * E + (p - p_rel) / E * DE
-                )
-        else
-                push!(eqs,
-                        p ~ (V - V₀) * E + p_rel,
+                else
+                        p ~ (V - V₀) * E + p_rel
                         D(V) ~ in.q + out.q
-                )
+                end
         end
 
-        compose(System(eqs, t, sts, ps; name), in, out)
 end
 
 
@@ -1029,38 +1065,41 @@ Named parameters:
 
 `TV_θmin`   Tricuspid valve minimum opening angle in rad
 """
-function ShiHeart(; name, τ,
-                LV_V₀, LV_p₀=0.0, LV_Eₘᵢₙ, LV_Eₘₐₓ, LV_τ, LV_τₑₛ, LV_τₑₚ, LV_Eshift=0.0,
-                RV_V₀, RV_p₀=0.0, RV_Eₘᵢₙ, RV_Eₘₐₓ, RV_τ, RV_τₑₛ, RV_τₑₚ, RV_Eshift=0.0,
-                LA_V₀, LA_p₀=0.0, LA_Eₘᵢₙ, LA_Eₘₐₓ, LA_τ, LA_τₑₛ, LA_τₑₚ, LA_Eshift=0.0,
-                RA_V₀, RA_p₀=0.0, RA_Eₘᵢₙ, RA_Eₘₐₓ, RA_τ, RA_τₑₛ, RA_τₑₚ, RA_Eshift=0.0,
-                AV_CQ, AV_Kp, AV_Kf, AV_Kb, AV_Kv, AV_θmax, AV_θmin,
-                MV_CQ, MV_Kp, MV_Kf, MV_Kb, MV_Kv, MV_θmax, MV_θmin,
-                TV_CQ, TV_Kp, TV_Kf, TV_Kb, TV_Kv, TV_θmax, TV_θmin,
-                PV_CQ, PV_Kp, PV_Kf, PV_Kb, PV_Kv, PV_θmax, PV_θmin)
-        @named LHin = Pin()
-        @named LHout = Pin()
-        @named RHin = Pin()
-        @named RHout = Pin()
-        @named in = Pin()
-        @named out = Pin()
-        sts = @variables begin
+@mtkmodel ShiHeart begin
+        @structural_parameters begin
+                τ
+        end
+        @components begin
+                LHin = Pin()
+                LHout = Pin()
+                RHin = Pin()
+                RHout = Pin()
+                in = Pin()
+                out = Pin()
+        end
+        @variables begin
                 Δp(t)
                 q(t)
         end
+        # sts = []
+        # ps = @parameters Rc=Rc Rp=Rp C=C
+        # No parameters in this function
+        # Parameters are inherited from subcomponents
 
-        # Ventricles and atria
-        @named LV = ShiChamber(V₀=LV_V₀, p₀=LV_p₀, Eₘᵢₙ=LV_Eₘᵢₙ, Eₘₐₓ=LV_Eₘₐₓ, τ=LV_τ, τₑₛ=LV_τₑₛ, τₑₚ=LV_τₑₚ, Eshift=LV_Eshift)
-        @named RV = ShiChamber(V₀=RV_V₀, p₀=RV_p₀, Eₘᵢₙ=RV_Eₘᵢₙ, Eₘₐₓ=RV_Eₘₐₓ, τ=RV_τ, τₑₛ=RV_τₑₛ, τₑₚ=RV_τₑₚ, Eshift=RV_Eshift)
-        @named LA = ShiChamber(V₀=LA_V₀, p₀=LA_p₀, Eₘᵢₙ=LA_Eₘᵢₙ, Eₘₐₓ=LA_Eₘₐₓ, τ=LA_τ, τₑₛ=LA_τₑₛ, τₑₚ=LA_τₑₚ, Eshift=LA_Eshift)
-        @named RA = ShiChamber(V₀=RA_V₀, p₀=RA_p₀, Eₘᵢₙ=RA_Eₘᵢₙ, Eₘₐₓ=RA_Eₘₐₓ, τ=RA_τ, τₑₛ=RA_τₑₛ, τₑₚ=RA_τₑₚ, Eshift=RA_Eshift)
-        # Valves
-        @named AV = ShiValve(CQ=AV_CQ, Kp=AV_Kp, Kf=AV_Kf, Kb=AV_Kb, Kv=AV_Kv, θmax=AV_θmax, θmin=AV_θmin)
-        @named MV = ShiValve(CQ=MV_CQ, Kp=MV_Kp, Kf=MV_Kf, Kb=MV_Kb, Kv=MV_Kv, θmax=MV_θmax, θmin=MV_θmin)
-        @named TV = ShiValve(CQ=TV_CQ, Kp=TV_Kp, Kf=TV_Kf, Kb=TV_Kb, Kv=TV_Kv, θmax=TV_θmax, θmin=TV_θmin)
-        @named PV = ShiValve(CQ=PV_CQ, Kp=PV_Kp, Kf=PV_Kf, Kb=PV_Kb, Kv=PV_Kv, θmax=PV_θmax, θmin=PV_θmin)
-
-        eqs = [
+        @components begin
+                # These are the components the subsystem is made of:
+                # Ventricles and atria
+                LV = ShiChamber(V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
+                RV = ShiChamber(V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
+                LA = ShiChamber(V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
+                RA = ShiChamber(V₀, p₀, Eₘᵢₙ, Eₘₐₓ, τ, τₑₛ, τₑₚ, Eshift)
+                # Valves
+                AV = ShiValve(CQ, Kp, Kf, Kb, Kv, θmax, θmin)
+                MV = ShiValve(CQ, Kp, Kf, Kb, Kv, θmax, θmin)
+                TV = ShiValve(CQ, Kp, Kf, Kb, Kv, θmax, θmin)
+                PV = ShiValve(CQ, Kp, Kf, Kb, Kv, θmax, θmin)
+        end
+        @equations begin
                 Δp ~ out.p - in.p
                 q ~ in.q
                 connect(LHin, LA.in)
@@ -1073,9 +1112,7 @@ function ShiHeart(; name, τ,
                 connect(TV.out, RV.in)
                 connect(RV.out, PV.in)
                 connect(PV.out, RHout)
-        ]
-
-        compose(System(eqs, t, sts, []; name), LHin, LHout, RHin, RHout, in, out, LV, RV, LA, RA, AV, MV, TV, PV)
+        end
 end
 
 
@@ -1092,12 +1129,14 @@ Named parameters:
 
 `R`     Resistance across the valve in mmHg*s/ml
 """
-function ResistorDiode(; name, R=1e-3)
-        @named oneport = OnePort()
-        @unpack Δp, q = oneport
-        ps = @parameters R = R
-        eqs = [q ~ -Δp / R * (Δp < 0)]
-        extend(System(eqs, t, [], ps; name), oneport)
+@mtkmodel ResistorDiode begin
+        @extend OnePort()
+        @parameters begin
+                R = 1e-3
+        end
+        @equations begin
+                q ~ -Δp / R * (Δp < 0)
+        end
 end
 
 
@@ -1114,12 +1153,14 @@ Named parameters:
 
 `CQ`    Flow coefficent in ml/(s*mmHg^0.5)
 """
-function OrificeValve(; name, CQ=1.0)
-        @named oneport = OnePort()
-        @unpack Δp, q = oneport
-        ps = @parameters CQ = CQ
-        eqs = [q ~ (Δp < 0) * CQ * sqrt(sign(Δp) * Δp)]
-        extend(System(eqs, t, [], ps; name), oneport)
+@mtkmodel OrificeValve begin
+        @extend OnePort()
+        @parameters begin
+                CQ = 1.0
+        end
+        @equations begin
+                q ~ (Δp < 0) * CQ * sqrt(sign(Δp) * Δp)
+        end
 end
 
 
@@ -1149,7 +1190,7 @@ Named parameters:
 
 `θmin`  Valve minimum opening angle in rad
 """
-function ShiValve(; name, CQ, Kp, Kf, Kb, Kv, θmax, θmin)
+@component function ShiValve(; name, CQ, Kp, Kf, Kb, Kv, θmax, θmin)
         @named oneport = OnePort()
         @unpack Δp, q = oneport
         ps = @parameters CQ = CQ Kp = Kp Kf = Kf Kb = Kb Kv = Kv θmax = θmax θmin = θmin
@@ -1221,11 +1262,18 @@ name    name of the element
 p is calculated in mmHg
 q is calculated in cm^3/s (ml/s)
 """
-function MynardValve_SemiLunar(; name, ρ, Leff, Mrg, Mst, Ann, Kvc, Kvo)
-        @named oneport = OnePort()
-        @unpack Δp, q = oneport
-        ps = @parameters ρ = ρ Leff = Leff Mrg = Mrg Mst = Mst Ann = Ann Kvc = Kvc Kvo = Kvo
-        sts = @variables begin
+@mtkmodel MynardValve_SemiLunar begin
+        @extend OnePort()
+        @parameters begin
+                ρ
+                Leff
+                Mrg
+                Mst
+                Ann
+                Kvc
+                Kvo
+        end
+        @variables begin
                 Aeff(t)
                 ζ(t)
                 B(t)
@@ -1233,8 +1281,10 @@ function MynardValve_SemiLunar(; name, ρ, Leff, Mrg, Mst, Ann, Kvc, Kvo)
                 Aeff_max(t)
                 L(t)
         end
-        Δp = -1333.22 * Δp
-        eqs = [
+        begin
+                Δp = -1333.22 * Δp
+        end
+        @equations begin
                 # Opening ratio
                 D(ζ) ~ (Δp > 0) * ((1 - ζ) * Kvo * Δp) + (Δp < 0) * (ζ * Kvc * Δp)
                 Aeff_min ~ Mrg * Ann + eps()
@@ -1244,8 +1294,7 @@ function MynardValve_SemiLunar(; name, ρ, Leff, Mrg, Mst, Ann, Kvc, Kvo)
                 B ~ ρ / (2 * Aeff^2)
                 L ~ ρ * Leff / Aeff
                 D(q) ~ (Δp - B * q * abs(q)) * 1 / L
-        ]
-        extend(System(eqs, t, sts, ps; name), oneport)
+        end
 end
 
 
@@ -1275,11 +1324,17 @@ name    name of the element
 p is calculated in mmHg
 q is calculated in cm^3/s (ml/s)
 """
-function MynardValve_Atrioventricular(; name, ρ, Mrg, Mst, Ann, Kvc, Kvo)
-        @named oneport = OnePort()
-        @unpack Δp, q = oneport
-        ps = @parameters ρ = ρ Mrg = Mrg Mst = Mst Ann = Ann Kvc = Kvc Kvo = Kvo
-        sts = @variables begin
+@mtkmodel MynardValve_Atrioventricular begin
+        @extend OnePort()
+        @parameters begin
+                ρ
+                Mrg
+                Mst
+                Ann
+                Kvc
+                Kvo
+        end
+        @variables begin
                 Aeff(t)
                 ζ(t)
                 B(t)
@@ -1287,8 +1342,10 @@ function MynardValve_Atrioventricular(; name, ρ, Mrg, Mst, Ann, Kvc, Kvo)
                 Aeff_max(t)
                 L(t)
         end
-        p = -1333.22 * p
-        eqs = [
+        begin
+                p = -1333.22 * p
+        end
+        @equations begin
                 # Opening ratio
                 D(ζ) ~ (Δp > 0) * ((1 - ζ) * Kvo * Δp) + (Δp < 0) * (ζ * Kvc * Δp)
                 Aeff_min ~ Mrg * Ann + eps()
@@ -1297,8 +1354,7 @@ function MynardValve_Atrioventricular(; name, ρ, Mrg, Mst, Ann, Kvc, Kvo)
                 # Flow equation
                 B ~ ρ / (2 * Aeff^2)
                 q ~ sqrt(1 / B * abs(Δp)) * sign(Δp)
-        ]
-        extend(System(eqs, t, sts, ps; name), oneport)
+        end
 end
 
 
@@ -1320,18 +1376,20 @@ Named parameters:
 
 `C`:       Arterial compliance in ml/mmHg
 """
-function WK3(; name)
-        @named oneport = OnePort()
-        @named Rc = Resistor(R=1.0)
-        @named Rp = Resistor(R=1.0)
-        @named C = Capacitor(C=1.0)
-        @named ground = Ground()
-        eqs = [
-                connect(oneport.in, Rc.in)
+@mtkmodel WK3 begin
+        @extend OnePort()
+        @components begin
+                Rc = Resistor(R=1.0)
+                Rp = Resistor(R=1.0)
+                C = Capacitor(C=1.0)
+                ground = Ground()
+        end
+
+        @equations begin
+                connect(in, Rc.in)
                 connect(Rc.out, Rp.in, C.in)
-                connect(Rp.out, C.out, oneport.out)
-        ]
-        extend(compose(System(eqs, t, [], []; name), Rc, Rp, C, ground), oneport)
+                connect(Rp.out, C.out, out)
+        end
 end
 
 
@@ -1353,19 +1411,21 @@ Named parameters:
 
 `E`:       Arterial elastance in mmHg/ml
 """
-function WK3E(; name)
-        @named oneport = OnePort()
-        @named Rc = Resistor(R=1.0)
-        @named Rp = Resistor(R=1.0)
-        @named E = Elastance(E=1.0)
-        @named ground = Ground()
-        eqs = [
-                connect(oneport.in, Rc.in)
+@mtkmodel WK3E begin
+        @extend OnePort()
+        @components begin
+                Rc = Resistor(R=1.0)
+                Rp = Resistor(R=1.0)
+                E = Elastance(E=1.0)
+                ground = Ground()
+        end
+
+        @equations begin
+                connect(in, Rc.in)
                 connect(Rc.out, E.in)
                 connect(E.out, Rp.in)
-                connect(Rp.out, oneport.out)
-        ]
-        extend(compose(System(eqs, t, [], []; name), Rc, Rp, E, ground), oneport)
+                connect(Rp.out, out)
+        end
 end
 
 
@@ -1389,20 +1449,25 @@ Named parameters:
 
 `C`:       Arterial compliance in ml/mmHg
 """
-function WK4_S(; name)
-        @named oneport = OnePort()
-        @named Rc = Resistor(R=1.0)
-        @named Rp = Resistor(R=1.0)
-        @named C = Capacitor(C=1.0)
-        @named L = Inductance(L=1.0)
-        @named ground = Ground()
-        eqs = [
-                connect(oneport.in, Rc.in)
+@mtkmodel WK4_S begin
+        @extend OnePort()
+
+        @components begin
+                # These are the components the subsystem is made of:
+                Rc = Resistor(R)
+                Rp = Resistor(R)
+                C = Capacitor(C)
+                L = Inductance(L)
+                ground = Ground()
+        end
+        # The equations for the subsystem are created by
+        # 'connect'-ing the components
+        @equations begin
+                connect(in, Rc.in)
                 connect(Rc.out, L.in)
                 connect(L.out, C.in, Rp.in)
-                connect(Rp.out, C.out, oneport.out)
-        ]
-        extend(compose(System(eqs, t, [], []; name), Rc, Rp, C, L, ground), oneport)
+                connect(Rp.out, C.out, out)
+        end
 end
 
 
@@ -1427,21 +1492,27 @@ Named parameters:
 
 `E`:       Arterial elastance in mmHg/ml
 """
-function WK4_SE(; name)
-        @named oneport = OnePort()
-        @named Rc = Resistor(R=1.0)
-        @named Rp = Resistor(R=1.0)
-        @named E = Elastance(E=1.0)
-        @named L = Inductance(L=1.0)
-        @named ground = Ground()
-        eqs = [
-                connect(oneport.in, Rc.in)
+@mtkmodel WK4_SE begin
+        @extend OnePort()
+
+        @components begin
+                # These are the components the subsystem is made of:
+                Rc = Resistor(R)
+                Rp = Resistor(R)
+                E = Elastance(E)
+                L = Inductance(L)
+                ground = Ground()
+        end
+
+        # The equations for the subsystem are created by
+        # 'connect'-ing the components
+        @equations begin
+                connect(in, Rc.in)
                 connect(Rc.out, L.in)
                 connect(L.out, E.in)
                 connect(E.out, Rp.in)
-                connect(Rp.out, oneport.out)
-        ]
-        extend(compose(System(eqs, t, [], []; name), Rc, Rp, E, L, ground), oneport)
+                connect(Rp.out, out)
+        end
 end
 
 
@@ -1465,19 +1536,23 @@ Named parameters:
 
 `C`:       Arterial compliance in ml/mmHg
 """
-function WK4_P(; name)
-        @named oneport = OnePort()
-        @named Rc = Resistor(R=1.0)
-        @named Rp = Resistor(R=1.0)
-        @named C = Capacitor(C=1.0)
-        @named L = Inductance(L=1.0)
-        @named ground = Ground()
-        eqs = [
-                connect(oneport.in, L.in, Rc.in)
+@mtkmodel WK4_P begin
+        @extend OnePort()
+        @components begin
+                Rc = Resistor(R=1.0)
+                Rp = Resistor(R=1.0)
+                C = Capacitor(C=1.0)
+                L = Inductance(L=1.0)
+                ground = Ground()
+        end
+
+        # The equations for the subsystem are created by
+        # 'connect'-ing the components
+        @equations begin
+                connect(in, L.in, Rc.in)
                 connect(L.out, Rc.out, C.in, Rp.in)
-                connect(Rp.out, C.out, oneport.out)
-        ]
-        extend(compose(System(eqs, t, [], []; name), Rc, Rp, C, L, ground), oneport)
+                connect(Rp.out, C.out, out)
+        end
 end
 
 
@@ -1502,60 +1577,68 @@ Named parameters:
 
 `E`:       Arterial elastance in mmHg/ml
 """
-function WK4_PE(; name)
-        @named oneport = OnePort()
-        @named Rc = Resistor(R=1.0)
-        @named Rp = Resistor(R=1.0)
-        @named E = Elastance(E=1.0)
-        @named L = Inductance(L=1.0)
-        @named ground = Ground()
-        eqs = [
-                connect(oneport.in, L.in, Rc.in)
+@mtkmodel WK4_PE begin
+        @extend OnePort()
+
+        @components begin
+                Rc = Resistor(R=1.0)
+                Rp = Resistor(R=1.0)
+                E = Elastance(E=1.0)
+                L = Inductance(L=1.0)
+                ground = Ground()
+        end
+
+        @equations begin
+                connect(in, L.in, Rc.in)
                 connect(L.out, Rc.out, E.in)
                 connect(E.out, Rp.in)
-                connect(Rp.out, oneport.out)
-        ]
-        extend(compose(System(eqs, t, [], []; name), Rc, Rp, E, L, ground), oneport)
+                connect(Rp.out, out)
+        end
 end
 
 
-function WK5(; name)
-        @named oneport = OnePort()
-        @named R1 = Resistor(R=1.0)
-        @named C1 = Capacitor(C=1.0)
-        @named R2 = Resistor(R=1.0)
-        @named C2 = Capacitor(C=1.0)
-        @named R3 = Resistor(R=1.0)
-        @named L = Inductance(L=1.0)
-        @named ground = Ground()
-        eqs = [
-                connect(oneport.in, R1.in)
+@mtkmodel WK5 begin
+        @extend OnePort()
+        @components begin
+                R1 = Resistor(R=1.0)
+                C1 = Capacitor(C=1.0)
+                R2 = Resistor(R=1.0)
+                C2 = Capacitor(C=1.0)
+                R3 = Resistor(R=1.0)
+                L = Inductance(L=1.0)
+                ground = Ground()
+        end
+
+        @equations begin
+                connect(in, R1.in)
                 connect(R1.out, C1.in, R2.in)
                 connect(R2.out, C2.in, R3.in)
-                connect(R3.out, C1.out, C2.out, oneport.out)
-        ]
-        extend(compose(System(eqs, t, [], []; name), R1, C1, R2, C2, R3, L, ground), oneport)
+                connect(R3.out, C1.out, C2.out, out)
+        end
 end
 
 
-function WK5E(; name)
-        @named oneport = OnePort()
-        @named R1 = Resistor(R=1.0)
-        @named E1 = Elastance(E=1.0)
-        @named R2 = Resistor(R=1.0)
-        @named E2 = Elastance(E=1.0)
-        @named R3 = Resistor(R=1.0)
-        @named L = Inductance(L=1.0)
-        @named ground = Ground()
-        eqs = [
-                connect(oneport.in, R1.in)
+@mtkmodel WK5E begin
+        @extend OnePort()
+
+        @components begin
+                R1 = Resistor(R=1.0)
+                E1 = Elastance(E=1.0)
+                R2 = Resistor(R=1.0)
+                E2 = Elastance(E=1.0)
+                R3 = Resistor(R=1.0)
+                L = Inductance(L=1.0)
+                ground = Ground()
+        end
+
+        @equations begin
+                connect(in, R1.in)
                 connect(R1.out, E1.in)
                 connect(E1.out, R2.in)
                 connect(R2.out, E2.in)
                 connect(E2.out, R3.in)
-                connect(R3.out, oneport.out)
-        ]
-        extend(compose(System(eqs, t, [], []; name), R1, E1, R2, E2, R3, L, ground), oneport)
+                connect(R3.out, out)
+        end
 end
 
 
@@ -1575,23 +1658,28 @@ Named parameters:
 
 `C`:       Component compliance in ml/mmHg
 """
-function CR(; name, R=1.0, C=1.0)
-        @named in = Pin()
-        @named out = Pin()
-        @named R = Resistor(R=R)
-        @named C = Compliance(C=C)
-        sts = @variables begin
+@mtkmodel CR begin
+        @structural_parameters begin
+                R=1.0
+                C=1.0
+        end
+        @variables begin
                 Δp(t)
                 q(t)
         end
-        eqs = [
+        @components begin
+                in = Pin()
+                out = Pin()
+                R = Resistor(R=R)
+                C = Compliance(C=C)
+        end
+        @equations begin
                 Δp ~ out.p - in.p
                 q ~ in.q
                 connect(in, C.in)
                 connect(C.out, R.in)
                 connect(R.out, out)
-        ]
-        compose(System(eqs, t, sts, []; name), in, out, R, C)
+        end
 end
 
 
@@ -1613,25 +1701,31 @@ Named parameters:
 
 `L`:       Component blood inertia in mmHg*s^2/ml
 """
-function CRL(; name, C=1.0, R=1.0, L=1.0)
-        @named in = Pin()
-        @named out = Pin()
-        @named C = Compliance(C=C)
-        @named R = Resistor(R=R)
-        @named L = Inductance(L=L)
-        sts = @variables begin
+@mtkmodel CRL begin
+        @structural_parameters begin
+                C=1.0
+                R=1.0
+                L=1.0
+        end
+        @variables begin
                 Δp(t)
                 q(t)
         end
-        eqs = [
+        @components begin
+                in = Pin()
+                out = Pin()
+                C = Compliance(C=C)
+                R = Resistor(R=R)
+                L = Inductance(L=L)
+        end
+        @equations begin
                 Δp ~ out.p - in.p
                 q ~ in.q
                 connect(in, C.in)
                 connect(C.out, R.in)
                 connect(R.out, L.in)
                 connect(L.out, out)
-        ]
-        compose(System(eqs, t, sts, []; name), in, out, C, R, L)
+        end
 end
 
 
@@ -1655,19 +1749,24 @@ Named parameters:
 
 `R3`:      Component resistance in mmHg*s/ml
 """
-function RRCR(; name)
-        @named in = Pin()
-        @named out = Pin()
-        @named ep = Pin()
-        @named R1 = Resistor(R=1.0)
-        @named R2 = Resistor(R=1.0)
-        @named C = Compliance(C=1.0)
-        @named R3 = Resistor(R=1.0)
-        sts = @variables begin
+@mtkmodel RRCR begin
+
+        @variables begin
                 p(t)
                 q(t)
         end
-        eqs = [
+
+        @components begin
+                in = Pin()
+                out = Pin()
+                ep = Pin()
+                R1 = Resistor(R)
+                R2 = Resistor(R)
+                C = Compliance_ep(C)
+                R3 = Resistor(R)
+        end
+
+        @equations begin
                 p ~ out.p - in.p
                 q ~ in.q
                 connect(in, R1.in)
@@ -1676,8 +1775,7 @@ function RRCR(; name)
                 connect(C.out, R3.in)
                 connect(R3.out, out)
                 connect(C.ep, ep)
-        ]
-        compose(System(eqs, t, sts, []; name), in, out, ep, R1, R2, C, R3)
+        end
 end
 
 
@@ -1713,29 +1811,28 @@ Named parameters:
 
 `SVN_R`:   Vein resistance in mmHg*s/ml
 """
-function ShiSystemicLoop(; name,
-                SAS_C=1.0, SAS_R=1.0, SAS_L=1.0,
-                SAT_C=1.0, SAT_R=1.0, SAT_L=1.0,
-                SAR_R=1.0, SCP_R=1.0,
-                SVN_C=1.0, SVN_R=1.0)
-        @named in = Pin()
-        @named out = Pin()
-        # These are the components the subsystem is made of:
-        ## Systemic Aortic Sinus ##
-        @named SAS = CRL(C=SAS_C, R=SAS_R, L=SAS_L)
-        ## Systemic Artery ##
-        @named SAT = CRL(C=SAT_C, R=SAT_R, L=SAT_L)
-        ## Systemic Arteriole ##
-        @named SAR = Resistor(R=SAR_R)
-        ## Systemic Capillary ##
-        @named SCP = Resistor(R=SCP_R)
-        ## Systemic Vein ##
-        @named SVN = CR(C=SVN_C, R=SVN_R)
-        sts = @variables begin
+@mtkmodel ShiSystemicLoop begin
+        @variables begin
                 Δp(t)
                 q(t)
         end
-        eqs = [
+        @components begin
+                in = Pin()
+                out = Pin()
+                # These are the components the subsystem is made of:
+                ## Systemic Aortic Sinus ##
+                SAS = CRL(C, R, L)
+                ## Systemic Artery ##
+                SAT = CRL(C, R, L)
+                ## Systemic Arteriole ##
+                SAR = Resistor(R)
+                ## Systemic Capillary ##
+                SCP = Resistor(R)
+                ## Systemic Vein ##
+                SVN = CR(C, R)
+        end
+
+        @equations begin
                 Δp ~ out.p - in.p
                 q ~ in.q
                 connect(in, SAS.in)
@@ -1744,8 +1841,7 @@ function ShiSystemicLoop(; name,
                 connect(SAR.out, SCP.in)
                 connect(SCP.out, SVN.in)
                 connect(SVN.out, out)
-        ]
-        compose(System(eqs, t, sts, []; name), in, out, SAS, SAT, SAR, SCP, SVN)
+        end
 end
 
 
@@ -1781,29 +1877,29 @@ Named parameters:
 
 `PVN__R`:   Vein resistance in mmHg*s/ml
 """
-function ShiPulmonaryLoop(; name,
-                PAS_C=1.0, PAS_R=1.0, PAS_L=1.0,
-                PAT_C=1.0, PAT_R=1.0, PAT_L=1.0,
-                PAR_R=1.0, PCP_R=1.0,
-                PVN_C=1.0, PVN_R=1.0)
-        @named in = Pin()
-        @named out = Pin()
-        # These are the components the subsystem is made of:
-        ## Pulmonary Aortic Sinus ##
-        @named PAS = CRL(C=PAS_C, R=PAS_R, L=PAS_L)
-        ## Pulmonary Artery ##
-        @named PAT = CRL(C=PAT_C, R=PAT_R, L=PAT_L)
-        ## Pulmonary Arteriole ##
-        @named PAR = Resistor(R=PAR_R)
-        ## Pulmonary Capillary ##
-        @named PCP = Resistor(R=PCP_R)
-        ## Pulmonary Vein ##
-        @named PVN = CR(C=PVN_C, R=PVN_R)
-        sts = @variables begin
+@mtkmodel ShiPulmonaryLoop begin
+        @variables begin
                 Δp(t)
                 q(t)
         end
-        eqs = [
+
+        @components begin
+                in = Pin()
+                out = Pin()
+                # These are the components the subsystem is made of:
+                ## Pulmonary Aortic Sinus ##
+                PAS = CRL(C, R, L)
+                ## Pulmonary Artery ##
+                PAT = CRL(C, R, L)
+                ## Pulmonary Arteriole ##
+                PAR = Resistor(R)
+                ## Pulmonary Capillary ##
+                PCP = Resistor(R)
+                ## Pulmonary Vein ##
+                PVN = CR(C, R)
+        end
+
+        @equations begin
                 Δp ~ out.p - in.p
                 q ~ in.q
                 connect(in, PAS.in)
@@ -1812,8 +1908,8 @@ function ShiPulmonaryLoop(; name,
                 connect(PAR.out, PCP.in)
                 connect(PCP.out, PVN.in)
                 connect(PVN.out, out)
-        ]
-        compose(System(eqs, t, sts, []; name), in, out, PAS, PAT, PAR, PCP, PVN)
+        end
+
 end
 
 
