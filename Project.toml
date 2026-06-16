@@ -1,15 +1,17 @@
 name = "CirculatorySystemModels"
 uuid = "4211d73e-f4e8-40c4-b600-92e4b82f0e1a"
-authors = ["Torsten Schenkel <t.schenkel@shu.ac.uk>, Harry Saxton <harry.saxton@student.shu.ac.uk> and contributors"]
 version = "0.5.0"
+authors = ["Torsten Schenkel <t.schenkel@shu.ac.uk>, Harry Saxton <harry.saxton@student.shu.ac.uk> and contributors"]
 
 [deps]
 ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
+Setfield = "efcf1570-3423-57d1-acb7-fd33fddbac46"
 
 [compat]
 CSV = "0.10"
 DataFrames = "1"
-ModelingToolkit = "10"
+ModelingToolkit = "11"
+Setfield = "1.1.2"
 julia = "1.10"
 
 [extras]
