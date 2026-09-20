@@ -34,11 +34,11 @@ end
                 in = Pin()
         end
         @variables begin
-                Δp(t)
+                # Δp(t)
                 q(t)
         end
         @equations begin
-                Δp ~ out.p - in.p
+                # Δp ~ out.p - in.p
                 0 ~ in.q + out.q
                 q ~ in.q
         end
@@ -51,12 +51,12 @@ end
                 ep = Pin()
         end
         @variables begin
-                Δp(t)
+                # Δp(t)
                 q(t)
                 pg(t)
         end
         @equations begin
-                Δp ~ out.p - in.p
+                # Δp ~ out.p - in.p
                 0 ~ in.q + out.q
                 0 ~ ep.q
                 q ~ in.q
